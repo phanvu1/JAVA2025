@@ -192,12 +192,12 @@ CREATE TABLE `kesach` (
 --
 
 INSERT INTO `kesach` (`makesach`, `vitri`) VALUES
-(1, 'tầng 1'),
-(2, 'tầng 1'),
-(3, 'tầng 1'),
-(4, 'tầng 2'),
-(5, 'tầng 2'),
-(6, 'tầng 2');
+(1, 'kệ số 1 tầng 1'),
+(2, 'kệ số 2 tầng 1'),
+(3, 'kệ số 3 tầng 1'),
+(4, 'kệ số 1 tầng 2'),
+(5, 'kệ số 2 tầng 2'),
+(6, 'kệ số 3 tầng 2');
 
 -- --------------------------------------------------------
 
