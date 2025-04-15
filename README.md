@@ -47,7 +47,7 @@ Tiếp theo, viết các lớp Repository để xử lý truy vấn cơ sở d�
 Repository sẽ làm việc trực tiếp với Entity, ví dụ: BookRepository với các phương thức như findById, save, findByAuthor.
 4. Tầng Service (Business Logic Layer):
 Sau khi Repository hoàn thiện, bạn có thể viết Service để xử lý logic nghiệp vụ.
-Service gọi Repository và thực hiện các quy tắc kinh doanh, ví dụ: kiểm tra sách có sẵn trước khi cho mượn.
+Service gọi Repository(DAO) và thực hiện các quy tắc kinh doanh, ví dụ: kiểm tra sách có sẵn trước khi cho mượn.
 5. Tầng Controller (Presentation Layer):
 Cuối cùng, viết Controller để nhận yêu cầu từ client (qua API) và trả về kết quả.
 Controller sẽ gọi Service và sử dụng DTO để giao tiếp, ví dụ: một endpoint /books để lấy danh sách sách.
