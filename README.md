@@ -1,7 +1,7 @@
 # JAVA2025
 # Cập nhật tuần 11:
 - Tạo 3 lớp BUS, DAO, GUI ứng với mô hình ba lớp.
-![alt text](image.png)
+![alt text](image-6.png)
 # Tuần 12:
 ① Presentation Layer (Tầng Hiển Thị)
 Vai trò: Hiển thị dữ liệu và nhận input từ người dùng (Web, Mobile, Desktop).
