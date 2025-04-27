@@ -15,30 +15,33 @@ public class SachBUS {
     }
 
     // Thêm sách mới
-    public boolean addSach(SachDTO sach) {
-        if (validateSach(sach)) {
-            return sachDAO.saveSach(sach);
+    public boolean themSach(SachDTO sach) {
+        if (sach.getTenSach() == null || sach.getTenSach().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên sách không được để trống");
         }
-        System.err.println("Dữ liệu sách không hợp lệ!");
-        return false;
+        if (sach.getMaLoai() <= 0 || sach.getMaNXB() <= 0 || sach.getMaKeSach() <= 0) {
+            throw new IllegalArgumentException("Mã loại, mã NXB hoặc mã kệ sách không hợp lệ");
+        }
+        if (sach.getNamXB() <= 0 || sach.getSoLuong() < 0) {
+            throw new IllegalArgumentException("Năm xuất bản hoặc số lượng không hợp lệ");
+        }
+        return sachDAO.saveSach(sach);
     }
 
     // Cập nhật thông tin sách
-    public boolean updateSach(SachDTO sach) {
-        if (validateSach(sach) && sach.getMaSach() > 0) {
-            return sachDAO.updateSach(sach);
+    public boolean suaSach(SachDTO sach) {
+        if (sach.getMaSach() <= 0) {
+            throw new IllegalArgumentException("Mã sách không hợp lệ");
         }
-        System.err.println("Dữ liệu sách không hợp lệ hoặc mã sách không tồn tại!");
-        return false;
+        return themSach(sach); // Tái sử dụng logic kiểm tra từ phương thức thêm
     }
 
     // Xóa sách theo mã sách
-    public boolean deleteSach(int maSach) {
-        if (maSach > 0) {
-            return sachDAO.deleteSach(maSach);
+    public boolean xoaSach(int maSach) {
+        if (maSach <= 0) {
+            throw new IllegalArgumentException("Mã sách không hợp lệ");
         }
-        System.err.println("Mã sách không hợp lệ!");
-        return false;
+        return sachDAO.deleteSach(maSach);
     }
 
     // Lấy danh sách tất cả sách
@@ -47,37 +50,18 @@ public class SachBUS {
     }
 
     // Tìm sách theo mã sách
-    public SachDTO findSachById(int maSach) {
-        if (maSach > 0) {
-            return sachDAO.findSachById(maSach);
+    public SachDTO timSachTheoMa(int maSach) {
+        if (maSach <= 0) {
+            throw new IllegalArgumentException("Mã sách không hợp lệ");
         }
-        System.err.println("Mã sách không hợp lệ!");
-        return null;
+        return sachDAO.findSachById(maSach);
     }
 
     // Tìm sách theo tên sách
-    public List<SachDTO> findSachByName(String tenSach) {
-        if (tenSach != null && !tenSach.trim().isEmpty()) {
-            return sachDAO.findSachByName(tenSach);
+    public List<SachDTO> timSachTheoTen(String tenSach) {
+        if (tenSach == null || tenSach.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên sách không được để trống");
         }
-        System.err.println("Tên sách không hợp lệ!");
-        return null;
-    }
-
-    // Kiểm tra tính hợp lệ của dữ liệu sách
-    private boolean validateSach(SachDTO sach) {
-        if (sach == null) {
-            return false;
-        }
-        if (sach.getTenSach() == null || sach.getTenSach().trim().isEmpty()) {
-            return false;
-        }
-        if (sach.getMaLoai() <= 0 || sach.getMaNXB() <= 0 || sach.getMaKeSach() <= 0) {
-            return false;
-        }
-        if (sach.getNamXB() <= 0 || sach.getSoLuong() < 0) {
-            return false;
-        }
-        return true;
+        return sachDAO.findSachByName(tenSach);
     }
 }

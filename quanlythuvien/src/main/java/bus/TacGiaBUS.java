@@ -15,30 +15,33 @@ public class TacGiaBUS {
     }
 
     // Thêm tác giả mới
-    public boolean addTacGia(TacGiaDTO tacGia) {
-        if (validateTacGia(tacGia)) {
-            return tacGiaDAO.saveTacGia(tacGia);
+    public boolean themTacGia(TacGiaDTO tacGia) {
+        if (tacGia.getTenTacGia() == null || tacGia.getTenTacGia().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên tác giả không được để trống");
         }
-        System.err.println("Dữ liệu tác giả không hợp lệ!");
-        return false;
+        if (tacGia.getNamSinh() <= 0) {
+            throw new IllegalArgumentException("Năm sinh không hợp lệ");
+        }
+        if (tacGia.getQueQuan() == null || tacGia.getQueQuan().trim().isEmpty()) {
+            throw new IllegalArgumentException("Quê quán không được để trống");
+        }
+        return tacGiaDAO.saveTacGia(tacGia);
     }
 
     // Cập nhật thông tin tác giả
-    public boolean updateTacGia(TacGiaDTO tacGia) {
-        if (validateTacGia(tacGia) && tacGia.getMaTacGia() > 0) {
-            return tacGiaDAO.updateTacGia(tacGia);
+    public boolean suaTacGia(TacGiaDTO tacGia) {
+        if (tacGia.getMaTacGia() <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
         }
-        System.err.println("Dữ liệu tác giả không hợp lệ hoặc mã tác giả không tồn tại!");
-        return false;
+        return themTacGia(tacGia); // Tái sử dụng logic kiểm tra từ phương thức thêm
     }
 
     // Xóa tác giả theo mã tác giả
-    public boolean deleteTacGia(int maTacGia) {
-        if (maTacGia > 0) {
-            return tacGiaDAO.deleteTacGia(maTacGia);
+    public boolean xoaTacGia(int maTacGia) {
+        if (maTacGia <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
         }
-        System.err.println("Mã tác giả không hợp lệ!");
-        return false;
+        return tacGiaDAO.deleteTacGia(maTacGia);
     }
 
     // Lấy danh sách tất cả tác giả
@@ -47,37 +50,18 @@ public class TacGiaBUS {
     }
 
     // Tìm tác giả theo mã tác giả
-    public TacGiaDTO findTacGiaById(int maTacGia) {
-        if (maTacGia > 0) {
-            return tacGiaDAO.findTacGiaById(maTacGia);
+    public TacGiaDTO timTacGiaTheoMa(int maTacGia) {
+        if (maTacGia <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
         }
-        System.err.println("Mã tác giả không hợp lệ!");
-        return null;
+        return tacGiaDAO.findTacGiaById(maTacGia);
     }
 
     // Tìm tác giả theo tên
-    public List<TacGiaDTO> findTacGiaByName(String tenTacGia) {
-        if (tenTacGia != null && !tenTacGia.trim().isEmpty()) {
-            return tacGiaDAO.findTacGiaByName(tenTacGia);
+    public List<TacGiaDTO> timTacGiaTheoTen(String tenTacGia) {
+        if (tenTacGia == null || tenTacGia.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên tác giả không được để trống");
         }
-        System.err.println("Tên tác giả không hợp lệ!");
-        return null;
-    }
-
-    // Kiểm tra tính hợp lệ của dữ liệu tác giả
-    private boolean validateTacGia(TacGiaDTO tacGia) {
-        if (tacGia == null) {
-            return false;
-        }
-        if (tacGia.getTenTacGia() == null || tacGia.getTenTacGia().trim().isEmpty()) {
-            return false;
-        }
-        if (tacGia.getNamSinh() <= 0) {
-            return false;
-        }
-        if (tacGia.getQueQuan() == null || tacGia.getQueQuan().trim().isEmpty()) {
-            return false;
-        }
-        return true;
+        return tacGiaDAO.findTacGiaByName(tenTacGia);
     }
 }

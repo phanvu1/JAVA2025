@@ -15,30 +15,36 @@ public class DocGiaBUS {
     }
 
     // Thêm độc giả mới
-    public boolean addDocGia(DocGiaDTO docGia) {
-        if (validateDocGia(docGia)) {
-            return docGiaDAO.saveDocGia(docGia);
+    public boolean themDocGia(DocGiaDTO docGia) {
+        if (docGia.getTenDocGia() == null || docGia.getTenDocGia().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên độc giả không được để trống");
         }
-        System.err.println("Dữ liệu độc giả không hợp lệ!");
-        return false;
+        if (docGia.getGioiTinh() == null || docGia.getGioiTinh().trim().isEmpty()) {
+            throw new IllegalArgumentException("Giới tính không được để trống");
+        }
+        if (docGia.getDiaChi() == null || docGia.getDiaChi().trim().isEmpty()) {
+            throw new IllegalArgumentException("Địa chỉ không được để trống");
+        }
+        if (docGia.getMaThe() <= 0) {
+            throw new IllegalArgumentException("Mã thẻ không hợp lệ");
+        }
+        return docGiaDAO.saveDocGia(docGia);
     }
 
     // Cập nhật thông tin độc giả
-    public boolean updateDocGia(DocGiaDTO docGia) {
-        if (validateDocGia(docGia) && docGia.getMaDocGia() > 0) {
-            return docGiaDAO.updateDocGia(docGia);
+    public boolean suaDocGia(DocGiaDTO docGia) {
+        if (docGia.getMaDocGia() <= 0) {
+            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
         }
-        System.err.println("Dữ liệu độc giả không hợp lệ hoặc mã độc giả không tồn tại!");
-        return false;
+        return themDocGia(docGia); // Tái sử dụng logic kiểm tra từ phương thức thêm
     }
 
     // Xóa độc giả theo mã độc giả
-    public boolean deleteDocGia(int maDocGia) {
-        if (maDocGia > 0) {
-            return docGiaDAO.deleteDocGia(maDocGia);
+    public boolean xoaDocGia(int maDocGia) {
+        if (maDocGia <= 0) {
+            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
         }
-        System.err.println("Mã độc giả không hợp lệ!");
-        return false;
+        return docGiaDAO.deleteDocGia(maDocGia);
     }
 
     // Lấy danh sách tất cả độc giả
@@ -47,40 +53,18 @@ public class DocGiaBUS {
     }
 
     // Tìm độc giả theo mã độc giả
-    public DocGiaDTO findDocGiaById(int maDocGia) {
-        if (maDocGia > 0) {
-            return docGiaDAO.findDocGiaById(maDocGia);
+    public DocGiaDTO timDocGiaTheoMa(int maDocGia) {
+        if (maDocGia <= 0) {
+            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
         }
-        System.err.println("Mã độc giả không hợp lệ!");
-        return null;
+        return docGiaDAO.findDocGiaById(maDocGia);
     }
 
     // Tìm độc giả theo tên
-    public List<DocGiaDTO> findDocGiaByName(String tenDocGia) {
-        if (tenDocGia != null && !tenDocGia.trim().isEmpty()) {
-            return docGiaDAO.findDocGiaByName(tenDocGia);
+    public List<DocGiaDTO> timDocGiaTheoTen(String tenDocGia) {
+        if (tenDocGia == null || tenDocGia.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên độc giả không được để trống");
         }
-        System.err.println("Tên độc giả không hợp lệ!");
-        return null;
-    }
-
-    // Kiểm tra tính hợp lệ của dữ liệu độc giả
-    private boolean validateDocGia(DocGiaDTO docGia) {
-        if (docGia == null) {
-            return false;
-        }
-        if (docGia.getTenDocGia() == null || docGia.getTenDocGia().trim().isEmpty()) {
-            return false;
-        }
-        if (docGia.getGioiTinh() == null || docGia.getGioiTinh().trim().isEmpty()) {
-            return false;
-        }
-        if (docGia.getDiaChi() == null || docGia.getDiaChi().trim().isEmpty()) {
-            return false;
-        }
-        if (docGia.getMaThe() <= 0) {
-            return false;
-        }
-        return true;
+        return docGiaDAO.findDocGiaByName(tenDocGia);
     }
 }
