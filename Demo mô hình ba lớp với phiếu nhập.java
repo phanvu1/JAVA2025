@@ -1,4 +1,5 @@
 ```java
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
@@ -15,7 +16,8 @@ public class PhieuNhapDTO {
     private String maNCC;
     private String ngayNhap;
 
-    public PhieuNhapDTO() {}
+    public PhieuNhapDTO() {
+    }
 
     public PhieuNhapDTO(int id, String maNhanVien, String maNCC, String ngayNhap) {
         this.id = id;
@@ -24,14 +26,37 @@ public class PhieuNhapDTO {
         this.ngayNhap = ngayNhap;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getMaNhanVien() { return maNhanVien; }
-    public void setMaNhanVien(String maNhanVien) { this.maNhanVien = maNhanVien; }
-    public String getMaNCC() { return maNCC; }
-    public void setMaNCC(String maNCC) { this.maNCC = maNCC; }
-    public String getNgayNhap() { return ngayNhap; }
-    public void setNgayNhap(String ngayNhap) { this.ngayNhap = ngayNhap; }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMaNhanVien() {
+        return maNhanVien;
+    }
+
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
+    }
+
+    public String getMaNCC() {
+        return maNCC;
+    }
+
+    public void setMaNCC(String maNCC) {
+        this.maNCC = maNCC;
+    }
+
+    public String getNgayNhap() {
+        return ngayNhap;
+    }
+
+    public void setNgayNhap(String ngayNhap) {
+        this.ngayNhap = ngayNhap;
+    }
 }
 
 // Data Access Layer
@@ -47,8 +72,8 @@ class PhieuNhapDAO {
         int newId = mockDatabase.size() + 1;
         dto.setId(newId);
         mockDatabase.add(dto);
-        System.out.println("Lưu: " + dto.getId() + ", " + dto.getMaNhanVien() + ", " + 
-                          dto.getMaNCC() + ", " + dto.getNgayNhap());
+        System.out.println("Lưu: " + dto.getId() + ", " + dto.getMaNhanVien() + ", " +
+                dto.getMaNCC() + ", " + dto.getNgayNhap());
         return true;
     }
 
@@ -56,8 +81,8 @@ class PhieuNhapDAO {
         for (int i = 0; i < mockDatabase.size(); i++) {
             if (mockDatabase.get(i).getId() == dto.getId()) {
                 mockDatabase.set(i, dto);
-                System.out.println("Sửa: " + dto.getId() + ", " + dto.getMaNhanVien() + ", " + 
-                                  dto.getMaNCC() + ", " + dto.getNgayNhap());
+                System.out.println("Sửa: " + dto.getId() + ", " + dto.getMaNhanVien() + ", " +
+                        dto.getMaNCC() + ", " + dto.getNgayNhap());
                 return true;
             }
         }
@@ -221,7 +246,7 @@ class PhieuNhapPanel {
         gbc.gridwidth = 3;
         panel.add(buttonPanel, gbc);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Mã Nhân Viên", "Mã NCC", "Ngày Nhập"}, 0);
+        tableModel = new DefaultTableModel(new Object[] { "ID", "Mã Nhân Viên", "Mã NCC", "Ngày Nhập" }, 0);
         table = new JTable(tableModel);
         table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
@@ -253,11 +278,10 @@ class PhieuNhapPanel {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             PhieuNhapDTO dto = new PhieuNhapDTO(
-                0,
-                txtMaNhanVien.getText(),
-                txtMaNCC.getText(),
-                sdf.format(ngayNhap.getDate())
-            );
+                    0,
+                    txtMaNhanVien.getText(),
+                    txtMaNCC.getText(),
+                    sdf.format(ngayNhap.getDate()));
             if (service.themPhieuNhap(dto)) {
                 JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thành công!");
                 clearForm();
@@ -274,11 +298,10 @@ class PhieuNhapPanel {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             PhieuNhapDTO dto = new PhieuNhapDTO(
-                Integer.parseInt(txtId.getText()),
-                txtMaNhanVien.getText(),
-                txtMaNCC.getText(),
-                sdf.format(ngayNhap.getDate())
-            );
+                    Integer.parseInt(txtId.getText()),
+                    txtMaNhanVien.getText(),
+                    txtMaNCC.getText(),
+                    sdf.format(ngayNhap.getDate()));
             if (service.suaPhieuNhap(dto)) {
                 JOptionPane.showMessageDialog(null, "Sửa phiếu nhập thành công!");
                 clearForm();
@@ -314,11 +337,11 @@ class PhieuNhapPanel {
         tableModel.setRowCount(0);
         List<PhieuNhapDTO> list = service.getAllPhieuNhap();
         for (PhieuNhapDTO dto : list) {
-            tableModel.addRow(new Object[]{
-                dto.getId(),
-                dto.getMaNhanVien(),
-                dto.getMaNCC(),
-                dto.getNgayNhap()
+            tableModel.addRow(new Object[] {
+                    dto.getId(),
+                    dto.getMaNhanVien(),
+                    dto.getMaNCC(),
+                    dto.getNgayNhap()
             });
         }
     }
@@ -344,5 +367,4 @@ class Main {
 
         panel.loadDataToTable();
     }
-}
-```
+}```
