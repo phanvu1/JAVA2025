@@ -55,7 +55,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import java.io.File;
 
-public class mainFrame extends JFrame {
+public class MainFrame extends JFrame {
     public static String Ma;
     public static boolean isdangxuat;
     private JPanel contentPane;
@@ -306,7 +306,7 @@ public class mainFrame extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    mainFrame frame = new mainFrame();
+                    MainFrame frame = new MainFrame();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -315,7 +315,7 @@ public class mainFrame extends JFrame {
         });
     }
 
-    public mainFrame() {
+    public MainFrame() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
         setBounds(100, 100, 1280, 768);
