@@ -55,6 +55,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import java.io.File;
 
+// Add imports for BUS and DTO layers
+import bus.SachBUS;
+import bus.DocGiaBUS;
+import bus.TacGiaBUS;
+import dto.SachDTO;
+import dto.DocGiaDTO;
+import dto.TacGiaDTO;
+import dao.DBConnect;
+
+import java.sql.Connection;
+
 public class MainFrame extends JFrame {
     public static String Ma;
     public static boolean isdangxuat;
@@ -302,6 +313,11 @@ public class MainFrame extends JFrame {
     private JTable tablemuon;
     public static int idtaikhoan;
 
+    // Add BUS layer instances
+    private SachBUS sachBUS;
+    private DocGiaBUS docGiaBUS;
+    private TacGiaBUS tacGiaBUS;
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -327,7 +343,7 @@ public class MainFrame extends JFrame {
         thanhtitle();
         menuleft();
         addEvent();
-        
+
         // Initialize empty tables
         dtmsach = new DefaultTableModel();
         dtmdocgia = new DefaultTableModel();
@@ -343,6 +359,14 @@ public class MainFrame extends JFrame {
         dtmke = new DefaultTableModel();
         dtmthongkesachmuon = new DefaultTableModel();
         dtmthongkenhaphang = new DefaultTableModel();
+
+        Connection connection = DBConnect.getConnection(); // obtain a valid Connection instance
+        sachBUS = new SachBUS(connection); // Initialize BUS layers with Connection
+        docGiaBUS = new DocGiaBUS(connection);
+        tacGiaBUS = new TacGiaBUS(connection);
+        loadSachData();
+        loadDocGiaData();
+        loadTacGiaData();
     }
 
     public void thanhtitle() {
@@ -501,7 +525,7 @@ public class MainFrame extends JFrame {
         lblphieunhap.setBackground(Color.DARK_GRAY);
         lblphieunhap.setBounds(0, 487, 187, 46);
         menuleft.add(lblphieunhap);
-        
+
         PanelChinh.add(pnTrangChu, "name_890335498390600");
 
         JLabel lblNewLabel_17 = new JLabel("");
@@ -744,39 +768,39 @@ public class MainFrame extends JFrame {
         txtghichuctpm.setEditable(false);
         txtghichuctpm.setBounds(96, 148, 142, 35);
         panel.add(txtghichuctpm);
-        
+
         btnthemctpm = new JButton("Thêm");
         btnthemctpm.setIcon(new ImageIcon("img\\Add.png"));
         btnthemctpm.setFont(new Font("Tahoma", Font.BOLD, 13));
         btnthemctpm.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                }
+            public void actionPerformed(ActionEvent arg0) {
+            }
         });
         btnthemctpm.setBounds(12, 227, 124, 41);
         panel.add(btnthemctpm);
-        
+
         btnsuactpm = new JButton("Sửa");
         btnsuactpm.setIcon(new ImageIcon("img\\Edit.png"));
         btnsuactpm.setFont(new Font("Tahoma", Font.BOLD, 13));
         btnsuactpm.setBounds(193, 227, 124, 41);
         panel.add(btnsuactpm);
-        
+
         btnxoactpm = new JButton("Xoá");
         btnxoactpm.setIcon(new ImageIcon("img\\Delete.png"));
         btnxoactpm.setFont(new Font("Tahoma", Font.BOLD, 13));
         btnxoactpm.setBounds(12, 280, 124, 41);
         panel.add(btnxoactpm);
-        
+
         bnttailaictpm = new JButton("Tải Lại");
         bnttailaictpm.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                }
+            public void actionPerformed(ActionEvent e) {
+            }
         });
         bnttailaictpm.setIcon(new ImageIcon("img\\update.png"));
         bnttailaictpm.setFont(new Font("Tahoma", Font.BOLD, 13));
         bnttailaictpm.setBounds(193, 280, 121, 41);
         panel.add(bnttailaictpm);
-        
+
         dateChooser_ngaytra = new JDateChooser();
         Calendar c1 = Calendar.getInstance();
         c1.setTime(Calendar.getInstance().getTime());
@@ -791,27 +815,27 @@ public class MainFrame extends JFrame {
         btnthemphieuphat.setBounds(822, 332, 117, 45);
         btnthemphieuphat.addActionListener(new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                        if (Ma == null || Ma.isEmpty() || Ma.equals("")) {
-                                JOptionPane.showMessageDialog(null, "Bạn chưa chọn mã phiếu mượn");
-                                return;
-                        }
-                        new Phat().setVisible(true);
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (Ma == null || Ma.isEmpty() || Ma.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn mã phiếu mượn");
+                    return;
                 }
+                new Phat().setVisible(true);
+            }
         });
         pnPhieumuon.add(btnthemphieuphat);
 
         btndanhsachphat = new JButton("Danh Sách Phạt");
         btndanhsachphat.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                        new DanhSachPhat().setVisible(true);
-                }
+            public void actionPerformed(ActionEvent arg0) {
+                new DanhSachPhat().setVisible(true);
+            }
         });
         btndanhsachphat.setFont(new Font("Tahoma", Font.BOLD, 15));
         btndanhsachphat.setBounds(964, 331, 129, 47);
         pnPhieumuon.add(btndanhsachphat);
-        
+
         JButton btnTimphieumuon = new JButton("Tìm");
         btnTimphieumuon.setIcon(new ImageIcon("img\\Search.png"));
         btnTimphieumuon.addActionListener(new ActionListener() {
@@ -828,10 +852,10 @@ public class MainFrame extends JFrame {
         pnPhieumuon.add(btnTimphieumuon);
         PanelChinh.add(pnPhieuNhap, "name_901242535638200");
         pnPhieuNhap.setLayout(null);
-        
+
         JPanel panel_6 = new JPanel();
         panel_6.setBorder(
-                        new TitledBorder(null, "Phi\u1EBFu Nh\u1EADp", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+                new TitledBorder(null, "Phi\u1EBFu Nh\u1EADp", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panel_6.setBounds(22, 13, 434, 304);
         pnPhieuNhap.add(panel_6);
         panel_6.setLayout(null);
@@ -896,13 +920,13 @@ public class MainFrame extends JFrame {
 
         btntailai = new JButton("Tải Lại");
         btntailai.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                }
+            public void actionPerformed(ActionEvent e) {
+            }
         });
         btntailai.setFont(new Font("Tahoma", Font.BOLD, 15));
         btntailai.setBounds(335, 242, 97, 46);
         panel_6.add(btntailai);
-        
+
         JScrollPane scrollPane_9 = new JScrollPane();
         scrollPane_9.setBounds(467, 13, 614, 304);
         pnPhieuNhap.add(scrollPane_9);
@@ -911,14 +935,14 @@ public class MainFrame extends JFrame {
         dtmphieunhap.addColumn("Mã NV");
         dtmphieunhap.addColumn("Mã NCC");
         dtmphieunhap.addColumn("Mã Ngày Nhập");
-        
+
         tablephieunhap = new MyTable(dtmphieunhap);
 
         scrollPane_9.setViewportView(tablephieunhap);
 
         JPanel panel_6_1 = new JPanel();
         panel_6_1.setBorder(new TitledBorder(null, "Chi Ti\u1EBFt Phi\u1EBFu Nh\u1EADp", TitledBorder.LEADING,
-                        TitledBorder.TOP, null, null));
+                TitledBorder.TOP, null, null));
 
         panel_6_1.setBounds(22, 418, 422, 304);
         pnPhieuNhap.add(panel_6_1);
@@ -928,7 +952,7 @@ public class MainFrame extends JFrame {
         lblNewLabel_12.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblNewLabel_12.setBounds(12, 60, 102, 33);
         panel_6_1.add(lblNewLabel_12);
-        
+
         txtMaSachctpn = new JTextField();
         txtMaSachctpn.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtMaSachctpn.setColumns(10);
@@ -1049,2578 +1073,2817 @@ public class MainFrame extends JFrame {
         pnchung();
         pnthongke();
     }
-        
-       private void pnchung() {
-            pnchung = new JPanel();
-            PanelChinh.add(pnchung, "name_903253398621700");
-            pnchung.setLayout(null);
-
-            JPanel panel_4 = new JPanel();
-            panel_4.setBorder(new TitledBorder(null, "Lo\u1EA1i", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            panel_4.setBounds(69, 33, 389, 292);
-            pnchung.add(panel_4);
-            panel_4.setLayout(null);
-
-            JLabel lblNewLabel_9 = new JLabel("Tên Loại");
-            lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_9.setForeground(new Color(0, 0, 0));
-            lblNewLabel_9.setBounds(12, 13, 79, 41);
-            panel_4.add(lblNewLabel_9);
-
-            txttenloai = new JTextField();
-            txttenloai.setFont(new Font("Tahoma", Font.BOLD, 15));
-            txttenloai.setBounds(120, 13, 225, 41);
-            panel_4.add(txttenloai);
-            txttenloai.setColumns(10);
-
-            JScrollPane scrollPane = new JScrollPane();
-            scrollPane.setBounds(12, 142, 365, 137);
-            panel_4.add(scrollPane);
-            dtmloai = new DefaultTableModel();
-            dtmloai.addColumn("Mã Loại");
-            dtmloai.addColumn("Tên Loại");
-            tableloai = new MyTable(dtmloai);
-            scrollPane.setViewportView(tableloai);
-
-            btnThemloai = new JButton("Thêm");
-            btnThemloai.setBounds(12, 93, 97, 25);
-            panel_4.add(btnThemloai);
-
-            btnsualoai = new JButton("Sửa");
-            btnsualoai.setBounds(149, 93, 97, 25);
-            panel_4.add(btnsualoai);
-
-            btnxoaloai = new JButton("Xoá");
-            btnxoaloai.setBounds(280, 93, 97, 25);
-            panel_4.add(btnxoaloai);
-
-            JPanel panel_4_1 = new JPanel();
-            panel_4_1.setBorder(
-                            new TitledBorder(null, "Nh\u00E0 Cung C\u1EA5p", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            panel_4_1.setBounds(660, 33, 389, 292);
-            pnchung.add(panel_4_1);
-            panel_4_1.setLayout(null);
-
-            lbltenncc = new JLabel("Tên NCC");
-            lbltenncc.setForeground(Color.BLACK);
-            lbltenncc.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbltenncc.setBounds(12, 13, 79, 41);
-            panel_4_1.add(lbltenncc);
-
-            txtNcc = new JTextField();
-            txtNcc.setFont(new Font("Tahoma", Font.BOLD, 15));
-            txtNcc.setColumns(10);
-            txtNcc.setBounds(120, 13, 225, 41);
-            panel_4_1.add(txtNcc);
-
-            btnThemncc = new JButton("Thêm");
-            btnThemncc.setBounds(12, 93, 97, 25);
-            panel_4_1.add(btnThemncc);
-
-            btnsuancc = new JButton("Sửa");
-            btnsuancc.setBounds(149, 93, 97, 25);
-            panel_4_1.add(btnsuancc);
-
-            btnxoancc = new JButton("Xoá");
-            btnxoancc.setBounds(280, 93, 97, 25);
-            panel_4_1.add(btnxoancc);
-
-            scrollPane_7 = new JScrollPane();
-            scrollPane_7.setBounds(12, 147, 365, 132);
-            panel_4_1.add(scrollPane_7);
-            dtmncc = new DefaultTableModel();
-            dtmncc.addColumn("Mã NCC");
-            dtmncc.addColumn("Tên Nhà Cung Cấp");
-            tablencc = new MyTable(dtmncc);
-            scrollPane_7.setViewportView(tablencc);
-
-            JPanel panel_4_2 = new JPanel();
-            panel_4_2.setBorder(new TitledBorder(null, "K\u1EC7 S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null,
-                            new Color(255, 127, 80)));
-            panel_4_2.setBounds(352, 408, 389, 292);
-            pnchung.add(panel_4_2);
-            panel_4_2.setLayout(null);
-
-            lblNewLabel_10 = new JLabel("Tên Kệ");
-            lblNewLabel_10.setForeground(Color.BLACK);
-            lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_10.setBounds(12, 23, 79, 41);
-            panel_4_2.add(lblNewLabel_10);
-
-            txtKeSach = new JTextField();
-            txtKeSach.setFont(new Font("Tahoma", Font.BOLD, 15));
-            txtKeSach.setColumns(10);
-            txtKeSach.setBounds(120, 23, 225, 41);
-            panel_4_2.add(txtKeSach);
-
-            btnthemkesach = new JButton("Thêm");
-            btnthemkesach.setBounds(12, 86, 97, 25);
-            panel_4_2.add(btnthemkesach);
-
-            btnsuakesach = new JButton("Sửa");
-            btnsuakesach.setBounds(149, 86, 97, 25);
-            panel_4_2.add(btnsuakesach);
-
-            btnxoakesach = new JButton("Xoá");
-            btnxoakesach.setBounds(280, 86, 97, 25);
-            panel_4_2.add(btnxoakesach);
-
-            scrollPane_8 = new JScrollPane();
-            scrollPane_8.setBounds(12, 143, 365, 136);
-            panel_4_2.add(scrollPane_8);
-            dtmke = new DefaultTableModel();
-            dtmke.addColumn("Mã Kệ");
-            dtmke.addColumn("Tên Kệ");
-            tablekesach = new MyTable(dtmke);
-            scrollPane_8.setViewportView(tablekesach);
-
-        }
-        
-        private void pnthongke() {
-            panelThongKe = new JPanel();
-            DefaultPieDataset p = new DefaultPieDataset();
-            // Bỏ phần tính toán dùng SachBus và chitietpmbus
-            p.setValue("Sách Đã Mượn", 0); // Giá trị giả lập
-            p.setValue("Sách Còn Lại", 100); // Giá trị giả lập
-
-            JFreeChart chart = ChartFactory.createPieChart3D("Thống Kê Sách Đã Mượn", p);
-            TextTitle tt = new TextTitle("Thống Kê Sách Đã Mượn", new Font("Arial", Font.BOLD, 15));
-            tt.setPadding(5, 5, 5, 5);
-            chart.setTitle(tt);
-            final PiePlot3D plot = (PiePlot3D) chart.getPlot();
-            plot.setLabelFont(new Font("Arial", Font.PLAIN, 12));
-
-            PanelChinh.add(panelThongKe, "name_8485672922600");
-            panelThongKe.setLayout(null);
-
-            btnthongkesachmuon = new JButton("Danh Sách ");
-            btnthongkesachmuon.setFont(new Font("Tahoma", Font.BOLD, 15));
-            btnthongkesachmuon.setBounds(155, 347, 138, 36);
-            panelThongKe.add(btnthongkesachmuon);
-
-            JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-            tabbedPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            tabbedPane.setBounds(397, 13, 684, 709);
-            panelThongKe.add(tabbedPane);
-
-            JPanel panel = new JPanel();
-            tabbedPane.addTab("Nhập Hàng", null, panel, null);
-            panel.setLayout(null);
-            dtmthongkenhaphang = new DefaultTableModel();
-            dtmthongkenhaphang.addColumn("Mã CTPN");
-            dtmthongkenhaphang.addColumn("Mã PN");
-            dtmthongkenhaphang.addColumn("Mã Sách");
-            dtmthongkenhaphang.addColumn("Giá Nhập");
-            dtmthongkenhaphang.addColumn("Số Lượng");
-            dtmthongkenhaphang.addColumn("Thành Tiền");
-            dtmthongkenhaphang.addColumn("Ngày Nhập");
-            dtmthongkenhaphang.addColumn("Tên Sách");
-            JScrollPane scrollPane = new JScrollPane();
-            scrollPane.setBounds(12, 13, 651, 444);
-            panel.add(scrollPane);
-            tablethongkenhaphang = new MyTable(dtmthongkenhaphang);
-            scrollPane.setViewportView(tablethongkenhaphang);
-
-            lblNewLabel_18 = new JLabel("Lọc Theo");
-            lblNewLabel_18.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_18.setForeground(new Color(0, 0, 0));
-            lblNewLabel_18.setBounds(27, 484, 76, 23);
-            panel.add(lblNewLabel_18);
-
-            btnlocthongke = new JButton("Lọc");
-            btnlocthongke.setFont(new Font("Tahoma", Font.BOLD, 15));
-            btnlocthongke.setBounds(351, 475, 64, 40);
-            panel.add(btnlocthongke);
-
-            JLabel lblNewLabel_20 = new JLabel("Số Sách Đã Nhập");
-            lblNewLabel_20.setForeground(Color.RED);
-            lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_20.setBounds(448, 485, 149, 20);
-            panel.add(lblNewLabel_20);
-
-            lblsosachdanhap = new JLabel("0");
-            lblsosachdanhap.setFont(new Font("Tahoma", Font.PLAIN, 18));
-            lblsosachdanhap.setBounds(587, 484, 76, 20);
-            panel.add(lblsosachdanhap);
-
-            JLabel lblNewLabel_20_1 = new JLabel("Tổng Tiền");
-            lblNewLabel_20_1.setForeground(Color.RED);
-            lblNewLabel_20_1.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_20_1.setBounds(448, 546, 149, 20);
-            panel.add(lblNewLabel_20_1);
-
-            lbltongtien = new JLabel("0");
-            lbltongtien.setFont(new Font("Tahoma", Font.PLAIN, 18));
-            lbltongtien.setBounds(547, 546, 128, 20);
-            panel.add(lbltongtien);
-
-            comboBox = new JComboBox();
-            comboBox.addItem("");
-            int year = Calendar.getInstance().get(Calendar.YEAR);
-            for (int i = year; i > year - 4; i--) {
-                comboBox.addItem(i);
-            }
-            comboBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    if (comboBox.getSelectedIndex() > 0) {
-                        namselect = comboBox.getSelectedItem().toString();
-                    }
-                }
-            });
-            comboBox.setBounds(154, 484, 149, 23);
-            panel.add(comboBox);
-
-            JButton btnNewButton_2 = new JButton("");
-            btnNewButton_2.setIcon(new ImageIcon("img\\update.png"));
-            btnNewButton_2.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent arg0) {
-                    // Bỏ loadthongkephieunhap()
-                }
-            });
-            btnNewButton_2.setBounds(547, 605, 97, 44);
-            panel.add(btnNewButton_2);
-
-            ngaybd = new JDateChooser();
-            ngaybd.setDateFormatString("yyyy-MM-dd");
-            ngaybd.setBounds(154, 545, 149, 34);
-            panel.add(ngaybd);
-
-            ngayketthuc = new JDateChooser();
-            ngayketthuc.setDateFormatString("yyyy-MM-dd");
-            ngayketthuc.setBounds(154, 605, 149, 29);
-            panel.add(ngayketthuc);
-
-            JLabel lblNewLabel_21_1 = new JLabel("Đến");
-            lblNewLabel_21_1.setForeground(Color.BLACK);
-            lblNewLabel_21_1.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_21_1.setBounds(100, 611, 41, 23);
-            panel.add(lblNewLabel_21_1);
-
-            rdloctheonam = new JRadioButton("Năm");
-            rdloctheonam.setBounds(100, 484, 92, 25);
-            panel.add(rdloctheonam);
-
-            rdloctheongay = new JRadioButton("Ngày");
-            rdloctheongay.setBounds(100, 545, 76, 25);
-            panel.add(rdloctheongay);
-            group = new ButtonGroup();
-            group.add(rdloctheonam);
-            group.add(rdloctheongay);
-
-            ChartPanel panel1 = new ChartPanel(chart);
-            panel1.setBounds(12, 25, 385, 302);
-            panelThongKe.add(panel1);
-
-            panel1.setPreferredSize(new Dimension(311, 302));
-            panel1.setBackground(new Color(0, 0, 0, 0));
-        }
-        
-        private void nhanvien() {
-
-            pnnhanvien = new JPanel();
-            pnnhanvien.setLayout(null);
-
-            panel_2 = new JPanel();
-            panel_2.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            panel_2.setBounds(118, 51, 866, 311);
-            pnnhanvien.add(panel_2);
-            panel_2.setLayout(null);
-
-            lbltennv = new JLabel("Tên");
-            lbltennv.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbltennv.setBounds(12, 13, 138, 39);
-            panel_2.add(lbltennv);
-
-            lblnamsinhnv = new JLabel("Năm Sinh");
-            lblnamsinhnv.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblnamsinhnv.setBounds(12, 83, 138, 39);
-            panel_2.add(lblnamsinhnv);
-
-            lblaCh_1 = new JLabel("Địa Chỉ");
-            lblaCh_1.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblaCh_1.setBounds(12, 158, 138, 39);
-            panel_2.add(lblaCh_1);
-
-            lbltennv_3 = new JLabel("Giới Tính");
-            lbltennv_3.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbltennv_3.setBounds(472, 13, 138, 39);
-            panel_2.add(lbltennv_3);
-
-            lbltennv_4 = new JLabel("Số Điện Thoại");
-            lbltennv_4.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbltennv_4.setBounds(472, 83, 138, 39);
-            panel_2.add(lbltennv_4);
-
-            txttennv = new JTextField();
-            txttennv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txttennv.setBounds(162, 13, 199, 39);
-            panel_2.add(txttennv);
-            txttennv.setColumns(10);
-
-            txtnamsinhnv = new JTextField();
-            txtnamsinhnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtnamsinhnv.setColumns(10);
-            txtnamsinhnv.setBounds(162, 83, 199, 39);
-            panel_2.add(txtnamsinhnv);
-
-            txtdiachinv = new JTextField();
-            txtdiachinv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtdiachinv.setColumns(10);
-            txtdiachinv.setBounds(162, 158, 199, 39);
-            panel_2.add(txtdiachinv);
-
-            txtsodienthoainv = new JTextField();
-            txtsodienthoainv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtsodienthoainv.setColumns(10);
-            txtsodienthoainv.setBounds(608, 83, 199, 39);
-            panel_2.add(txtsodienthoainv);
-
-            txtgioitinhnv = new JTextField();
-            txtgioitinhnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtgioitinhnv.setColumns(10);
-            txtgioitinhnv.setBounds(608, 13, 199, 39);
-            panel_2.add(txtgioitinhnv);
-
-            btnthemnv = new JButton("Thêm");
-            btnthemnv.setIcon(new ImageIcon("img\\Add.png"));
-            btnthemnv.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnthemnv.setBounds(58, 245, 126, 53);
-            panel_2.add(btnthemnv);
-
-            btnsuanv = new JButton("Sửa");
-            btnsuanv.setIcon(new ImageIcon("img\\Edit.png"));
-            btnsuanv.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnsuanv.setBounds(259, 245, 126, 53);
-            panel_2.add(btnsuanv);
-
-            btnxoanv = new JButton("Xoá\r\n");
-            btnxoanv.setIcon(new ImageIcon("img\\Delete.png"));
-            btnxoanv.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnxoanv.setBounds(467, 245, 126, 53);
-            panel_2.add(btnxoanv);
-
-            btnreloadnv = new JButton("Tải Lại");
-            btnreloadnv.setIcon(new ImageIcon("img\\update.png"));
-            btnreloadnv.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnreloadnv.setBounds(688, 245, 126, 53);
-            panel_2.add(btnreloadnv);
-
-            lbltimkiem = new JLabel("Tìm kiếm");
-            lbltimkiem.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbltimkiem.setBounds(118, 405, 138, 39);
-            pnnhanvien.add(lbltimkiem);
-
-            txtTimKiemnv = new JTextField();
-            txtTimKiemnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtTimKiemnv.setBorder(new EmptyBorder(0, 0, 0, 0));
-            txtTimKiemnv.setBackground(new Color(214, 217, 223));
-            txtTimKiemnv.setBounds(290, 399, 425, 39);
-            pnnhanvien.add(txtTimKiemnv);
-            txtTimKiemnv.setColumns(10);
-
-            scrollPane_4 = new JScrollPane();
-            scrollPane_4.setBounds(118, 469, 866, 253);
-            pnnhanvien.add(scrollPane_4);
-            dtmnhanvien = new DefaultTableModel();
-            dtmnhanvien.addColumn("Mã");
-            dtmnhanvien.addColumn("Họ Tên");
-            dtmnhanvien.addColumn("Năm Sinh");
-            dtmnhanvien.addColumn("Giới Tính");
-            dtmnhanvien.addColumn("Địa Chi");
-            dtmnhanvien.addColumn("SĐT");
-
-            tablenhanvien = new MyTable(dtmnhanvien);
-            scrollPane_4.setViewportView(tablenhanvien);
-            popupThemtaikhoanv = new JPopupMenu();
-            mnthemtaikhoan = new JMenuItem("Thêm Tài Khoản");
-            mnthemtaikhoan.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                            int i = tablenhanvien.getSelectedRow();
-                            if (i > -1) {
-                                    idtaikhoan = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-                                    new TaiKhoan().setVisible(true);
-                            } else {
-                                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào nhân viên để thêm tài khoản");
-                            }
-
-                    }
-            });
-            mnthemtaikhoan.setBounds(0, 0, 113, 19);
-            popupThemtaikhoanv.add(mnthemtaikhoan);
-
-            addPopup(tablenhanvien, popupThemtaikhoanv);
+
+    private void pnchung() {
+        pnchung = new JPanel();
+        PanelChinh.add(pnchung, "name_903253398621700");
+        pnchung.setLayout(null);
+
+        JPanel panel_4 = new JPanel();
+        panel_4.setBorder(new TitledBorder(null, "Lo\u1EA1i", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panel_4.setBounds(69, 33, 389, 292);
+        pnchung.add(panel_4);
+        panel_4.setLayout(null);
+
+        JLabel lblNewLabel_9 = new JLabel("Tên Loại");
+        lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_9.setForeground(new Color(0, 0, 0));
+        lblNewLabel_9.setBounds(12, 13, 79, 41);
+        panel_4.add(lblNewLabel_9);
+
+        txttenloai = new JTextField();
+        txttenloai.setFont(new Font("Tahoma", Font.BOLD, 15));
+        txttenloai.setBounds(120, 13, 225, 41);
+        panel_4.add(txttenloai);
+        txttenloai.setColumns(10);
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(12, 142, 365, 137);
+        panel_4.add(scrollPane);
+        dtmloai = new DefaultTableModel();
+        dtmloai.addColumn("Mã Loại");
+        dtmloai.addColumn("Tên Loại");
+        tableloai = new MyTable(dtmloai);
+        scrollPane.setViewportView(tableloai);
+
+        btnThemloai = new JButton("Thêm");
+        btnThemloai.setBounds(12, 93, 97, 25);
+        panel_4.add(btnThemloai);
+
+        btnsualoai = new JButton("Sửa");
+        btnsualoai.setBounds(149, 93, 97, 25);
+        panel_4.add(btnsualoai);
+
+        btnxoaloai = new JButton("Xoá");
+        btnxoaloai.setBounds(280, 93, 97, 25);
+        panel_4.add(btnxoaloai);
+
+        JPanel panel_4_1 = new JPanel();
+        panel_4_1.setBorder(
+                new TitledBorder(null, "Nh\u00E0 Cung C\u1EA5p", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panel_4_1.setBounds(660, 33, 389, 292);
+        pnchung.add(panel_4_1);
+        panel_4_1.setLayout(null);
+
+        lbltenncc = new JLabel("Tên NCC");
+        lbltenncc.setForeground(Color.BLACK);
+        lbltenncc.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbltenncc.setBounds(12, 13, 79, 41);
+        panel_4_1.add(lbltenncc);
+
+        txtNcc = new JTextField();
+        txtNcc.setFont(new Font("Tahoma", Font.BOLD, 15));
+        txtNcc.setColumns(10);
+        txtNcc.setBounds(120, 13, 225, 41);
+        panel_4_1.add(txtNcc);
+
+        btnThemncc = new JButton("Thêm");
+        btnThemncc.setBounds(12, 93, 97, 25);
+        panel_4_1.add(btnThemncc);
+
+        btnsuancc = new JButton("Sửa");
+        btnsuancc.setBounds(149, 93, 97, 25);
+        panel_4_1.add(btnsuancc);
+
+        btnxoancc = new JButton("Xoá");
+        btnxoancc.setBounds(280, 93, 97, 25);
+        panel_4_1.add(btnxoancc);
+
+        scrollPane_7 = new JScrollPane();
+        scrollPane_7.setBounds(12, 147, 365, 132);
+        panel_4_1.add(scrollPane_7);
+        dtmncc = new DefaultTableModel();
+        dtmncc.addColumn("Mã NCC");
+        dtmncc.addColumn("Tên Nhà Cung Cấp");
+        tablencc = new MyTable(dtmncc);
+        scrollPane_7.setViewportView(tablencc);
+
+        JPanel panel_4_2 = new JPanel();
+        panel_4_2.setBorder(new TitledBorder(null, "K\u1EC7 S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null,
+                new Color(255, 127, 80)));
+        panel_4_2.setBounds(352, 408, 389, 292);
+        pnchung.add(panel_4_2);
+        panel_4_2.setLayout(null);
+
+        lblNewLabel_10 = new JLabel("Tên Kệ");
+        lblNewLabel_10.setForeground(Color.BLACK);
+        lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_10.setBounds(12, 23, 79, 41);
+        panel_4_2.add(lblNewLabel_10);
+
+        txtKeSach = new JTextField();
+        txtKeSach.setFont(new Font("Tahoma", Font.BOLD, 15));
+        txtKeSach.setColumns(10);
+        txtKeSach.setBounds(120, 23, 225, 41);
+        panel_4_2.add(txtKeSach);
+
+        btnthemkesach = new JButton("Thêm");
+        btnthemkesach.setBounds(12, 86, 97, 25);
+        panel_4_2.add(btnthemkesach);
+
+        btnsuakesach = new JButton("Sửa");
+        btnsuakesach.setBounds(149, 86, 97, 25);
+        panel_4_2.add(btnsuakesach);
+
+        btnxoakesach = new JButton("Xoá");
+        btnxoakesach.setBounds(280, 86, 97, 25);
+        panel_4_2.add(btnxoakesach);
+
+        scrollPane_8 = new JScrollPane();
+        scrollPane_8.setBounds(12, 143, 365, 136);
+        panel_4_2.add(scrollPane_8);
+        dtmke = new DefaultTableModel();
+        dtmke.addColumn("Mã Kệ");
+        dtmke.addColumn("Tên Kệ");
+        tablekesach = new MyTable(dtmke);
+        scrollPane_8.setViewportView(tablekesach);
 
     }
-        
-        private void nhaxuatban() {
-            pnnhaxuatban = new JPanel();
-            pnnhaxuatban.setLayout(null);
 
-            panel_1 = new JPanel();
-            panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING,
-                    TitledBorder.TOP, null, new Color(0, 0, 0)));
-            panel_1.setBounds(216, 64, 708, 327);
-            pnnhaxuatban.add(panel_1);
-            panel_1.setLayout(null);
+    private void pnthongke() {
+        panelThongKe = new JPanel();
+        DefaultPieDataset p = new DefaultPieDataset();
+        // Bỏ phần tính toán dùng SachBus và chitietpmbus
+        p.setValue("Sách Đã Mượn", 0); // Giá trị giả lập
+        p.setValue("Sách Còn Lại", 100); // Giá trị giả lập
 
-            lblTennhaxuatban = new JLabel("Tên Nhà Xuất Bản");
-            lblTennhaxuatban.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTennhaxuatban.setBounds(43, 38, 145, 43);
-            panel_1.add(lblTennhaxuatban);
+        JFreeChart chart = ChartFactory.createPieChart3D("Thống Kê Sách Đã Mượn", p);
+        TextTitle tt = new TextTitle("Thống Kê Sách Đã Mượn", new Font("Arial", Font.BOLD, 15));
+        tt.setPadding(5, 5, 5, 5);
+        chart.setTitle(tt);
+        final PiePlot3D plot = (PiePlot3D) chart.getPlot();
+        plot.setLabelFont(new Font("Arial", Font.PLAIN, 12));
 
-            lblaCh = new JLabel("Địa Chỉ");
-            lblaCh.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblaCh.setBounds(43, 104, 145, 43);
-            panel_1.add(lblaCh);
+        PanelChinh.add(panelThongKe, "name_8485672922600");
+        panelThongKe.setLayout(null);
 
-            lblTennhaxuatban_2 = new JLabel("Số Điện Thoại");
-            lblTennhaxuatban_2.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTennhaxuatban_2.setBounds(43, 172, 145, 43);
-            panel_1.add(lblTennhaxuatban_2);
+        btnthongkesachmuon = new JButton("Danh Sách ");
+        btnthongkesachmuon.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnthongkesachmuon.setBounds(155, 347, 138, 36);
+        panelThongKe.add(btnthongkesachmuon);
 
-            txtTennhaxuatban = new JTextField();
-            txtTennhaxuatban.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtTennhaxuatban.setBounds(321, 44, 282, 37);
-            panel_1.add(txtTennhaxuatban);
-            txtTennhaxuatban.setColumns(10);
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        tabbedPane.setBounds(397, 13, 684, 709);
+        panelThongKe.add(tabbedPane);
 
-            txtdiachinxb = new JTextField();
-            txtdiachinxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtdiachinxb.setColumns(10);
-            txtdiachinxb.setBounds(321, 110, 282, 37);
-            panel_1.add(txtdiachinxb);
+        JPanel panel = new JPanel();
+        tabbedPane.addTab("Nhập Hàng", null, panel, null);
+        panel.setLayout(null);
+        dtmthongkenhaphang = new DefaultTableModel();
+        dtmthongkenhaphang.addColumn("Mã CTPN");
+        dtmthongkenhaphang.addColumn("Mã PN");
+        dtmthongkenhaphang.addColumn("Mã Sách");
+        dtmthongkenhaphang.addColumn("Giá Nhập");
+        dtmthongkenhaphang.addColumn("Số Lượng");
+        dtmthongkenhaphang.addColumn("Thành Tiền");
+        dtmthongkenhaphang.addColumn("Ngày Nhập");
+        dtmthongkenhaphang.addColumn("Tên Sách");
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(12, 13, 651, 444);
+        panel.add(scrollPane);
+        tablethongkenhaphang = new MyTable(dtmthongkenhaphang);
+        scrollPane.setViewportView(tablethongkenhaphang);
 
-            txtsdtnxb = new JTextField();
-            txtsdtnxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtsdtnxb.setColumns(10);
-            txtsdtnxb.setBounds(321, 172, 282, 37);
-            panel_1.add(txtsdtnxb);
+        lblNewLabel_18 = new JLabel("Lọc Theo");
+        lblNewLabel_18.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_18.setForeground(new Color(0, 0, 0));
+        lblNewLabel_18.setBounds(27, 484, 76, 23);
+        panel.add(lblNewLabel_18);
 
-            btnThemnxb = new JButton("Thêm");
-            btnThemnxb.setIcon(new ImageIcon("img\\Add.png"));
-            btnThemnxb.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnThemnxb.setBounds(45, 252, 108, 47);
-            panel_1.add(btnThemnxb);
+        btnlocthongke = new JButton("Lọc");
+        btnlocthongke.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnlocthongke.setBounds(351, 475, 64, 40);
+        panel.add(btnlocthongke);
 
-            btnsuanxb = new JButton("Sửa");
-            btnsuanxb.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnsuanxb.setIcon(new ImageIcon("img\\Edit.png"));
-            btnsuanxb.setBounds(221, 252, 108, 47);
-            panel_1.add(btnsuanxb);
+        JLabel lblNewLabel_20 = new JLabel("Số Sách Đã Nhập");
+        lblNewLabel_20.setForeground(Color.RED);
+        lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_20.setBounds(448, 485, 149, 20);
+        panel.add(lblNewLabel_20);
 
-            btnxoanxb = new JButton("Xoá");
-            btnxoanxb.setIcon(new ImageIcon("img\\Delete.png"));
-            btnxoanxb.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnxoanxb.setBounds(387, 252, 108, 47);
-            panel_1.add(btnxoanxb);
+        lblsosachdanhap = new JLabel("0");
+        lblsosachdanhap.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblsosachdanhap.setBounds(587, 484, 76, 20);
+        panel.add(lblsosachdanhap);
 
-            btnreloadnxb = new JButton("Tải Lại");
-            btnreloadnxb.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    // Bỏ loadnxb()
-                }
-            });
-            btnreloadnxb.setIcon(new ImageIcon("img\\update.png"));
-            btnreloadnxb.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnreloadnxb.setBounds(562, 252, 108, 47);
-            panel_1.add(btnreloadnxb);
+        JLabel lblNewLabel_20_1 = new JLabel("Tổng Tiền");
+        lblNewLabel_20_1.setForeground(Color.RED);
+        lblNewLabel_20_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_20_1.setBounds(448, 546, 149, 20);
+        panel.add(lblNewLabel_20_1);
 
-            lblTimKiemnxb = new JLabel("Tìm Kiếm");
-            lblTimKiemnxb.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTimKiemnxb.setBounds(260, 419, 145, 43);
-            pnnhaxuatban.add(lblTimKiemnxb);
+        lbltongtien = new JLabel("0");
+        lbltongtien.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lbltongtien.setBounds(547, 546, 128, 20);
+        panel.add(lbltongtien);
 
-            txttimnxb = new JTextField();
-            txttimnxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txttimnxb.setColumns(10);
-            txttimnxb.setBounds(427, 419, 282, 37);
-            pnnhaxuatban.add(txttimnxb);
-
-            scrollPane_3 = new JScrollPane();
-            scrollPane_3.setBounds(211, 473, 713, 249);
-            pnnhaxuatban.add(scrollPane_3);
-            dtmnhaxuatban = new DefaultTableModel();
-            dtmnhaxuatban.addColumn("Mã Nhà Xuất Bản");
-            dtmnhaxuatban.addColumn("Tên Nhà Xuất Bản");
-            dtmnhaxuatban.addColumn("Địa Chỉ");
-            dtmnhaxuatban.addColumn("Số Điện Thoại");
-            tablenhaxuatban = new MyTable(dtmnhaxuatban);
-            scrollPane_3.setViewportView(tablenhaxuatban);
+        comboBox = new JComboBox();
+        comboBox.addItem("");
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = year; i > year - 4; i--) {
+            comboBox.addItem(i);
         }
-        
-        private void docgia() {
-            pndocgia = new JPanel();
-            pndocgia.setLayout(null);
-
-            panelthongtindocgia = new JPanel();
-            panelthongtindocgia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            panelthongtindocgia.setBounds(130, 39, 837, 252);
-            pndocgia.add(panelthongtindocgia);
-            panelthongtindocgia.setLayout(null);
-
-            lblTendocgia = new JLabel("Tên Đọc Giả");
-            lblTendocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTendocgia.setBounds(91, 13, 91, 36);
-            panelthongtindocgia.add(lblTendocgia);
-
-            lbldiachidocgia = new JLabel("Địa Chỉ");
-            lbldiachidocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lbldiachidocgia.setBounds(91, 119, 91, 36);
-            panelthongtindocgia.add(lbldiachidocgia);
-
-            lblgioitinhdocgia = new JLabel("Giới Tính");
-            lblgioitinhdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblgioitinhdocgia.setBounds(453, 119, 91, 36);
-            panelthongtindocgia.add(lblgioitinhdocgia);
-
-            lblSdtdocgia = new JLabel("Số điện thoại");
-            lblSdtdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblSdtdocgia.setBounds(453, 13, 109, 36);
-            panelthongtindocgia.add(lblSdtdocgia);
-
-            txtTendocgia = new JTextField();
-            txtTendocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtTendocgia.setBounds(192, 13, 208, 36);
-            panelthongtindocgia.add(txtTendocgia);
-            txtTendocgia.setColumns(10);
-
-            txtdiachidocgia = new JTextField();
-            txtdiachidocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtdiachidocgia.setColumns(10);
-            txtdiachidocgia.setBounds(192, 119, 208, 36);
-            panelthongtindocgia.add(txtdiachidocgia);
-
-            txtgioitinhdocgia = new JTextField();
-            txtgioitinhdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtgioitinhdocgia.setColumns(10);
-            txtgioitinhdocgia.setBounds(569, 119, 208, 36);
-            panelthongtindocgia.add(txtgioitinhdocgia);
-
-            txtsdtdocgia = new JTextField();
-            txtsdtdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtsdtdocgia.setColumns(10);
-            txtsdtdocgia.setBounds(569, 13, 208, 36);
-            panelthongtindocgia.add(txtsdtdocgia);
-
-            btnthemdocgia = new JButton("Thêm");
-            btnthemdocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnthemdocgia.setIcon(new ImageIcon("img\\Add.png"));
-            btnthemdocgia.setBounds(84, 190, 119, 49);
-            panelthongtindocgia.add(btnthemdocgia);
-
-            btnsuadocgia = new JButton("Sửa");
-            btnsuadocgia.setIcon(new ImageIcon("img\\Edit.png"));
-            btnsuadocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnsuadocgia.setBounds(274, 190, 119, 49);
-            panelthongtindocgia.add(btnsuadocgia);
-
-            btnxoadocgia = new JButton("Xoá");
-            btnxoadocgia.setIcon(new ImageIcon("img\\Delete.png"));
-            btnxoadocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnxoadocgia.setBounds(496, 190, 119, 49);
-            panelthongtindocgia.add(btnxoadocgia);
-
-            btnTiLi = new JButton("Tải Lại");
-            btnTiLi.setIcon(new ImageIcon("img\\update.png"));
-            btnTiLi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    // Bỏ loaddocgia()
+        comboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (comboBox.getSelectedIndex() > 0) {
+                    namselect = comboBox.getSelectedItem().toString();
                 }
-            });
-            btnTiLi.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnTiLi.setBounds(693, 190, 119, 49);
-            panelthongtindocgia.add(btnTiLi);
+            }
+        });
+        comboBox.setBounds(154, 484, 149, 23);
+        panel.add(comboBox);
 
-            txtTimkiemdocgia = new JTextField();
-            txtTimkiemdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtTimkiemdocgia.setBounds(251, 322, 442, 42);
-            pndocgia.add(txtTimkiemdocgia);
-            txtTimkiemdocgia.setColumns(10);
+        JButton btnNewButton_2 = new JButton("");
+        btnNewButton_2.setIcon(new ImageIcon("img\\update.png"));
+        btnNewButton_2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                // Bỏ loadthongkephieunhap()
+            }
+        });
+        btnNewButton_2.setBounds(547, 605, 97, 44);
+        panel.add(btnNewButton_2);
 
-            btnTimkiemdocgia = new JButton("Tìm");
-            btnTimkiemdocgia.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    if (!isNumber(txtTimkiemdocgia.getText())) {
-                        JOptionPane.showMessageDialog(null, "tìm kiếm mã đọc giả phải là số");
-                        return;
-                    }
+        ngaybd = new JDateChooser();
+        ngaybd.setDateFormatString("yyyy-MM-dd");
+        ngaybd.setBounds(154, 545, 149, 34);
+        panel.add(ngaybd);
+
+        ngayketthuc = new JDateChooser();
+        ngayketthuc.setDateFormatString("yyyy-MM-dd");
+        ngayketthuc.setBounds(154, 605, 149, 29);
+        panel.add(ngayketthuc);
+
+        JLabel lblNewLabel_21_1 = new JLabel("Đến");
+        lblNewLabel_21_1.setForeground(Color.BLACK);
+        lblNewLabel_21_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_21_1.setBounds(100, 611, 41, 23);
+        panel.add(lblNewLabel_21_1);
+
+        rdloctheonam = new JRadioButton("Năm");
+        rdloctheonam.setBounds(100, 484, 92, 25);
+        panel.add(rdloctheonam);
+
+        rdloctheongay = new JRadioButton("Ngày");
+        rdloctheongay.setBounds(100, 545, 76, 25);
+        panel.add(rdloctheongay);
+        group = new ButtonGroup();
+        group.add(rdloctheonam);
+        group.add(rdloctheongay);
+
+        ChartPanel panel1 = new ChartPanel(chart);
+        panel1.setBounds(12, 25, 385, 302);
+        panelThongKe.add(panel1);
+
+        panel1.setPreferredSize(new Dimension(311, 302));
+        panel1.setBackground(new Color(0, 0, 0, 0));
+    }
+
+    private void nhanvien() {
+
+        pnnhanvien = new JPanel();
+        pnnhanvien.setLayout(null);
+
+        panel_2 = new JPanel();
+        panel_2.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panel_2.setBounds(118, 51, 866, 311);
+        pnnhanvien.add(panel_2);
+        panel_2.setLayout(null);
+
+        lbltennv = new JLabel("Tên");
+        lbltennv.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbltennv.setBounds(12, 13, 138, 39);
+        panel_2.add(lbltennv);
+
+        lblnamsinhnv = new JLabel("Năm Sinh");
+        lblnamsinhnv.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblnamsinhnv.setBounds(12, 83, 138, 39);
+        panel_2.add(lblnamsinhnv);
+
+        lblaCh_1 = new JLabel("Địa Chỉ");
+        lblaCh_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblaCh_1.setBounds(12, 158, 138, 39);
+        panel_2.add(lblaCh_1);
+
+        lbltennv_3 = new JLabel("Giới Tính");
+        lbltennv_3.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbltennv_3.setBounds(472, 13, 138, 39);
+        panel_2.add(lbltennv_3);
+
+        lbltennv_4 = new JLabel("Số Điện Thoại");
+        lbltennv_4.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbltennv_4.setBounds(472, 83, 138, 39);
+        panel_2.add(lbltennv_4);
+
+        txttennv = new JTextField();
+        txttennv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txttennv.setBounds(162, 13, 199, 39);
+        panel_2.add(txttennv);
+        txttennv.setColumns(10);
+
+        txtnamsinhnv = new JTextField();
+        txtnamsinhnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtnamsinhnv.setColumns(10);
+        txtnamsinhnv.setBounds(162, 83, 199, 39);
+        panel_2.add(txtnamsinhnv);
+
+        txtdiachinv = new JTextField();
+        txtdiachinv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtdiachinv.setColumns(10);
+        txtdiachinv.setBounds(162, 158, 199, 39);
+        panel_2.add(txtdiachinv);
+
+        txtsodienthoainv = new JTextField();
+        txtsodienthoainv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtsodienthoainv.setColumns(10);
+        txtsodienthoainv.setBounds(608, 83, 199, 39);
+        panel_2.add(txtsodienthoainv);
+
+        txtgioitinhnv = new JTextField();
+        txtgioitinhnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtgioitinhnv.setColumns(10);
+        txtgioitinhnv.setBounds(608, 13, 199, 39);
+        panel_2.add(txtgioitinhnv);
+
+        btnthemnv = new JButton("Thêm");
+        btnthemnv.setIcon(new ImageIcon("img\\Add.png"));
+        btnthemnv.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnthemnv.setBounds(58, 245, 126, 53);
+        panel_2.add(btnthemnv);
+
+        btnsuanv = new JButton("Sửa");
+        btnsuanv.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuanv.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuanv.setBounds(259, 245, 126, 53);
+        panel_2.add(btnsuanv);
+
+        btnxoanv = new JButton("Xoá\r\n");
+        btnxoanv.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoanv.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoanv.setBounds(467, 245, 126, 53);
+        panel_2.add(btnxoanv);
+
+        btnreloadnv = new JButton("Tải Lại");
+        btnreloadnv.setIcon(new ImageIcon("img\\update.png"));
+        btnreloadnv.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnreloadnv.setBounds(688, 245, 126, 53);
+        panel_2.add(btnreloadnv);
+
+        lbltimkiem = new JLabel("Tìm kiếm");
+        lbltimkiem.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbltimkiem.setBounds(118, 405, 138, 39);
+        pnnhanvien.add(lbltimkiem);
+
+        txtTimKiemnv = new JTextField();
+        txtTimKiemnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTimKiemnv.setBorder(new EmptyBorder(0, 0, 0, 0));
+        txtTimKiemnv.setBackground(new Color(214, 217, 223));
+        txtTimKiemnv.setBounds(290, 399, 425, 39);
+        pnnhanvien.add(txtTimKiemnv);
+        txtTimKiemnv.setColumns(10);
+
+        scrollPane_4 = new JScrollPane();
+        scrollPane_4.setBounds(118, 469, 866, 253);
+        pnnhanvien.add(scrollPane_4);
+        dtmnhanvien = new DefaultTableModel();
+        dtmnhanvien.addColumn("Mã");
+        dtmnhanvien.addColumn("Họ Tên");
+        dtmnhanvien.addColumn("Năm Sinh");
+        dtmnhanvien.addColumn("Giới Tính");
+        dtmnhanvien.addColumn("Địa Chi");
+        dtmnhanvien.addColumn("SĐT");
+
+        tablenhanvien = new MyTable(dtmnhanvien);
+        scrollPane_4.setViewportView(tablenhanvien);
+        popupThemtaikhoanv = new JPopupMenu();
+        mnthemtaikhoan = new JMenuItem("Thêm Tài Khoản");
+        mnthemtaikhoan.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablenhanvien.getSelectedRow();
+                if (i > -1) {
+                    idtaikhoan = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+                    new TaiKhoan().setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào nhân viên để thêm tài khoản");
                 }
-            });
-            btnTimkiemdocgia.setIcon(new ImageIcon("img\\Search.png"));
-            btnTimkiemdocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnTimkiemdocgia.setBounds(765, 316, 120, 53);
-            pndocgia.add(btnTimkiemdocgia);
 
-            lblTimKiem = new JLabel("Tìm Kiếm");
-            lblTimKiem.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTimKiem.setBounds(98, 322, 91, 36);
-            pndocgia.add(lblTimKiem);
+            }
+        });
+        mnthemtaikhoan.setBounds(0, 0, 113, 19);
+        popupThemtaikhoanv.add(mnthemtaikhoan);
 
-            scrollPane_1 = new JScrollPane();
-            scrollPane_1.setBounds(47, 404, 1005, 308);
-            pndocgia.add(scrollPane_1);
-            dtmdocgia = new DefaultTableModel();
-            dtmdocgia.addColumn("Mã Đọc Giả");
-            dtmdocgia.addColumn("Họ Và Tên");
-            dtmdocgia.addColumn("Giới Tính");
-            dtmdocgia.addColumn("Số Điện Thạoi");
-            dtmdocgia.addColumn("Địa Chỉ");
-            tabledocgia = new MyTable(dtmdocgia);
-            scrollPane_1.setViewportView(tabledocgia);
+        addPopup(tablenhanvien, popupThemtaikhoanv);
 
-            JPopupMenu popupMenu = new JPopupMenu();
-            mntmNewMenuItem = new JMenuItem("Thẻ Thư Viện");
-            mntmNewMenuItem.setBounds(0, 0, 113, 19);
-            mntmNewMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int i = tabledocgia.getSelectedRow();
-                    if (i > -1) {
-                        int ma = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
-                        if (false) { // Bỏ phần liên quan đến TheThuVienDAL
+    }
+
+    private void nhaxuatban() {
+        pnnhaxuatban = new JPanel();
+        pnnhaxuatban.setLayout(null);
+
+        panel_1 = new JPanel();
+        panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING,
+                TitledBorder.TOP, null, new Color(0, 0, 0)));
+        panel_1.setBounds(216, 64, 708, 327);
+        pnnhaxuatban.add(panel_1);
+        panel_1.setLayout(null);
+
+        lblTennhaxuatban = new JLabel("Tên Nhà Xuất Bản");
+        lblTennhaxuatban.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTennhaxuatban.setBounds(43, 38, 145, 43);
+        panel_1.add(lblTennhaxuatban);
+
+        lblaCh = new JLabel("Địa Chỉ");
+        lblaCh.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblaCh.setBounds(43, 104, 145, 43);
+        panel_1.add(lblaCh);
+
+        lblTennhaxuatban_2 = new JLabel("Số Điện Thoại");
+        lblTennhaxuatban_2.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTennhaxuatban_2.setBounds(43, 172, 145, 43);
+        panel_1.add(lblTennhaxuatban_2);
+
+        txtTennhaxuatban = new JTextField();
+        txtTennhaxuatban.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTennhaxuatban.setBounds(321, 44, 282, 37);
+        panel_1.add(txtTennhaxuatban);
+        txtTennhaxuatban.setColumns(10);
+
+        txtdiachinxb = new JTextField();
+        txtdiachinxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtdiachinxb.setColumns(10);
+        txtdiachinxb.setBounds(321, 110, 282, 37);
+        panel_1.add(txtdiachinxb);
+
+        txtsdtnxb = new JTextField();
+        txtsdtnxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtsdtnxb.setColumns(10);
+        txtsdtnxb.setBounds(321, 172, 282, 37);
+        panel_1.add(txtsdtnxb);
+
+        btnThemnxb = new JButton("Thêm");
+        btnThemnxb.setIcon(new ImageIcon("img\\Add.png"));
+        btnThemnxb.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnThemnxb.setBounds(45, 252, 108, 47);
+        panel_1.add(btnThemnxb);
+
+        btnsuanxb = new JButton("Sửa");
+        btnsuanxb.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuanxb.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuanxb.setBounds(221, 252, 108, 47);
+        panel_1.add(btnsuanxb);
+
+        btnxoanxb = new JButton("Xoá");
+        btnxoanxb.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoanxb.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoanxb.setBounds(387, 252, 108, 47);
+        panel_1.add(btnxoanxb);
+
+        btnreloadnxb = new JButton("Tải Lại");
+        btnreloadnxb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Bỏ loadnxb()
+            }
+        });
+        btnreloadnxb.setIcon(new ImageIcon("img\\update.png"));
+        btnreloadnxb.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnreloadnxb.setBounds(562, 252, 108, 47);
+        panel_1.add(btnreloadnxb);
+
+        lblTimKiemnxb = new JLabel("Tìm Kiếm");
+        lblTimKiemnxb.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTimKiemnxb.setBounds(260, 419, 145, 43);
+        pnnhaxuatban.add(lblTimKiemnxb);
+
+        txttimnxb = new JTextField();
+        txttimnxb.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txttimnxb.setColumns(10);
+        txttimnxb.setBounds(427, 419, 282, 37);
+        pnnhaxuatban.add(txttimnxb);
+
+        scrollPane_3 = new JScrollPane();
+        scrollPane_3.setBounds(211, 473, 713, 249);
+        pnnhaxuatban.add(scrollPane_3);
+        dtmnhaxuatban = new DefaultTableModel();
+        dtmnhaxuatban.addColumn("Mã Nhà Xuất Bản");
+        dtmnhaxuatban.addColumn("Tên Nhà Xuất Bản");
+        dtmnhaxuatban.addColumn("Địa Chỉ");
+        dtmnhaxuatban.addColumn("Số Điện Thoại");
+        tablenhaxuatban = new MyTable(dtmnhaxuatban);
+        scrollPane_3.setViewportView(tablenhaxuatban);
+    }
+
+    private void docgia() {
+        pndocgia = new JPanel();
+        pndocgia.setLayout(null);
+
+        panelthongtindocgia = new JPanel();
+        panelthongtindocgia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelthongtindocgia.setBounds(130, 39, 837, 252);
+        pndocgia.add(panelthongtindocgia);
+        panelthongtindocgia.setLayout(null);
+
+        lblTendocgia = new JLabel("Tên Đọc Giả");
+        lblTendocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTendocgia.setBounds(91, 13, 91, 36);
+        panelthongtindocgia.add(lblTendocgia);
+
+        lbldiachidocgia = new JLabel("Địa Chỉ");
+        lbldiachidocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbldiachidocgia.setBounds(91, 119, 91, 36);
+        panelthongtindocgia.add(lbldiachidocgia);
+
+        lblgioitinhdocgia = new JLabel("Giới Tính");
+        lblgioitinhdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblgioitinhdocgia.setBounds(453, 119, 91, 36);
+        panelthongtindocgia.add(lblgioitinhdocgia);
+
+        lblSdtdocgia = new JLabel("Số điện thoại");
+        lblSdtdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblSdtdocgia.setBounds(453, 13, 109, 36);
+        panelthongtindocgia.add(lblSdtdocgia);
+
+        txtTendocgia = new JTextField();
+        txtTendocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTendocgia.setBounds(192, 13, 208, 36);
+        panelthongtindocgia.add(txtTendocgia);
+        txtTendocgia.setColumns(10);
+
+        txtdiachidocgia = new JTextField();
+        txtdiachidocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtdiachidocgia.setColumns(10);
+        txtdiachidocgia.setBounds(192, 119, 208, 36);
+        panelthongtindocgia.add(txtdiachidocgia);
+
+        txtgioitinhdocgia = new JTextField();
+        txtgioitinhdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtgioitinhdocgia.setColumns(10);
+        txtgioitinhdocgia.setBounds(569, 119, 208, 36);
+        panelthongtindocgia.add(txtgioitinhdocgia);
+
+        txtsdtdocgia = new JTextField();
+        txtsdtdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtsdtdocgia.setColumns(10);
+        txtsdtdocgia.setBounds(569, 13, 208, 36);
+        panelthongtindocgia.add(txtsdtdocgia);
+
+        btnthemdocgia = new JButton("Thêm");
+        btnthemdocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnthemdocgia.setIcon(new ImageIcon("img\\Add.png"));
+        btnthemdocgia.setBounds(84, 190, 119, 49);
+        panelthongtindocgia.add(btnthemdocgia);
+
+        btnsuadocgia = new JButton("Sửa");
+        btnsuadocgia.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuadocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuadocgia.setBounds(274, 190, 119, 49);
+        panelthongtindocgia.add(btnsuadocgia);
+
+        btnxoadocgia = new JButton("Xoá");
+        btnxoadocgia.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoadocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoadocgia.setBounds(496, 190, 119, 49);
+        panelthongtindocgia.add(btnxoadocgia);
+
+        btnTiLi = new JButton("Tải Lại");
+        btnTiLi.setIcon(new ImageIcon("img\\update.png"));
+        btnTiLi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                // Bỏ loaddocgia()
+            }
+        });
+        btnTiLi.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnTiLi.setBounds(693, 190, 119, 49);
+        panelthongtindocgia.add(btnTiLi);
+
+        txtTimkiemdocgia = new JTextField();
+        txtTimkiemdocgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTimkiemdocgia.setBounds(251, 322, 442, 42);
+        pndocgia.add(txtTimkiemdocgia);
+        txtTimkiemdocgia.setColumns(10);
+
+        btnTimkiemdocgia = new JButton("Tìm");
+        btnTimkiemdocgia.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (!isNumber(txtTimkiemdocgia.getText())) {
+                    JOptionPane.showMessageDialog(null, "tìm kiếm mã đọc giả phải là số");
+                    return;
+                }
+            }
+        });
+        btnTimkiemdocgia.setIcon(new ImageIcon("img\\Search.png"));
+        btnTimkiemdocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnTimkiemdocgia.setBounds(765, 316, 120, 53);
+        pndocgia.add(btnTimkiemdocgia);
+
+        lblTimKiem = new JLabel("Tìm Kiếm");
+        lblTimKiem.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTimKiem.setBounds(98, 322, 91, 36);
+        pndocgia.add(lblTimKiem);
+
+        scrollPane_1 = new JScrollPane();
+        scrollPane_1.setBounds(47, 404, 1005, 308);
+        pndocgia.add(scrollPane_1);
+        dtmdocgia = new DefaultTableModel();
+        dtmdocgia.addColumn("Mã Đọc Giả");
+        dtmdocgia.addColumn("Họ Và Tên");
+        dtmdocgia.addColumn("Giới Tính");
+        dtmdocgia.addColumn("Số Điện Thạoi");
+        dtmdocgia.addColumn("Địa Chỉ");
+        tabledocgia = new MyTable(dtmdocgia);
+        scrollPane_1.setViewportView(tabledocgia);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+        mntmNewMenuItem = new JMenuItem("Thẻ Thư Viện");
+        mntmNewMenuItem.setBounds(0, 0, 113, 19);
+        mntmNewMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tabledocgia.getSelectedRow();
+                if (i > -1) {
+                    int ma = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
+                    if (false) { // Bỏ phần liên quan đến TheThuVienDAL
+                        gui.TheThuVien the = new gui.TheThuVien();
+                        the.setVisible(true);
+                    } else {
+                        int a = JOptionPane.showConfirmDialog(null,
+                                "Thành Viên này chưa có thẻ bạn có muốn thêm thẻ không", "", JOptionPane.YES_NO_OPTION);
+                        if (a == JOptionPane.YES_OPTION) {
+                            // Bỏ phần khai báo DocGia DTO
                             gui.TheThuVien the = new gui.TheThuVien();
                             the.setVisible(true);
-                        } else {
-                            int a = JOptionPane.showConfirmDialog(null, "Thành Viên này chưa có thẻ bạn có muốn thêm thẻ không", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Bỏ phần khai báo DocGia DTO
-                                gui.TheThuVien the = new gui.TheThuVien();
-                                the.setVisible(true);
-                            }
                         }
                     }
                 }
-            });
-            popupMenu.add(mntmNewMenuItem);
-            addPopup(tabledocgia, popupMenu);
-        }
-        private void pntacgia() {
-            pntacgia = new JPanel();
-            pntacgia.setLayout(null);
+            }
+        });
+        popupMenu.add(mntmNewMenuItem);
+        addPopup(tabledocgia, popupMenu);
+    }
 
-            pnthongtintacgia = new JPanel();
-            pnthongtintacgia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-            pnthongtintacgia.setBounds(158, 78, 607, 281);
-            pntacgia.add(pnthongtintacgia);
-            pnthongtintacgia.setLayout(null);
+    private void pntacgia() {
+        pntacgia = new JPanel();
+        pntacgia.setLayout(null);
 
-            lblTentacgia = new JLabel("Tên Tác Giả");
-            lblTentacgia.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTentacgia.setBounds(24, 51, 152, 37);
-            pnthongtintacgia.add(lblTentacgia);
+        pnthongtintacgia = new JPanel();
+        pnthongtintacgia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        pnthongtintacgia.setBounds(158, 78, 607, 281);
+        pntacgia.add(pnthongtintacgia);
+        pnthongtintacgia.setLayout(null);
 
-            txtTentacgia = new JTextField();
-            txtTentacgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtTentacgia.setBounds(287, 51, 224, 37);
-            pnthongtintacgia.add(txtTentacgia);
-            txtTentacgia.setColumns(10);
+        lblTentacgia = new JLabel("Tên Tác Giả");
+        lblTentacgia.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTentacgia.setBounds(24, 51, 152, 37);
+        pnthongtintacgia.add(lblTentacgia);
 
-            lblnamsinh = new JLabel("Năm Sinh");
-            lblnamsinh.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblnamsinh.setBounds(24, 116, 152, 37);
-            pnthongtintacgia.add(lblnamsinh);
+        txtTentacgia = new JTextField();
+        txtTentacgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTentacgia.setBounds(287, 51, 224, 37);
+        pnthongtintacgia.add(txtTentacgia);
+        txtTentacgia.setColumns(10);
 
-            txtnamsinhtacgia = new JTextField();
-            txtnamsinhtacgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtnamsinhtacgia.setColumns(10);
-            txtnamsinhtacgia.setBounds(287, 117, 224, 37);
-            pnthongtintacgia.add(txtnamsinhtacgia);
+        lblnamsinh = new JLabel("Năm Sinh");
+        lblnamsinh.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblnamsinh.setBounds(24, 116, 152, 37);
+        pnthongtintacgia.add(lblnamsinh);
 
-            lblTentacgia_2 = new JLabel("Quê Quán");
-            lblTentacgia_2.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTentacgia_2.setBounds(24, 189, 152, 37);
-            pnthongtintacgia.add(lblTentacgia_2);
+        txtnamsinhtacgia = new JTextField();
+        txtnamsinhtacgia.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtnamsinhtacgia.setColumns(10);
+        txtnamsinhtacgia.setBounds(287, 117, 224, 37);
+        pnthongtintacgia.add(txtnamsinhtacgia);
 
-            txtQueQuan = new JTextField();
-            txtQueQuan.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtQueQuan.setColumns(10);
-            txtQueQuan.setBounds(287, 189, 224, 37);
-            pnthongtintacgia.add(txtQueQuan);
+        lblTentacgia_2 = new JLabel("Quê Quán");
+        lblTentacgia_2.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTentacgia_2.setBounds(24, 189, 152, 37);
+        pnthongtintacgia.add(lblTentacgia_2);
 
-            scrollPane_2 = new JScrollPane();
-            scrollPane_2.setBounds(158, 430, 792, 281);
-            pntacgia.add(scrollPane_2);
+        txtQueQuan = new JTextField();
+        txtQueQuan.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtQueQuan.setColumns(10);
+        txtQueQuan.setBounds(287, 189, 224, 37);
+        pnthongtintacgia.add(txtQueQuan);
 
-            dtmtacgia = new DefaultTableModel();
-            dtmtacgia.addColumn("Mã Tác Giả");
-            dtmtacgia.addColumn("Tên Tác Giả");
-            dtmtacgia.addColumn("Năm Sinh");
-            dtmtacgia.addColumn("Quê Quán");
-            tabletacgia = new MyTable(dtmtacgia);
-            scrollPane_2.setViewportView(tabletacgia);
+        scrollPane_2 = new JScrollPane();
+        scrollPane_2.setBounds(158, 430, 792, 281);
+        pntacgia.add(scrollPane_2);
 
-            btnThemTacgia = new JButton("Thêm");
-            btnThemTacgia.setIcon(new ImageIcon("img\\Add.png"));
-            btnThemTacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnThemTacgia.setBounds(819, 78, 126, 54);
-            pntacgia.add(btnThemTacgia);
+        dtmtacgia = new DefaultTableModel();
+        dtmtacgia.addColumn("Mã Tác Giả");
+        dtmtacgia.addColumn("Tên Tác Giả");
+        dtmtacgia.addColumn("Năm Sinh");
+        dtmtacgia.addColumn("Quê Quán");
+        tabletacgia = new MyTable(dtmtacgia);
+        scrollPane_2.setViewportView(tabletacgia);
 
-            btnsuatacgia = new JButton("Sửa");
-            btnsuatacgia.setIcon(new ImageIcon("img\\Edit.png"));
-            btnsuatacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnsuatacgia.setBounds(819, 144, 126, 47);
-            pntacgia.add(btnsuatacgia);
+        btnThemTacgia = new JButton("Thêm");
+        btnThemTacgia.setIcon(new ImageIcon("img\\Add.png"));
+        btnThemTacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnThemTacgia.setBounds(819, 78, 126, 54);
+        pntacgia.add(btnThemTacgia);
 
-            btnxoatacgia = new JButton("Xoá");
-            btnxoatacgia.setIcon(new ImageIcon("img\\Delete.png"));
-            btnxoatacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnxoatacgia.setBounds(819, 203, 126, 47);
-            pntacgia.add(btnxoatacgia);
+        btnsuatacgia = new JButton("Sửa");
+        btnsuatacgia.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuatacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuatacgia.setBounds(819, 144, 126, 47);
+        pntacgia.add(btnsuatacgia);
 
-            btnreloadtacgia = new JButton("Tải Lại");
-            btnreloadtacgia.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    // Bỏ loadtacgia()
+        btnxoatacgia = new JButton("Xoá");
+        btnxoatacgia.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoatacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoatacgia.setBounds(819, 203, 126, 47);
+        pntacgia.add(btnxoatacgia);
+
+        btnreloadtacgia = new JButton("Tải Lại");
+        btnreloadtacgia.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Bỏ loadtacgia()
+            }
+        });
+        btnreloadtacgia.setIcon(new ImageIcon("img\\update.png"));
+        btnreloadtacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnreloadtacgia.setBounds(819, 262, 126, 47);
+        pntacgia.add(btnreloadtacgia);
+    }
+
+    private void pnsach() {
+        pnSach = new JPanel();
+        pnSach.setLayout(null);
+
+        lbltitlepnSach = new JLabel("Sách");
+        lbltitlepnSach.setFont(new Font("Tahoma", Font.BOLD, 20));
+        lbltitlepnSach.setBounds(502, 0, 76, 77);
+        pnSach.add(lbltitlepnSach);
+
+        JPanel panel = new JPanel();
+        panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING,
+                TitledBorder.TOP, null, new Color(0, 0, 0)));
+        panel.setBounds(66, 77, 788, 273);
+        pnSach.add(panel);
+        panel.setLayout(null);
+
+        lblTenSach = new JLabel("Tên Sách");
+        lblTenSach.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTenSach.setBounds(12, 13, 112, 34);
+        panel.add(lblTenSach);
+
+        lblMaLoai = new JLabel("Mã Loại");
+        lblMaLoai.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblMaLoai.setBounds(12, 64, 112, 34);
+        panel.add(lblMaLoai);
+
+        lblNewLabel_2 = new JLabel("Mã Nhà Xuất Bản");
+        lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_2.setBounds(12, 111, 132, 34);
+        panel.add(lblNewLabel_2);
+
+        lblNewLabel_3 = new JLabel("Mã Tác Giả");
+        lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblNewLabel_3.setBounds(12, 160, 112, 34);
+        panel.add(lblNewLabel_3);
+
+        lblHinhAnh = new JLabel("Hình Ảnh");
+        lblHinhAnh.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblHinhAnh.setBounds(398, 13, 112, 34);
+        panel.add(lblHinhAnh);
+
+        lblnamxuatban = new JLabel("Năm Xuất Bản");
+        lblnamxuatban.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblnamxuatban.setBounds(398, 64, 112, 34);
+        panel.add(lblnamxuatban);
+
+        lblSLng = new JLabel("Số Lượng");
+        lblSLng.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblSLng.setBounds(398, 111, 112, 34);
+        panel.add(lblSLng);
+
+        lblMaKeSach = new JLabel("Mã Kệ Sách");
+        lblMaKeSach.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblMaKeSach.setBounds(398, 160, 112, 34);
+        panel.add(lblMaKeSach);
+
+        txttensach = new JTextField();
+        txttensach.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txttensach.setBounds(156, 14, 203, 34);
+        panel.add(txttensach);
+        txttensach.setColumns(10);
+
+        cmbmaloai = new JComboBox();
+        cmbmaloai.setBounds(156, 71, 203, 27);
+        cmbmaloai.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cmbmaloai.getSelectedItem() == null) {
+                    return;
                 }
-            });
-            btnreloadtacgia.setIcon(new ImageIcon("img\\update.png"));
-            btnreloadtacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnreloadtacgia.setBounds(819, 262, 126, 47);
-            pntacgia.add(btnreloadtacgia);
-        }
-        private void pnsach() {
-            pnSach = new JPanel();
-            pnSach.setLayout(null);
+            }
+        });
+        panel.add(cmbmaloai);
 
-            lbltitlepnSach = new JLabel("Sách");
-            lbltitlepnSach.setFont(new Font("Tahoma", Font.BOLD, 20));
-            lbltitlepnSach.setBounds(502, 0, 76, 77);
-            pnSach.add(lbltitlepnSach);
+        cmbmanhaxuatban = new JComboBox();
+        cmbmanhaxuatban.setBounds(156, 118, 203, 27);
+        cmbmanhaxuatban.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cmbmanhaxuatban.getSelectedItem() == null) {
+                    return;
+                }
+            }
+        });
+        panel.add(cmbmanhaxuatban);
 
-            JPanel panel = new JPanel();
-            panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING,
-                    TitledBorder.TOP, null, new Color(0, 0, 0)));
-            panel.setBounds(66, 77, 788, 273);
-            pnSach.add(panel);
-            panel.setLayout(null);
+        cmbmatg = new JComboBox();
+        cmbmatg.setBounds(156, 160, 203, 27);
+        cmbmatg.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cmbmatg.getSelectedItem() == null) {
+                    return;
+                }
+            }
+        });
+        panel.add(cmbmatg);
 
-            lblTenSach = new JLabel("Tên Sách");
-            lblTenSach.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblTenSach.setBounds(12, 13, 112, 34);
-            panel.add(lblTenSach);
+        cmbmakesach = new JComboBox();
+        cmbmakesach.setBounds(522, 160, 207, 27);
+        cmbmakesach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cmbmakesach.getSelectedItem() == null) {
+                    return;
+                }
+            }
+        });
+        panel.add(cmbmakesach);
 
-            lblMaLoai = new JLabel("Mã Loại");
-            lblMaLoai.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblMaLoai.setBounds(12, 64, 112, 34);
-            panel.add(lblMaLoai);
+        txtsoluongsach = new JTextField();
+        txtsoluongsach.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtsoluongsach.setBounds(522, 111, 207, 34);
+        panel.add(txtsoluongsach);
+        txtsoluongsach.setColumns(10);
 
-            lblNewLabel_2 = new JLabel("Mã Nhà Xuất Bản");
-            lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_2.setBounds(12, 111, 132, 34);
-            panel.add(lblNewLabel_2);
+        txtnamxbsach = new JTextField();
+        txtnamxbsach.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtnamxbsach.setColumns(10);
+        txtnamxbsach.setBounds(522, 64, 207, 34);
+        panel.add(txtnamxbsach);
 
-            lblNewLabel_3 = new JLabel("Mã Tác Giả");
-            lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblNewLabel_3.setBounds(12, 160, 112, 34);
-            panel.add(lblNewLabel_3);
+        JButton btnNewButton = new JButton("Chọn Ảnh");
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                // Bỏ xuLyChonAnh()
+            }
+        });
+        btnNewButton.setBounds(522, 19, 112, 28);
+        panel.add(btnNewButton);
 
-            lblHinhAnh = new JLabel("Hình Ảnh");
-            lblHinhAnh.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblHinhAnh.setBounds(398, 13, 112, 34);
-            panel.add(lblHinhAnh);
+        btnthemsach = new JButton("Thêm");
+        btnthemsach.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnthemsach.setIcon(new ImageIcon("img\\Add.png"));
+        btnthemsach.setBounds(32, 206, 112, 53);
+        panel.add(btnthemsach);
 
-            lblnamxuatban = new JLabel("Năm Xuất Bản");
-            lblnamxuatban.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblnamxuatban.setBounds(398, 64, 112, 34);
-            panel.add(lblnamxuatban);
+        btnsuasach = new JButton("Sửa");
+        btnsuasach.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuasach.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuasach.setBounds(213, 206, 112, 51);
+        panel.add(btnsuasach);
 
-            lblSLng = new JLabel("Số Lượng");
-            lblSLng.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblSLng.setBounds(398, 111, 112, 34);
-            panel.add(lblSLng);
+        btnxoasach = new JButton("Xoá");
+        btnxoasach.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoasach.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoasach.setBounds(408, 206, 112, 51);
+        panel.add(btnxoasach);
 
-            lblMaKeSach = new JLabel("Mã Kệ Sách");
-            lblMaKeSach.setFont(new Font("Tahoma", Font.BOLD, 15));
-            lblMaKeSach.setBounds(398, 160, 112, 34);
-            panel.add(lblMaKeSach);
+        btnloadlaitrang = new JButton("Tải Lại");
+        btnloadlaitrang.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnloadlaitrang.setIcon(new ImageIcon("img\\update.png"));
+        btnloadlaitrang.setBounds(620, 204, 112, 53);
+        panel.add(btnloadlaitrang);
 
-            txttensach = new JTextField();
-            txttensach.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txttensach.setBounds(156, 14, 203, 34);
-            panel.add(txttensach);
-            txttensach.setColumns(10);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(39, 456, 1024, 273);
+        pnSach.add(scrollPane);
+        dtmsach = new DefaultTableModel();
+        dtmsach.addColumn("Mã Sách");
+        dtmsach.addColumn("Tên Sách");
+        dtmsach.addColumn("Mã Tác Giả");
+        dtmsach.addColumn("Mã Nhà Xuất Bản");
+        dtmsach.addColumn("Mã Loại");
+        dtmsach.addColumn("Năm Xuất Bản");
+        dtmsach.addColumn("Số Lượng");
+        dtmsach.addColumn("Mã Kệ");
+        dtmsach.addColumn("Ảnh");
 
-            cmbmaloai = new JComboBox();
-            cmbmaloai.setBounds(156, 71, 203, 27);
-            cmbmaloai.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (cmbmaloai.getSelectedItem() == null) {
-                        return;
+        tablesach = new MyTable(dtmsach);
+        scrollPane.setViewportView(tablesach);
+        JPopupMenu popupMenu = new JPopupMenu();
+        mntmNewMenuItem = new JMenuItem("Thông tin chi tiết");
+        mntmNewMenuItem.setBounds(0, 0, 113, 19);
+        popupMenu.add(mntmNewMenuItem);
+
+        addPopup(tablesach, popupMenu);
+    }
+
+    private void trangchu() {
+
+        pnTrangChu = new JPanel();
+
+        pnTrangChu.setLayout(null);
+
+        /* PANEL NHÂN VIÊN */
+
+        lblNewLabel = new JLabel("CHÀO MỪNG BẠN ĐẾN VỚI THƯ VIỆN TRƯỜNG ĐH SÀI GÒN");
+        lblNewLabel.setForeground(new Color(255, 20, 147));
+        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        lblNewLabel.setBounds(75, 41, 945, 185);
+        pnTrangChu.add(lblNewLabel);
+    }
+
+    public void addEvent() {
+        btnlocthongke.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!rdloctheonam.isSelected() && !rdloctheongay.isSelected()) {
+                    JOptionPane.showMessageDialog(null, "Bạn cần chọn lọc theo ngày / năm");
+                    return;
+                }
+                if (namselect.equals("") && ngaybd.getDate() == null && ngayketthuc.getDate() == null) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn năm");
+                    return;
+                }
+                if (namselect != "" && rdloctheonam.isSelected()) {
+                    ngaybd.setDate(null);
+                    ngayketthuc.setDate(null);
+                    dtmthongkenhaphang.setRowCount(0);
+                    lbltongtien.setText("0");
+                    lblsosachdanhap.setText("0");
+                } else if (ngaybd.getDate() != null && ngayketthuc.getDate() != null && rdloctheongay.isSelected()) {
+                    namselect = "";
+                    comboBox.setSelectedIndex(0);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String date1 = sdf.format(ngaybd.getDate());
+                    String date2 = sdf.format(ngayketthuc.getDate());
+                    System.out.println(date2);
+                    dtmthongkenhaphang.setRowCount(0);
+                    lbltongtien.setText("0");
+                    lblsosachdanhap.setText("0");
+                }
+            }
+        });
+
+        btnloadlaitrang.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                // Bỏ loadsach()
+            }
+        });
+
+        btnthongkesachmuon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                new TableThongKePhieuMuon().setVisible(true);
+            }
+        });
+
+        tablectpm.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                int i = tablectpm.getSelectedRow();
+                if (i >= 0) {
+                    Date date2;
+                    try {
+                        date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(i, 3).toString());
+                        dateChooser_ngaytra.setDate(date2);
+                        txtmasachmuon.setText(dtmctpm.getValueAt(i, 2).toString());
+                        txtghichuctpm.setText(dtmctpm.getValueAt(i, 4).toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 }
-            });
-            panel.add(cmbmaloai);
+            }
+        });
 
-            cmbmanhaxuatban = new JComboBox();
-            cmbmanhaxuatban.setBounds(156, 118, 203, 27);
-            cmbmanhaxuatban.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (cmbmanhaxuatban.getSelectedItem() == null) {
-                        return;
+        btninphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablephieunhap.getSelectedRow();
+                if (i > -1) {
+                    int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
+                }
+            }
+        });
+
+        btnxuatexcel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Bỏ xuatExcel
+            }
+        });
+
+        btnnhapexcel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                // Bỏ nhapExcel
+            }
+        });
+
+        btnmanvphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                new TableNhanVien().setVisible(true);
+            }
+        });
+
+        btnmanccphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TableNCC().setVisible(true);
+            }
+        });
+
+        btnmanvphieunhap_1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TableSach().setVisible(true);
+            }
+        });
+
+        tablephieunhap.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tablephieunhap.getSelectedRow();
+                if (i >= 0) {
+                    mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                    lblmaphieunhap.setText("Mã Phiếu Nhập " + mapn);
+                    txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 0).toString());
+                    txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
+                    Date date2;
+                    try {
+                        date2 = new SimpleDateFormat("yyyy-MM-dd")
+                                .parse((String) dtmphieunhap.getValueAt(i, 3).toString());
+                        NgayNhapPhieuNhap.setDate(date2);
+                    } catch (ParseException ex) {
+                        ex.printStackTrace();
                     }
+                    int maphieunhap = mapn;
+                    dtmchitietphieunhap.setRowCount(0);
                 }
-            });
-            panel.add(cmbmanhaxuatban);
+            }
+        });
 
-            cmbmatg = new JComboBox();
-            cmbmatg.setBounds(156, 160, 203, 27);
-            cmbmatg.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (cmbmatg.getSelectedItem() == null) {
-                        return;
+        tablechitietphieunhap.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tablechitietphieunhap.getSelectedRow();
+                if (i >= 0) {
+                    lblmaphieunhap.setText("Mã Phiếu Nhập " + dtmchitietphieunhap.getValueAt(i, 1).toString());
+                    txtMaSachctpn.setText(dtmchitietphieunhap.getValueAt(i, 2).toString());
+                    txtsoluongctpn.setText(dtmchitietphieunhap.getValueAt(i, 3).toString());
+                    txtgianhap.setText(dtmchitietphieunhap.getValueAt(i, 4).toString());
+                }
+            }
+        });
+
+        tablemuon.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                int i = tablemuon.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        Date date = new SimpleDateFormat("yyyy-MM-dd")
+                                .parse((String) dtmmuon.getValueAt(i, 3).toString());
+                        dateChooser.setDate(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                }
-            });
-            panel.add(cmbmatg);
-
-            cmbmakesach = new JComboBox();
-            cmbmakesach.setBounds(522, 160, 207, 27);
-            cmbmakesach.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (cmbmakesach.getSelectedItem() == null) {
-                        return;
-                    }
-                }
-            });
-            panel.add(cmbmakesach);
-
-            txtsoluongsach = new JTextField();
-            txtsoluongsach.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtsoluongsach.setBounds(522, 111, 207, 34);
-            panel.add(txtsoluongsach);
-            txtsoluongsach.setColumns(10);
-
-            txtnamxbsach = new JTextField();
-            txtnamxbsach.setFont(new Font("Tahoma", Font.PLAIN, 15));
-            txtnamxbsach.setColumns(10);
-            txtnamxbsach.setBounds(522, 64, 207, 34);
-            panel.add(txtnamxbsach);
-
-            JButton btnNewButton = new JButton("Chọn Ảnh");
-            btnNewButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    // Bỏ xuLyChonAnh()
-                }
-            });
-            btnNewButton.setBounds(522, 19, 112, 28);
-            panel.add(btnNewButton);
-
-            btnthemsach = new JButton("Thêm");
-            btnthemsach.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnthemsach.setIcon(new ImageIcon("img\\Add.png"));
-            btnthemsach.setBounds(32, 206, 112, 53);
-            panel.add(btnthemsach);
-
-            btnsuasach = new JButton("Sửa");
-            btnsuasach.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnsuasach.setIcon(new ImageIcon("img\\Edit.png"));
-            btnsuasach.setBounds(213, 206, 112, 51);
-            panel.add(btnsuasach);
-
-            btnxoasach = new JButton("Xoá");
-            btnxoasach.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnxoasach.setIcon(new ImageIcon("img\\Delete.png"));
-            btnxoasach.setBounds(408, 206, 112, 51);
-            panel.add(btnxoasach);
-
-            btnloadlaitrang = new JButton("Tải Lại");
-            btnloadlaitrang.setFont(new Font("Tahoma", Font.BOLD, 14));
-            btnloadlaitrang.setIcon(new ImageIcon("img\\update.png"));
-            btnloadlaitrang.setBounds(620, 204, 112, 53);
-            panel.add(btnloadlaitrang);
-
-            JScrollPane scrollPane = new JScrollPane();
-            scrollPane.setBounds(39, 456, 1024, 273);
-            pnSach.add(scrollPane);
-            dtmsach = new DefaultTableModel();
-            dtmsach.addColumn("Mã Sách");
-            dtmsach.addColumn("Tên Sách");
-            dtmsach.addColumn("Mã Tác Giả");
-            dtmsach.addColumn("Mã Nhà Xuất Bản");
-            dtmsach.addColumn("Mã Loại");
-            dtmsach.addColumn("Năm Xuất Bản");
-            dtmsach.addColumn("Số Lượng");
-            dtmsach.addColumn("Mã Kệ");
-            dtmsach.addColumn("Ảnh");
-
-            tablesach = new MyTable(dtmsach);
-            scrollPane.setViewportView(tablesach);
-            JPopupMenu popupMenu = new JPopupMenu();
-            mntmNewMenuItem = new JMenuItem("Thông tin chi tiết");
-            mntmNewMenuItem.setBounds(0, 0, 113, 19);
-            popupMenu.add(mntmNewMenuItem);
-
-            addPopup(tablesach, popupMenu);
-        }
-        
-        private void trangchu() {
-
-		pnTrangChu = new JPanel();
-
-		pnTrangChu.setLayout(null);
-
-		/* PANEL NHÂN VIÊN */
-
-		lblNewLabel = new JLabel("CHÀO MỪNG BẠN ĐẾN VỚI THƯ VIỆN TRƯỜNG ĐH SÀI GÒN");
-		lblNewLabel.setForeground(new Color(255, 20, 147));
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblNewLabel.setBounds(75, 41, 945, 185);
-		pnTrangChu.add(lblNewLabel);
-	}
-        
-        public void addEvent() {
-            btnlocthongke.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (!rdloctheonam.isSelected() && !rdloctheongay.isSelected()) {
-                        JOptionPane.showMessageDialog(null, "Bạn cần chọn lọc theo ngày / năm");
-                        return;
-                    }
-                    if (namselect.equals("") && ngaybd.getDate() == null && ngayketthuc.getDate() == null) {
-                        JOptionPane.showMessageDialog(null, "Bạn chưa chọn năm");
-                        return;
-                    }
-                    if (namselect != "" && rdloctheonam.isSelected()) {
-                        ngaybd.setDate(null);
-                        ngayketthuc.setDate(null);
-                        dtmthongkenhaphang.setRowCount(0);
-                        lbltongtien.setText("0");
-                        lblsosachdanhap.setText("0");
-                    } else if (ngaybd.getDate() != null && ngayketthuc.getDate() != null && rdloctheongay.isSelected()) {
-                        namselect = "";
-                        comboBox.setSelectedIndex(0);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String date1 = sdf.format(ngaybd.getDate());
-                        String date2 = sdf.format(ngayketthuc.getDate());
-                        System.out.println(date2);
-                        dtmthongkenhaphang.setRowCount(0);
-                        lbltongtien.setText("0");
-                        lblsosachdanhap.setText("0");
-                    }
-                }
-            });
-
-            btnloadlaitrang.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // Bỏ loadsach()
-                }
-            });
-
-            btnthongkesachmuon.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    new TableThongKePhieuMuon().setVisible(true);
-                }
-            });
-
-            tablectpm.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseReleased(MouseEvent arg0) {}
-
-                @Override
-                public void mousePressed(MouseEvent arg0) {}
-
-                @Override
-                public void mouseExited(MouseEvent arg0) {}
-
-                @Override
-                public void mouseEntered(MouseEvent arg0) {}
-
-                @Override
-                public void mouseClicked(MouseEvent arg0) {
-                    int i = tablectpm.getSelectedRow();
-                    if (i >= 0) {
-                        Date date2;
-                        try {
-                            date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(i, 3).toString());
-                            dateChooser_ngaytra.setDate(date2);
-                            txtmasachmuon.setText(dtmctpm.getValueAt(i, 2).toString());
-                            txtghichuctpm.setText(dtmctpm.getValueAt(i, 4).toString());
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-
-            btninphieunhap.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int i = tablephieunhap.getSelectedRow();
-                    if (i > -1) {
-                        int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                    txtmapm.setText(dtmmuon.getValueAt(i, 0).toString());
+                    Ma = (dtmmuon.getValueAt(i, 0).toString());
+                    String tinhtrang = dtmmuon.getValueAt(i, 4).toString();
+                    if (tinhtrang.equals("Đang Mượn")) {
+                        rdmuon.setSelected(true);
                     } else {
-                        JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
+                        rdtra.setSelected(true);
+                    }
+                    String ngay = dtmmuon.getValueAt(i, 3).toString();
+                    cmbnhanvienpm.setSelectedIndex(0);
+                    cmbmadocgiaphieumuon.setSelectedIndex(0);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    dtmctpm.setRowCount(0);
+                    Date date2;
+                    try {
+                        date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(0, 3).toString());
+                        dateChooser_ngaytra.setDate(date2);
+                        txtmasachmuon.setText(dtmctpm.getValueAt(0, 2).toString());
+                        txtghichuctpm.setText(dtmctpm.getValueAt(0, 4).toString());
+                    } catch (Exception e) {
                     }
                 }
-            });
-
-            btnxuatexcel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Bỏ xuatExcel
-                }
-            });
-
-            btnnhapexcel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // Bỏ nhapExcel
-                }
-            });
-
-            btnmanvphieunhap.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    new TableNhanVien().setVisible(true);
-                }
-            });
-
-            btnmanccphieunhap.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new TableNCC().setVisible(true);
-                }
-            });
-
-            btnmanvphieunhap_1.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new TableSach().setVisible(true);
-                }
-            });
-
-            tablephieunhap.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-
-                @Override
-                public void mousePressed(MouseEvent e) {}
-
-                @Override
-                public void mouseExited(MouseEvent e) {}
-
-                @Override
-                public void mouseEntered(MouseEvent e) {}
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    int i = tablephieunhap.getSelectedRow();
-                    if (i >= 0) {
-                        mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                        lblmaphieunhap.setText("Mã Phiếu Nhập " + mapn);
-                        txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 0).toString());
-                        txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
-                        Date date2;
-                        try {
-                            date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmphieunhap.getValueAt(i, 3).toString());
-                            NgayNhapPhieuNhap.setDate(date2);
-                        } catch (ParseException ex) {
-                            ex.printStackTrace();
-                        }
-                        int maphieunhap = mapn;
-                        dtmchitietphieunhap.setRowCount(0);
-                    }
-                }
-            });
-
-            tablechitietphieunhap.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-
-                @Override
-                public void mousePressed(MouseEvent e) {}
-
-                @Override
-                public void mouseExited(MouseEvent e) {}
-
-                @Override
-                public void mouseEntered(MouseEvent e) {}
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    int i = tablechitietphieunhap.getSelectedRow();
-                    if (i >= 0) {
-                        lblmaphieunhap.setText("Mã Phiếu Nhập " + dtmchitietphieunhap.getValueAt(i, 1).toString());
-                        txtMaSachctpn.setText(dtmchitietphieunhap.getValueAt(i, 2).toString());
-                        txtsoluongctpn.setText(dtmchitietphieunhap.getValueAt(i, 3).toString());
-                        txtgianhap.setText(dtmchitietphieunhap.getValueAt(i, 4).toString());
-                    }
-                }
-            });
-
-            tablemuon.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-
-                @Override
-                public void mousePressed(MouseEvent e) {}
-
-                @Override
-                public void mouseExited(MouseEvent e) {}
-
-                @Override
-                public void mouseEntered(MouseEvent e) {}
-
-                @Override
-                public void mouseClicked(MouseEvent arg0) {
-                    int i = tablemuon.getSelectedRow();
-                    if (i >= 0) {
-                        try {
-                            Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmmuon.getValueAt(i, 3).toString());
-                            dateChooser.setDate(date);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        txtmapm.setText(dtmmuon.getValueAt(i, 0).toString());
-                        Ma = (dtmmuon.getValueAt(i, 0).toString());
-                        String tinhtrang = dtmmuon.getValueAt(i, 4).toString();
-                        if (tinhtrang.equals("Đang Mượn")) {
-                            rdmuon.setSelected(true);
-                        } else {
-                            rdtra.setSelected(true);
-                        }
-                        String ngay = dtmmuon.getValueAt(i, 3).toString();
-                        cmbnhanvienpm.setSelectedIndex(0);
-                        cmbmadocgiaphieumuon.setSelectedIndex(0);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        dtmctpm.setRowCount(0);
-                        Date date2;
-                        try {
-                            date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(0, 3).toString());
-                            dateChooser_ngaytra.setDate(date2);
-                            txtmasachmuon.setText(dtmctpm.getValueAt(0, 2).toString());
-                            txtghichuctpm.setText(dtmctpm.getValueAt(0, 4).toString());
-                        } catch (Exception e) {}
-                    }
-                }
-            });
-            tabledocgia.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-
-				int i = tabledocgia.getSelectedRow();
-				if (i >= 0) {
-					txtTendocgia.setText(dtmdocgia.getValueAt(i, 1).toString());
-					txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString());
-					txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 4).toString());
-					txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 3).toString());
-				}
-
-			}
-		});
-		tabletacgia.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int i = tabletacgia.getSelectedRow();
-				if (i >= 0) {
-					txtTentacgia.setText(dtmtacgia.getValueAt(i, 1).toString());
-					txtnamsinhtacgia.setText(dtmtacgia.getValueAt(i, 2).toString());
-					txtQueQuan.setText(dtmtacgia.getValueAt(i, 3).toString());
-				}
-
-			}
-		});
-
-		lbldangxuat.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-
-				lbldangxuat.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-
-				lbldangxuat.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-
-				setVisible(false);
-				isdangxuat = true;
-				new LoginForm().setVisible(true);
-				return;
-
-			}
-		});
-		lblchung.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-
-				lblchung.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-
-				lblchung.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-
-				pnTrangChu.show(false);
-				pnSach.show(false);
-				pndocgia.show(false);
-				pntacgia.show(false);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-				pnchung.show();
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-		});
-		exit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.exit(0);
-			}
-		});
-
-		lblnhanvien.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-				lblnhanvien.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-				lblnhanvien.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				pnTrangChu.show(false);
-				pnSach.show(false);
-				pndocgia.show(false);
-				pntacgia.show(false);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(true);
-				pnPhieumuon.show(false);
-				pnchung.show(false);
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-		});
-
-		lblnhaxuatban.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-				lblnhaxuatban.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-				lblnhaxuatban.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				pnTrangChu.show(false);
-				pnSach.show(false);
-				pndocgia.show(false);
-				pntacgia.show(false);
-				pnnhaxuatban.show(true);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-				pnchung.show(false);
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-
-		});
-		lbldocgia.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-				lbldocgia.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-				lbldocgia.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				pnTrangChu.show(false);
-				pnSach.show(false);
-				pndocgia.show(true);
-				pntacgia.show(false);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-				pnchung.show(false);
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-		});
-		lblTrangchu.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-
-				lblTrangchu.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-
-				lblTrangchu.setBackground(Color.BLUE);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-
-				pnTrangChu.show();
-				pnSach.show(false);
-				pndocgia.show(false);
-				pntacgia.show(false);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-				pnchung.show(false);
-				pnPhieuNhap.show(false);
-				panelThongKe.show(false);
-			}
-		});
-
-		lblSach.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-				lblSach.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-				lblSach.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				pnTrangChu.show(false);
-				pnSach.show(true);
-				pndocgia.show(false);
-				pntacgia.show(false);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-				pnchung.show(false);
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-		});
-		lbltacgia.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-				lbltacgia.setBackground(new Color(64, 64, 64));
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-				lbltacgia.setBackground(Color.blue);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				// lblTitle.setText("Tác Giả");
-				pnTrangChu.show(false);
-				pnSach.show(false);
-				pndocgia.show(false);
-				pntacgia.show(true);
-				pnnhaxuatban.show(false);
-				pnnhanvien.show(false);
-				pnPhieumuon.show(false);
-
-				pnchung.show(false);
-				panelThongKe.show(false);
-				pnPhieuNhap.show(false);
-			}
-		});
-                lblthongke.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        lblthongke.setBackground(new Color(64, 64, 64));
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        lblthongke.setBackground(Color.blue);
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        pnTrangChu.show(false);
-                        pnSach.show(false);
-                        pndocgia.show(false);
-                        pntacgia.show(false);
-                        pnnhaxuatban.show(false);
-                        pnnhanvien.show(false);
-                        pnPhieumuon.show(false);
-                        pnchung.show(false);
-                        panelThongKe.show();
-                        pnPhieuNhap.show(false);
-                    }
-                });
-
-                lblphieumuon.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        lblphieumuon.setBackground(new Color(64, 64, 64));
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        lblphieumuon.setBackground(Color.blue);
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        pnTrangChu.show(false);
-                        pnSach.show(false);
-                        pndocgia.show(false);
-                        pntacgia.show(false);
-                        pnnhaxuatban.show(false);
-                        pnnhanvien.show(false);
-                        pnPhieumuon.show();
-                        pnPhieuNhap.show(false);
-                        pnchung.show(false);
-                        panelThongKe.show(false);
-                    }
-                });
-
-                lblphieunhap.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent arg0) {
-                        lblphieunhap.setBackground(new Color(64, 64, 64));
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent arg0) {
-                        lblphieunhap.setBackground(Color.blue);
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent arg0) {
-                        pnTrangChu.show(false);
-                        pnSach.show(false);
-                        pndocgia.show(false);
-                        pntacgia.show(false);
-                        pnnhaxuatban.show(false);
-                        pnnhanvien.show(false);
-                        pnPhieumuon.show(false);
-                        pnPhieuNhap.show();
-                        pnchung.show(false);
-                        panelThongKe.show(false);
-                    }
-                });
-
-                this.addMouseMotionListener(new MouseMotionListener() {
-                    @Override
-                    public void mouseMoved(MouseEvent arg0) {
-                        x_mouse = arg0.getX();
-                        y_mouse = arg0.getY();
-                    }
-
-                    @Override
-                    public void mouseDragged(MouseEvent arg0) {
-                        moveFrame(arg0.getXOnScreen(), arg0.getYOnScreen());
-                    }
-                });
-
-                tableloai.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {}
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int i = tableloai.getSelectedRow();
-                        if (i >= 0) {
-                            txttenloai.setText(dtmloai.getValueAt(i, 1).toString());
-                        }
-                    }
-                });
-
-                tablesach.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {}
-
-                    @Override
-                    public void mouseClicked(MouseEvent arg0) {
-                        int i = tablesach.getSelectedRow();
-                        if (i > -1) {
-                            txttensach.setText(dtmsach.getValueAt(i, 1).toString());
-                            int maloai = Integer.parseInt(dtmsach.getValueAt(i, 2).toString());
-                            int manxb = Integer.parseInt(dtmsach.getValueAt(i, 3).toString());
-                            int matg = Integer.parseInt(dtmsach.getValueAt(i, 4).toString());
-                            int make = Integer.parseInt(dtmsach.getValueAt(i, 7).toString());
-                            txtnamxbsach.setText(dtmsach.getValueAt(i, 5).toString());
-                            txtsoluongsach.setText(dtmsach.getValueAt(i, 6).toString());
-                            hinhanh = dtmsach.getValueAt(i, 8).toString();
-                        }
-                    }
-                });
-                tablencc.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {}
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int i = tablencc.getSelectedRow();
-                        if (i >= 0) {
-                            txtNcc.setText(dtmncc.getValueAt(i, 1).toString());
-                        }
-                    }
-                });
-
-                tablekesach.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {}
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int i = tablekesach.getSelectedRow();
-                        if (i >= 0) {
-                            txtKeSach.setText("" + dtmke.getValueAt(i, 1));
-                        }
-                    }
-                });
-
-                btnthemkesach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(contentPane, "Thêm Thất bại");
-                    }
-                });
-
-                btnsuakesach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablekesach.getSelectedRow();
-                        if (i > -1) {
-                            int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                            JOptionPane.showMessageDialog(contentPane, "Sửa Thất bại");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
-                        }
-                    }
-                });
-
-                btnxoakesach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablekesach.getSelectedRow();
-                        if (i > -1) {
-                            int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                JOptionPane.showMessageDialog(contentPane, "Xoá Thất bại");
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
-                        }
-                    }
-                });
-
-                btnxoaloai.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tableloai.getSelectedRow();
-                        int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                        int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                        if (a == JOptionPane.YES_OPTION) {
-                            // Không có thông báo GUI ở đây
-                        }
-                    }
-                });
-
-                btnThemloai.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-                btnsualoai.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tableloai.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
-                        }
-                    }
-                });
-
-                btnxoancc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablencc.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào.");
-                        }
-                    }
-                });
-
-                btnThemncc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-
-                btnsuancc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablencc.getSelectedRow();
-                        if (i > -1) {
-                            int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
-                            // Không có thông báo GUI ở đây
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
-                        }
-                    }
-                });
-
-                tablenhanvien.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent arg0) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent arg0) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent arg0) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent arg0) {}
-
-                    @Override
-                    public void mouseClicked(MouseEvent arg0) {
-                        int i = tablenhanvien.getSelectedRow();
-                        if (i >= 0) {
-                            txttennv.setText(dtmnhanvien.getValueAt(i, 1).toString());
-                            txtnamsinhnv.setText(dtmnhanvien.getValueAt(i, 2).toString());
-                            txtgioitinhnv.setText(dtmnhanvien.getValueAt(i, 3).toString());
-                            txtdiachinv.setText(dtmnhanvien.getValueAt(i, 4).toString());
-                            txtsodienthoainv.setText(dtmnhanvien.getValueAt(i, 5).toString());
-                        }
-                    }
-                });
-
-                btnsuanv.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablenhanvien.getSelectedRow();
-                        if (i > -1) {
-                            int vitri = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-                            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-                            // Không có thông báo GUI ở đây
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưua chọn nhân viên nào hết");
-                        }
-                    }
-                });
-
-                btnthemnv.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-
-                btnxoanv.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablenhanvien.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-                            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void removeUpdate(DocumentEvent arg0) {
-                        searchNv();
-                    }
-
-                    @Override
-                    public void insertUpdate(DocumentEvent arg0) {
-                        searchNv();
-                    }
-
-                    @Override
-                    public void changedUpdate(DocumentEvent arg0) {
-                        searchNv();
-                    }
-
-                    public void searchNv() {
-                        try {
-                            dtmnhanvien.setRowCount(0);
-                            if (txtTimKiemnv.getText().isEmpty()) {
-                                return;
-                            }
-                            String s = txtTimKiemnv.getText().toLowerCase();
-                        } catch (Exception e) {}
-                    }
-                });
-
-                tablenhaxuatban.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseReleased(MouseEvent arg0) {}
-
-                    @Override
-                    public void mousePressed(MouseEvent arg0) {}
-
-                    @Override
-                    public void mouseExited(MouseEvent arg0) {}
-
-                    @Override
-                    public void mouseEntered(MouseEvent arg0) {
-                        int i = tablenhaxuatban.getSelectedRow();
-                        if (i >= 0) {
-                            txtTennhaxuatban.setText(dtmnhaxuatban.getValueAt(i, 1).toString());
-                            txtdiachinxb.setText(dtmnhaxuatban.getValueAt(i, 2).toString());
-                            txtsdtnxb.setText(dtmnhaxuatban.getValueAt(i, 3).toString());
-                        }
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent arg0) {}
-                });
-
-                btnThemnxb.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-
-                btnsuanxb.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablenhaxuatban.getSelectedRow();
-                        if (i > -1) {
-                            int vitri = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
-                            // Không có thông báo GUI ở đây
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn vào table");
-                        }
-                    }
-                });
-                btnxoanxb.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tablenhaxuatban.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnThemTacgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-
-                btnsuatacgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tabletacgia.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmtacgia.getValueAt(i, 0).toString());
-                            // Không có thông báo GUI ở đây
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
-                        }
-                    }
-                });
-
-                btnxoatacgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tabletacgia.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmtacgia.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnthemdocgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        // Không có thông báo GUI ở đây
-                    }
-                });
-
-                btnsuadocgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tabledocgia.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
-                            // Không có thông báo GUI ở đây
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnxoadocgia.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int i = tabledocgia.getSelectedRow();
-                        if (i >= 0) {
-                            int vitri = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnthemsach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        String tensach = txttensach.getText();
-                        int namxb;
-                        try {
-                            namxb = Integer.parseInt(txtnamxbsach.getText());
-                            System.out.println(namxb);
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
-                            return;
-                        }
-                        int soluong;
-                        try {
-                            soluong = Integer.parseInt(txtsoluongsach.getText());
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "Số lượng phải là số");
-                            return;
-                        }
-                    }
-                });
-
-                btnsuasach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablesach.getSelectedRow();
-                        if (i > -1) {
-                            String tensach = txttensach.getText();
-                            int namxb;
-                            try {
-                                namxb = Integer.parseInt(txtnamxbsach.getText());
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
-                                return;
-                            }
-                            int soluong;
-                            try {
-                                soluong = Integer.parseInt(txtsoluongsach.getText());
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(null, "Số lượng phải là số");
-                                return;
-                            }
-                            int masach = Integer.parseInt(dtmsach.getValueAt(i, 0).toString());
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn Chưa Chọn Vào Bảng");
-                        }
-                    }
-                });
-
-                btnxoasach.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablesach.getSelectedRow();
-                        if (i > -1) {
-                            String tensach = txttensach.getText();
-                            int namxb;
-                            try {
-                                namxb = Integer.parseInt(txtnamxbsach.getText());
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
-                                return;
-                            }
-                            int soluong;
-                            try {
-                                soluong = Integer.parseInt(txtsoluongsach.getText());
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(null, "Số lượng phải là số");
-                                return;
-                            }
-                            int masach = Integer.parseInt(dtmsach.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Bạn Chưa Chọn Vào Bảng");
-                        }
-                    }
-                });
-
-                btnthemphieumuon.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (dateChooser.getDate() == null) {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
-                            return;
-                        }
-                        if (!rdmuon.isSelected() && !rdtra.isSelected()) {
-                            JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
-                            return;
-                        }
-                        String tinhtrang = "Đã Trả";
-                        if (rdmuon.isSelected()) {
-                            tinhtrang = "Đang Mượn";
-                        }
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String ngaymuon = sdf.format(dateChooser.getDate());
-                    }
-                });
-
-                btnsuaphieumuon.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablemuon.getSelectedRow();
-                        if (i >= 0) {
-                            if (dateChooser.getDate() == null) {
-                                JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
-                                return;
-                            }
-                            if (!rdmuon.isSelected() && !rdtra.isSelected()) {
-                                JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
-                                return;
-                            }
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String ngaymuon = sdf.format(dateChooser.getDate());
-                            int vitri = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnxoaphieumuon.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablemuon.getSelectedRow();
-                        if (i >= 0) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String ngaymuon = sdf.format(dateChooser.getDate());
-                            int vitri = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-                btnthemctpm.addActionListener(new ActionListener() {
-                    private String ngaymuon2;
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String ngaytra;
-                        try {
-                            ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                            ngaymuon2 = sdf.format(dateChooser.getDate());
-                        } catch (Exception e2) {
-                            JOptionPane.showMessageDialog(null, "Ngày sai");
-                            return;
-                        }
-                        if (!isNumber(txtmapm.getText())) {
-                            JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
-                            return;
-                        }
-                        if (!isNumber(txtmapm.getText())) {
-                            JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
-                            return;
-                        }
-                        if (!isNumber(txtmasachmuon.getText())) {
-                            JOptionPane.showMessageDialog(null, "Mã sách mượn sai");
-                            return;
-                        }
-                    }
-                });
-
-                btnsuactpm.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablectpm.getSelectedRow();
-                        if (i >= 0) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String ngaymuon2;
-                            String ngaytra;
-                            try {
-                                ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                                ngaymuon2 = sdf.format(dateChooser.getDate());
-                            } catch (Exception e2) {
-                                JOptionPane.showMessageDialog(null, "Ngày sai");
-                                return;
-                            }
-                            int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
-                            int mapm = Integer.parseInt(dtmctpm.getValueAt(i, 1).toString());
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnxoactpm.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablectpm.getSelectedRow();
-                        if (i >= 0) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                            int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnthemphieunhap.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        if (txtManhanvienphieunhap.getText().isEmpty()) {
-                            thongbao("Mã nhân viên");
-                            return;
-                        }
-                        if (txtManccPhieuNhap.getText().isEmpty()) {
-                            thongbao("Mã NCC");
-                            return;
-                        }
-                        if (NgayNhapPhieuNhap.getDate() == null) {
-                            thongbao("Ngày Nhập");
-                            return;
-                        }
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                        int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                        int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                    }
-                });
-
-                btnsuaphieunhap.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablephieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            if (txtManhanvienphieunhap.getText().isEmpty()) {
-                                thongbao("Mã nhân viên");
-                                return;
-                            }
-                            if (txtManccPhieuNhap.getText().isEmpty()) {
-                                thongbao("Mã NCC");
-                                return;
-                            }
-                            if (NgayNhapPhieuNhap.getDate() == null) {
-                                thongbao("Ngày Nhập");
-                                return;
-                            }
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                            String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                            int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                            int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnxoaphieunhap.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablephieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                            String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                            int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                            int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnthemchitietphieunhap.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        if (txtMaSachctpn.getText().isEmpty()) {
-                            thongbao("Mã sách");
-                            return;
-                        }
-                        if (!isNumber(txtsoluongctpn.getText())) {
-                            JOptionPane.showMessageDialog(null, "Số lượng phải nhập số");
-                            return;
-                        }
-                        if (txtsoluongctpn.getText().isEmpty()) {
-                            thongbao("Số lượng");
-                            return;
-                        }
-                        if (!isNumber(txtgianhap.getText())) {
-                            JOptionPane.showMessageDialog(null, "Giá nhập phải là số");
-                            return;
-                        }
-                        if (txtgianhap.getText().isEmpty()) {
-                            thongbao("Giá nhập");
-                            return;
-                        }
-                        int masach = Integer.parseInt(txtMaSachctpn.getText());
-                        int sl = Integer.parseInt(txtsoluongctpn.getText());
-                        int gia = Integer.parseInt(txtgianhap.getText());
-                    }
-                });
-
-                btnxoactpn.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablechitietphieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            int masach = Integer.parseInt(txtMaSachctpn.getText());
-                            int sl = Integer.parseInt(txtsoluongctpn.getText());
-                            int gia = Integer.parseInt(txtgianhap.getText());
-                            int mactpn = Integer.parseInt(dtmchitietphieunhap.getValueAt(i, 0).toString());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-
-                btnsuactpn.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablechitietphieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            if (txtMaSachctpn.getText().isEmpty()) {
-                                thongbao("Mã sách");
-                                return;
-                            }
-                            if (!isNumber(txtsoluongctpn.getText())) {
-                                JOptionPane.showMessageDialog(null, "Số lượng phải nhập số");
-                                return;
-                            }
-                            if (txtsoluongctpn.getText().isEmpty()) {
-                                thongbao("Số lượng");
-                                return;
-                            }
-                            if (!isNumber(txtgianhap.getText())) {
-                                JOptionPane.showMessageDialog(null, "Giá nhập phải là số");
-                                return;
-                            }
-                            if (txtgianhap.getText().isEmpty()) {
-                                thongbao("Giá nhập");
-                                return;
-                            }
-                            int masach = Integer.parseInt(txtMaSachctpn.getText());
-                            int sl = Integer.parseInt(txtsoluongctpn.getText());
-                            int gia = Integer.parseInt(txtgianhap.getText());
-                            int mactpn = Integer.parseInt(dtmchitietphieunhap.getValueAt(i, 0).toString());
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
-                        }
-                    }
-                });
-                        }
-        
-        private void moveFrame(int x, int y) {
-            this.setLocation(x - x_mouse, y - y_mouse);
-        }
-
-        public void loadloaisach() {
-            dtmloai.setRowCount(0);
-            cmbmaloai.removeAllItems();
-        }
-
-        public void loadnxb() {
-            dtmnhaxuatban.setRowCount(0);
-            cmbmanhaxuatban.removeAllItems();
-        }
-
-        public void loadnhacungcap() {
-            dtmncc.setRowCount(0);
-        }
-
-        public void loadkesach() {
-            dtmke.setRowCount(0);
-            cmbmakesach.removeAllItems();
-        }
-
-        public void loadnhanvien() {
-            dtmnhanvien.setRowCount(0);
-            cmbnhanvienpm.removeAllItems();
-        }
-
-        public void loadtacgia() {
-            dtmtacgia.setRowCount(0);
-            cmbmatg.removeAllItems();
-        }
-
-        public void loaddocgia() {
-            dtmdocgia.setRowCount(0);
-        }
-
-        public void loadsach() {
-            dtmsach.setRowCount(0);
-        }
-
-        public void loadphieumuon() {
-            dtmmuon.setRowCount(0);
-        }
-
-        public void loadctphieumuon() {
-            dtmctpm.setRowCount(0);
-        }
-
-        public void loadphieunhap() {
-            dtmphieunhap.setRowCount(0);
-        }
-
-        public void loadthongkephieunhap() {
-            dtmthongkenhaphang.setRowCount(0);
-        }
-
-        public void loadctphieunhap() {
-            dtmchitietphieunhap.setRowCount(0);
-        }
-
-        public String tinhtrangmuon() {
-            if (rdmuon.isSelected()) {
-                return "Đang Mượn";
             }
-            return "Đã Trả";
-        }
+        });
+        tabledocgia.addMouseListener(new MouseListener() {
 
-        private static void addPopup(Component component, final JPopupMenu popup) {
-            component.addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent e) {
-                    if (e.isPopupTrigger()) {
-                        showMenu(e);
-                    }
-                }
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
 
-                public void mouseReleased(MouseEvent e) {
-                    if (e.isPopupTrigger()) {
-                        showMenu(e);
-                    }
-                }
-
-                private void showMenu(MouseEvent e) {
-                    popup.show(e.getComponent(), e.getX(), e.getY());
-                }
-            });
-        }
-
-        private void xuLyChonAnh() {
-            JFileChooser fileChooser = new JFileChooser("img/sach/");
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp hình ảnh", "jpg", "png", "jpeg");
-            fileChooser.setFileFilter(filter);
-            int returnVal = fileChooser.showOpenDialog(null);
-
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                String name = fileChooser.getSelectedFile().getName();
-                hinhanh = name;
-                lblhinhanhpre.setIcon(getAnhSP(name));
-                System.out.println(name);
-            }
-        }
-        File fileAnhSP;
-        private ImageIcon getAnhSP(String src) {
-            src = src.trim().equals("") ? "default.png" : src;
-            BufferedImage img = null;
-            File fileImg = new File("img/sach/" + src);
-
-            if (!fileImg.exists()) {
-                src = "default.png";
-                fileImg = new File("img/sach/" + src);
             }
 
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+
+                int i = tabledocgia.getSelectedRow();
+                if (i >= 0) {
+                    txtTendocgia.setText(dtmdocgia.getValueAt(i, 1).toString());
+                    txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString());
+                    txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 4).toString());
+                    txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 3).toString());
+                }
+
+            }
+        });
+        tabletacgia.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tabletacgia.getSelectedRow();
+                if (i >= 0) {
+                    txtTentacgia.setText(dtmtacgia.getValueAt(i, 1).toString());
+                    txtnamsinhtacgia.setText(dtmtacgia.getValueAt(i, 2).toString());
+                    txtQueQuan.setText(dtmtacgia.getValueAt(i, 3).toString());
+                }
+
+            }
+        });
+
+        lbldangxuat.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+
+                lbldangxuat.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+
+                lbldangxuat.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+
+                setVisible(false);
+                isdangxuat = true;
+                new LoginForm().setVisible(true);
+                return;
+
+            }
+        });
+        lblchung.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+
+                lblchung.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+
+                lblchung.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show();
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+        });
+        exit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.exit(0);
+            }
+        });
+
+        lblnhanvien.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+                lblnhanvien.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+                lblnhanvien.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(true);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+        });
+
+        lblnhaxuatban.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+                lblnhaxuatban.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+                lblnhaxuatban.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(true);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+
+        });
+        lbldocgia.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+                lbldocgia.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+                lbldocgia.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(true);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+        });
+        lblTrangchu.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+
+                lblTrangchu.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+
+                lblTrangchu.setBackground(Color.BLUE);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+
+                pnTrangChu.show();
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                pnPhieuNhap.show(false);
+                panelThongKe.show(false);
+            }
+        });
+
+        lblSach.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+                lblSach.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+                lblSach.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                pnTrangChu.show(false);
+                pnSach.show(true);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+        });
+        lbltacgia.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+                lbltacgia.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+                lbltacgia.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                // lblTitle.setText("Tác Giả");
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(true);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+            }
+        });
+        lblthongke.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lblthongke.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lblthongke.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show();
+                pnPhieuNhap.show(false);
+            }
+        });
+
+        lblphieumuon.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lblphieumuon.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lblphieumuon.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show();
+                pnPhieuNhap.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+            }
+        });
+
+        lblphieunhap.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+                lblphieunhap.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                lblphieunhap.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnPhieuNhap.show();
+                pnchung.show(false);
+                panelThongKe.show(false);
+            }
+        });
+
+        this.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseMoved(MouseEvent arg0) {
+                x_mouse = arg0.getX();
+                y_mouse = arg0.getY();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent arg0) {
+                moveFrame(arg0.getXOnScreen(), arg0.getYOnScreen());
+            }
+        });
+
+        tableloai.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tableloai.getSelectedRow();
+                if (i >= 0) {
+                    txttenloai.setText(dtmloai.getValueAt(i, 1).toString());
+                }
+            }
+        });
+
+        tablesach.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                int i = tablesach.getSelectedRow();
+                if (i > -1) {
+                    txttensach.setText(dtmsach.getValueAt(i, 1).toString());
+                    int maloai = Integer.parseInt(dtmsach.getValueAt(i, 2).toString());
+                    int manxb = Integer.parseInt(dtmsach.getValueAt(i, 3).toString());
+                    int matg = Integer.parseInt(dtmsach.getValueAt(i, 4).toString());
+                    int make = Integer.parseInt(dtmsach.getValueAt(i, 7).toString());
+                    txtnamxbsach.setText(dtmsach.getValueAt(i, 5).toString());
+                    txtsoluongsach.setText(dtmsach.getValueAt(i, 6).toString());
+                    hinhanh = dtmsach.getValueAt(i, 8).toString();
+                }
+            }
+        });
+        tablencc.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tablencc.getSelectedRow();
+                if (i >= 0) {
+                    txtNcc.setText(dtmncc.getValueAt(i, 1).toString());
+                }
+            }
+        });
+
+        tablekesach.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tablekesach.getSelectedRow();
+                if (i >= 0) {
+                    txtKeSach.setText("" + dtmke.getValueAt(i, 1));
+                }
+            }
+        });
+
+        btnthemkesach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(contentPane, "Thêm Thất bại");
+            }
+        });
+
+        btnsuakesach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablekesach.getSelectedRow();
+                if (i > -1) {
+                    int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
+                    JOptionPane.showMessageDialog(contentPane, "Sửa Thất bại");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                }
+            }
+        });
+
+        btnxoakesach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablekesach.getSelectedRow();
+                if (i > -1) {
+                    int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        JOptionPane.showMessageDialog(contentPane, "Xoá Thất bại");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                }
+            }
+        });
+
+        btnxoaloai.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tableloai.getSelectedRow();
+                int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
+                int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                if (a == JOptionPane.YES_OPTION) {
+                    // Không có thông báo GUI ở đây
+                }
+            }
+        });
+
+        btnThemloai.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+        btnsualoai.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tableloai.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
+                }
+            }
+        });
+
+        btnxoancc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablencc.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào.");
+                }
+            }
+        });
+
+        btnThemncc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+
+        btnsuancc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablencc.getSelectedRow();
+                if (i > -1) {
+                    int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
+                    // Không có thông báo GUI ở đây
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
+                }
+            }
+        });
+
+        tablenhanvien.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                int i = tablenhanvien.getSelectedRow();
+                if (i >= 0) {
+                    txttennv.setText(dtmnhanvien.getValueAt(i, 1).toString());
+                    txtnamsinhnv.setText(dtmnhanvien.getValueAt(i, 2).toString());
+                    txtgioitinhnv.setText(dtmnhanvien.getValueAt(i, 3).toString());
+                    txtdiachinv.setText(dtmnhanvien.getValueAt(i, 4).toString());
+                    txtsodienthoainv.setText(dtmnhanvien.getValueAt(i, 5).toString());
+                }
+            }
+        });
+
+        btnsuanv.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablenhanvien.getSelectedRow();
+                if (i > -1) {
+                    int vitri = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+                    SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+                    // Không có thông báo GUI ở đây
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưua chọn nhân viên nào hết");
+                }
+            }
+        });
+
+        btnthemnv.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+
+        btnxoanv.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablenhanvien.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+                    SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent arg0) {
+                searchNv();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent arg0) {
+                searchNv();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent arg0) {
+                searchNv();
+            }
+
+            public void searchNv() {
+                try {
+                    dtmnhanvien.setRowCount(0);
+                    if (txtTimKiemnv.getText().isEmpty()) {
+                        return;
+                    }
+                    String s = txtTimKiemnv.getText().toLowerCase();
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        tablenhaxuatban.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                int i = tablenhaxuatban.getSelectedRow();
+                if (i >= 0) {
+                    txtTennhaxuatban.setText(dtmnhaxuatban.getValueAt(i, 1).toString());
+                    txtdiachinxb.setText(dtmnhaxuatban.getValueAt(i, 2).toString());
+                    txtsdtnxb.setText(dtmnhaxuatban.getValueAt(i, 3).toString());
+                }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+            }
+        });
+
+        btnThemnxb.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+
+        btnsuanxb.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablenhaxuatban.getSelectedRow();
+                if (i > -1) {
+                    int vitri = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
+                    // Không có thông báo GUI ở đây
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn vào table");
+                }
+            }
+        });
+        btnxoanxb.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tablenhaxuatban.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnThemTacgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+
+        btnsuatacgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tabletacgia.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmtacgia.getValueAt(i, 0).toString());
+                    // Không có thông báo GUI ở đây
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
+                }
+            }
+        });
+
+        btnxoatacgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tabletacgia.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmtacgia.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnthemdocgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                // Không có thông báo GUI ở đây
+            }
+        });
+
+        btnsuadocgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tabledocgia.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
+                    // Không có thông báo GUI ở đây
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnxoadocgia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = tabledocgia.getSelectedRow();
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnthemsach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                String tensach = txttensach.getText();
+                int namxb;
+                try {
+                    namxb = Integer.parseInt(txtnamxbsach.getText());
+                    System.out.println(namxb);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
+                    return;
+                }
+                int soluong;
+                try {
+                    soluong = Integer.parseInt(txtsoluongsach.getText());
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Số lượng phải là số");
+                    return;
+                }
+            }
+        });
+
+        btnsuasach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablesach.getSelectedRow();
+                if (i > -1) {
+                    String tensach = txttensach.getText();
+                    int namxb;
+                    try {
+                        namxb = Integer.parseInt(txtnamxbsach.getText());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
+                        return;
+                    }
+                    int soluong;
+                    try {
+                        soluong = Integer.parseInt(txtsoluongsach.getText());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Số lượng phải là số");
+                        return;
+                    }
+                    int masach = Integer.parseInt(dtmsach.getValueAt(i, 0).toString());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn Chưa Chọn Vào Bảng");
+                }
+            }
+        });
+
+        btnxoasach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablesach.getSelectedRow();
+                if (i > -1) {
+                    String tensach = txttensach.getText();
+                    int namxb;
+                    try {
+                        namxb = Integer.parseInt(txtnamxbsach.getText());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
+                        return;
+                    }
+                    int soluong;
+                    try {
+                        soluong = Integer.parseInt(txtsoluongsach.getText());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Số lượng phải là số");
+                        return;
+                    }
+                    int masach = Integer.parseInt(dtmsach.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn Chưa Chọn Vào Bảng");
+                }
+            }
+        });
+
+        btnthemphieumuon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (dateChooser.getDate() == null) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
+                    return;
+                }
+                if (!rdmuon.isSelected() && !rdtra.isSelected()) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
+                    return;
+                }
+                String tinhtrang = "Đã Trả";
+                if (rdmuon.isSelected()) {
+                    tinhtrang = "Đang Mượn";
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String ngaymuon = sdf.format(dateChooser.getDate());
+            }
+        });
+
+        btnsuaphieumuon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablemuon.getSelectedRow();
+                if (i >= 0) {
+                    if (dateChooser.getDate() == null) {
+                        JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
+                        return;
+                    }
+                    if (!rdmuon.isSelected() && !rdtra.isSelected()) {
+                        JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
+                        return;
+                    }
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String ngaymuon = sdf.format(dateChooser.getDate());
+                    int vitri = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnxoaphieumuon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablemuon.getSelectedRow();
+                if (i >= 0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String ngaymuon = sdf.format(dateChooser.getDate());
+                    int vitri = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+        btnthemctpm.addActionListener(new ActionListener() {
+            private String ngaymuon2;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String ngaytra;
+                try {
+                    ngaytra = sdf.format(dateChooser_ngaytra.getDate());
+                    ngaymuon2 = sdf.format(dateChooser.getDate());
+                } catch (Exception e2) {
+                    JOptionPane.showMessageDialog(null, "Ngày sai");
+                    return;
+                }
+                if (!isNumber(txtmapm.getText())) {
+                    JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
+                    return;
+                }
+                if (!isNumber(txtmapm.getText())) {
+                    JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
+                    return;
+                }
+                if (!isNumber(txtmasachmuon.getText())) {
+                    JOptionPane.showMessageDialog(null, "Mã sách mượn sai");
+                    return;
+                }
+            }
+        });
+
+        btnsuactpm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablectpm.getSelectedRow();
+                if (i >= 0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String ngaymuon2;
+                    String ngaytra;
+                    try {
+                        ngaytra = sdf.format(dateChooser_ngaytra.getDate());
+                        ngaymuon2 = sdf.format(dateChooser.getDate());
+                    } catch (Exception e2) {
+                        JOptionPane.showMessageDialog(null, "Ngày sai");
+                        return;
+                    }
+                    int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
+                    int mapm = Integer.parseInt(dtmctpm.getValueAt(i, 1).toString());
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnxoactpm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablectpm.getSelectedRow();
+                if (i >= 0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String ngaytra = sdf.format(dateChooser_ngaytra.getDate());
+                    int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnthemphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (txtManhanvienphieunhap.getText().isEmpty()) {
+                    thongbao("Mã nhân viên");
+                    return;
+                }
+                if (txtManccPhieuNhap.getText().isEmpty()) {
+                    thongbao("Mã NCC");
+                    return;
+                }
+                if (NgayNhapPhieuNhap.getDate() == null) {
+                    thongbao("Ngày Nhập");
+                    return;
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
+                int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
+                int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
+            }
+        });
+
+        btnsuaphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablephieunhap.getSelectedRow();
+                if (i >= 0) {
+                    if (txtManhanvienphieunhap.getText().isEmpty()) {
+                        thongbao("Mã nhân viên");
+                        return;
+                    }
+                    if (txtManccPhieuNhap.getText().isEmpty()) {
+                        thongbao("Mã NCC");
+                        return;
+                    }
+                    if (NgayNhapPhieuNhap.getDate() == null) {
+                        thongbao("Ngày Nhập");
+                        return;
+                    }
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                    String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
+                    int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
+                    int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnxoaphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablephieunhap.getSelectedRow();
+                if (i >= 0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                    String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
+                    int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
+                    int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnthemchitietphieunhap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (txtMaSachctpn.getText().isEmpty()) {
+                    thongbao("Mã sách");
+                    return;
+                }
+                if (!isNumber(txtsoluongctpn.getText())) {
+                    JOptionPane.showMessageDialog(null, "Số lượng phải nhập số");
+                    return;
+                }
+                if (txtsoluongctpn.getText().isEmpty()) {
+                    thongbao("Số lượng");
+                    return;
+                }
+                if (!isNumber(txtgianhap.getText())) {
+                    JOptionPane.showMessageDialog(null, "Giá nhập phải là số");
+                    return;
+                }
+                if (txtgianhap.getText().isEmpty()) {
+                    thongbao("Giá nhập");
+                    return;
+                }
+                int masach = Integer.parseInt(txtMaSachctpn.getText());
+                int sl = Integer.parseInt(txtsoluongctpn.getText());
+                int gia = Integer.parseInt(txtgianhap.getText());
+            }
+        });
+
+        btnxoactpn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablechitietphieunhap.getSelectedRow();
+                if (i >= 0) {
+                    int masach = Integer.parseInt(txtMaSachctpn.getText());
+                    int sl = Integer.parseInt(txtsoluongctpn.getText());
+                    int gia = Integer.parseInt(txtgianhap.getText());
+                    int mactpn = Integer.parseInt(dtmchitietphieunhap.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                        // Không có thông báo GUI ở đây
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        btnsuactpn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablechitietphieunhap.getSelectedRow();
+                if (i >= 0) {
+                    if (txtMaSachctpn.getText().isEmpty()) {
+                        thongbao("Mã sách");
+                        return;
+                    }
+                    if (!isNumber(txtsoluongctpn.getText())) {
+                        JOptionPane.showMessageDialog(null, "Số lượng phải nhập số");
+                        return;
+                    }
+                    if (txtsoluongctpn.getText().isEmpty()) {
+                        thongbao("Số lượng");
+                        return;
+                    }
+                    if (!isNumber(txtgianhap.getText())) {
+                        JOptionPane.showMessageDialog(null, "Giá nhập phải là số");
+                        return;
+                    }
+                    if (txtgianhap.getText().isEmpty()) {
+                        thongbao("Giá nhập");
+                        return;
+                    }
+                    int masach = Integer.parseInt(txtMaSachctpn.getText());
+                    int sl = Integer.parseInt(txtsoluongctpn.getText());
+                    int gia = Integer.parseInt(txtgianhap.getText());
+                    int mactpn = Integer.parseInt(dtmchitietphieunhap.getValueAt(i, 0).toString());
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+
+        addSachEventListeners();
+        addDocGiaEventListeners();
+        addTacGiaEventListeners();
+    }
+
+    private void moveFrame(int x, int y) {
+        this.setLocation(x - x_mouse, y - y_mouse);
+    }
+
+    public void loadloaisach() {
+        dtmloai.setRowCount(0);
+        cmbmaloai.removeAllItems();
+    }
+
+    public void loadnxb() {
+        dtmnhaxuatban.setRowCount(0);
+        cmbmanhaxuatban.removeAllItems();
+    }
+
+    public void loadnhacungcap() {
+        dtmncc.setRowCount(0);
+    }
+
+    public void loadkesach() {
+        dtmke.setRowCount(0);
+        cmbmakesach.removeAllItems();
+    }
+
+    public void loadnhanvien() {
+        dtmnhanvien.setRowCount(0);
+        cmbnhanvienpm.removeAllItems();
+    }
+
+    public void loadtacgia() {
+        dtmtacgia.setRowCount(0);
+        cmbmatg.removeAllItems();
+    }
+
+    public void loaddocgia() {
+        dtmdocgia.setRowCount(0);
+    }
+
+    public void loadsach() {
+        dtmsach.setRowCount(0);
+    }
+
+    public void loadphieumuon() {
+        dtmmuon.setRowCount(0);
+    }
+
+    public void loadctphieumuon() {
+        dtmctpm.setRowCount(0);
+    }
+
+    public void loadphieunhap() {
+        dtmphieunhap.setRowCount(0);
+    }
+
+    public void loadthongkephieunhap() {
+        dtmthongkenhaphang.setRowCount(0);
+    }
+
+    public void loadctphieunhap() {
+        dtmchitietphieunhap.setRowCount(0);
+    }
+
+    public String tinhtrangmuon() {
+        if (rdmuon.isSelected()) {
+            return "Đang Mượn";
+        }
+        return "Đã Trả";
+    }
+
+    private static void addPopup(Component component, final JPopupMenu popup) {
+        component.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            private void showMenu(MouseEvent e) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+    }
+
+    private void xuLyChonAnh() {
+        JFileChooser fileChooser = new JFileChooser("img/sach/");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp hình ảnh", "jpg", "png", "jpeg");
+        fileChooser.setFileFilter(filter);
+        int returnVal = fileChooser.showOpenDialog(null);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String name = fileChooser.getSelectedFile().getName();
+            hinhanh = name;
+            lblhinhanhpre.setIcon(getAnhSP(name));
+            System.out.println(name);
+        }
+    }
+
+    File fileAnhSP;
+
+    private ImageIcon getAnhSP(String src) {
+        src = src.trim().equals("") ? "default.png" : src;
+        BufferedImage img = null;
+        File fileImg = new File("img/sach/" + src);
+
+        if (!fileImg.exists()) {
+            src = "default.png";
+            fileImg = new File("img/sach/" + src);
+        }
+
+        try {
+            img = ImageIO.read(fileImg);
+            fileAnhSP = new File("img/sach/" + src);
+        } catch (IOException e) {
+            fileAnhSP = new File("img/sach/default.png");
+        }
+
+        if (img != null) {
+            Image dimg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            return new ImageIcon(dimg);
+        }
+        return null;
+    }
+
+    public static void thongbao(String s) {
+        JOptionPane.showMessageDialog(null, s + " không được bỏ trống");
+    }
+
+    public static boolean isNumber(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void loadSachData() {
+        dtmsach.setRowCount(0);
+        sachBUS.getAllSach().forEach(sach -> dtmsach.addRow(
+                new Object[] { sach.getMaSach(), sach.getTenSach(), sach.getNamXB(), sach.getSoLuong() }));
+    }
+
+    private void loadDocGiaData() {
+        dtmdocgia.setRowCount(0);
+        docGiaBUS.getAllDocGia().forEach(docGia -> dtmdocgia.addRow(
+                new Object[] { docGia.getMaDocGia(), docGia.getTenDocGia(), docGia.getGioiTinh() }));
+    }
+
+    private void loadTacGiaData() {
+        dtmtacgia.setRowCount(0);
+        tacGiaBUS.getAllTacGia().forEach(tacGia -> dtmtacgia.addRow(
+                new Object[] { tacGia.getMaTacGia(), tacGia.getTenTacGia() }));
+    }
+
+    // Add event listeners for SachPanel
+    private void addSachEventListeners() {
+        btnthemsach.addActionListener(e -> {
             try {
-                img = ImageIO.read(fileImg);
-                fileAnhSP = new File("img/sach/" + src);
-            } catch (IOException e) {
-                fileAnhSP = new File("img/sach/default.png");
+                SachDTO sach = new SachDTO();
+                sach.setTenSach(txttensach.getText());
+                sach.setNamXB(Integer.parseInt(txtnamxbsach.getText()));
+                sach.setSoLuong(Integer.parseInt(txtsoluongsach.getText()));
+                if (sachBUS.themSach(sach)) {
+                    JOptionPane.showMessageDialog(null, "Thêm sách thành công!");
+                    loadSachData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
             }
+        });
 
-            if (img != null) {
-                Image dimg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                return new ImageIcon(dimg);
-            }
-            return null;
-        }
-
-        public static void thongbao(String s) {
-            JOptionPane.showMessageDialog(null, s + " không được bỏ trống");
-        }
-
-        public static boolean isNumber(String s) {
+        btnsuasach.addActionListener(e -> {
             try {
-                Double.parseDouble(s);
-                return true;
-            } catch (Exception e) {
-                return false;
+                int selectedRow = tablesach.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để sửa!");
+                    return;
+                }
+                SachDTO sach = new SachDTO();
+                sach.setMaSach((int) dtmsach.getValueAt(selectedRow, 0));
+                sach.setTenSach(txttensach.getText());
+                sach.setNamXB(Integer.parseInt(txtnamxbsach.getText()));
+                sach.setSoLuong(Integer.parseInt(txtsoluongsach.getText()));
+                if (sachBUS.suaSach(sach)) {
+                    JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
+                    loadSachData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
             }
-        }
+        });
+
+        btnxoasach.addActionListener(e -> {
+            try {
+                int selectedRow = tablesach.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để xóa!");
+                    return;
+                }
+                int maSach = (int) dtmsach.getValueAt(selectedRow, 0);
+                if (sachBUS.xoaSach(maSach)) {
+                    JOptionPane.showMessageDialog(null, "Xóa sách thành công!");
+                    loadSachData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+    }
+
+    // Add event listeners for DocGiaPanel
+    private void addDocGiaEventListeners() {
+        btnthemdocgia.addActionListener(e -> {
+            try {
+                DocGiaDTO docGia = new DocGiaDTO();
+                docGia.setTenDocGia(txtTendocgia.getText());
+                docGia.setGioiTinh(txtgioitinhdocgia.getText());
+                if (docGiaBUS.themDocGia(docGia)) {
+                    JOptionPane.showMessageDialog(null, "Thêm độc giả thành công!");
+                    loadDocGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+
+        btnsuadocgia.addActionListener(e -> {
+            try {
+                int selectedRow = tabledocgia.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn độc giả để sửa!");
+                    return;
+                }
+                DocGiaDTO docGia = new DocGiaDTO();
+                docGia.setMaDocGia((int) dtmdocgia.getValueAt(selectedRow, 0));
+                docGia.setTenDocGia(txtTendocgia.getText());
+                docGia.setGioiTinh(txtgioitinhdocgia.getText());
+                if (docGiaBUS.suaDocGia(docGia)) {
+                    JOptionPane.showMessageDialog(null, "Sửa độc giả thành công!");
+                    loadDocGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+
+        btnxoadocgia.addActionListener(e -> {
+            try {
+                int selectedRow = tabledocgia.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn độc giả để xóa!");
+                    return;
+                }
+                int maDocGia = (int) dtmdocgia.getValueAt(selectedRow, 0);
+                if (docGiaBUS.xoaDocGia(maDocGia)) {
+                    JOptionPane.showMessageDialog(null, "Xóa độc giả thành công!");
+                    loadDocGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+    }
+
+    // Add event listeners for TacGiaPanel
+    private void addTacGiaEventListeners() {
+        btnThemTacgia.addActionListener(e -> {
+            try {
+                TacGiaDTO tacGia = new TacGiaDTO();
+                tacGia.setTenTacGia(txtTentacgia.getText());
+                if (tacGiaBUS.themTacGia(tacGia)) {
+                    JOptionPane.showMessageDialog(null, "Thêm tác giả thành công!");
+                    loadTacGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+
+        btnsuatacgia.addActionListener(e -> {
+            try {
+                int selectedRow = tabletacgia.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
+                    return;
+                }
+                TacGiaDTO tacGia = new TacGiaDTO();
+                tacGia.setMaTacGia((int) dtmtacgia.getValueAt(selectedRow, 0));
+                tacGia.setTenTacGia(txtTentacgia.getText());
+                if (tacGiaBUS.suaTacGia(tacGia)) {
+                    JOptionPane.showMessageDialog(null, "Sửa tác giả thành công!");
+                    loadTacGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+
+        btnxoatacgia.addActionListener(e -> {
+            try {
+                int selectedRow = tabletacgia.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để xóa!");
+                    return;
+                }
+                int maTacGia = (int) dtmtacgia.getValueAt(selectedRow, 0);
+                if (tacGiaBUS.xoaTacGia(maTacGia)) {
+                    JOptionPane.showMessageDialog(null, "Xóa tác giả thành công!");
+                    loadTacGiaData();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+            }
+        });
+    }
 }
