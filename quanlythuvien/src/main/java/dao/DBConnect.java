@@ -8,9 +8,9 @@ public class DBConnect {
     private static Connection connection;
 
     // Thông tin kết nối cơ sở dữ liệu
-    private static final String URL = "jdbc:mysql://localhost:3306/quanlythuvien";
-    private static final String USERNAME = "admin1";
-    private static final String PASSWORD = "abc123";
+    private static final String url = "jdbc:mysql://127.0.0.1:3306/quanlythuvien";
+    private static final String username = "root";
+    private static final String password = "";
 
     // Constructor private để ngăn tạo đối tượng từ bên ngoài
     private DBConnect() {}
@@ -19,7 +19,7 @@ public class DBConnect {
     public static Connection getConnection() {
         if (connection == null) {
             try {
-                connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                connection = DriverManager.getConnection(url, username, password);
                 System.out.println("Kết nối cơ sở dữ liệu thành công!");
             } catch (SQLException e) {
                 System.err.println("Kết nối cơ sở dữ liệu thất bại!");

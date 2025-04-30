@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableRowSorter;
 
 public class MyTable extends JTable {
 
@@ -17,7 +18,7 @@ public class MyTable extends JTable {
         this.setIntercellSpacing(new Dimension(0, 0));
         this.setRowHeight(25);
         this.setSelectionBackground(new Color(50, 154, 114));
-        this.setSelectionForeground(Color.WHITE);
+        this.setSelectionForeground(Color.white);
         this.setFont(new Font("Arial", Font.PLAIN, 16));
 
         JTableHeader header = this.getTableHeader();
@@ -36,5 +37,9 @@ public class MyTable extends JTable {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         this.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+
+        //SORT HEADER TABLE
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
+        this.setRowSorter(sorter);
     }
 }

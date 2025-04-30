@@ -54,6 +54,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+
+import dto.PhieuNhapDTO;
+import dto.ChiTietPhieuNhapDTO;
+
+import bus.PhieuNhapBUS;
+
+import java.util.logging.SimpleFormatter;
 
 public class MainFrame extends JFrame {
     public static String Ma;
@@ -327,22 +336,8 @@ public class MainFrame extends JFrame {
         thanhtitle();
         menuleft();
         addEvent();
+        loadphieunhap();
         
-        // Initialize empty tables
-        dtmsach = new DefaultTableModel();
-        dtmdocgia = new DefaultTableModel();
-        dtmtacgia = new DefaultTableModel();
-        dtmnhaxuatban = new DefaultTableModel();
-        dtmnhanvien = new DefaultTableModel();
-        dtmmuon = new DefaultTableModel();
-        dtmctpm = new DefaultTableModel();
-        dtmphieunhap = new DefaultTableModel();
-        dtmchitietphieunhap = new DefaultTableModel();
-        dtmloai = new DefaultTableModel();
-        dtmncc = new DefaultTableModel();
-        dtmke = new DefaultTableModel();
-        dtmthongkesachmuon = new DefaultTableModel();
-        dtmthongkenhaphang = new DefaultTableModel();
     }
 
     public void thanhtitle() {
@@ -652,7 +647,7 @@ public class MainFrame extends JFrame {
 
         dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
-        dateChooser.setEnabled(false);
+        dateChooser.setEnabled(true);
         dateChooser.setDate(Calendar.getInstance().getTime());
         dateChooser.setBounds(111, 171, 236, 36);
         panel_3.add(dateChooser);
@@ -869,7 +864,7 @@ public class MainFrame extends JFrame {
 
         NgayNhapPhieuNhap = new JDateChooser();
         NgayNhapPhieuNhap.setBounds(144, 174, 145, 33);
-        NgayNhapPhieuNhap.setEnabled(false);
+        NgayNhapPhieuNhap.setEnabled(true);
         NgayNhapPhieuNhap.setDate(Calendar.getInstance().getTime());
         NgayNhapPhieuNhap.setDateFormatString("yyyy-MM-dd");
         panel_6.add(NgayNhapPhieuNhap);
@@ -897,6 +892,7 @@ public class MainFrame extends JFrame {
         btntailai = new JButton("Tải Lại");
         btntailai.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    loadphieunhap();
                 }
         });
         btntailai.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -911,6 +907,7 @@ public class MainFrame extends JFrame {
         dtmphieunhap.addColumn("Mã NV");
         dtmphieunhap.addColumn("Mã NCC");
         dtmphieunhap.addColumn("Mã Ngày Nhập");
+        dtmphieunhap.addColumn("Tổng tiền");
         
         tablephieunhap = new MyTable(dtmphieunhap);
 
@@ -2101,13 +2098,10 @@ public class MainFrame extends JFrame {
             tablephieunhap.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseReleased(MouseEvent e) {}
-
                 @Override
                 public void mousePressed(MouseEvent e) {}
-
                 @Override
                 public void mouseExited(MouseEvent e) {}
-
                 @Override
                 public void mouseEntered(MouseEvent e) {}
 
@@ -2115,18 +2109,31 @@ public class MainFrame extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     int i = tablephieunhap.getSelectedRow();
                     if (i >= 0) {
-                        mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                        lblmaphieunhap.setText("Mã Phiếu Nhập " + mapn);
-                        txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 0).toString());
-                        txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
-                        Date date2;
                         try {
-                            date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmphieunhap.getValueAt(i, 3).toString());
-                            NgayNhapPhieuNhap.setDate(date2);
-                        } catch (ParseException ex) {
+                            mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                            lblmaphieunhap.setText("Mã Phiếu Nhập " + mapn);
+                            txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
+                            txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 2).toString());
+                            Date date2;
+                            try {
+                                date2 = new SimpleDateFormat("yyyy-MM-dd").parse(dtmphieunhap.getValueAt(i, 3).toString());
+                                NgayNhapPhieuNhap.setDate(date2);
+                            } catch (ParseException ex) {
+                                ex.printStackTrace();
+                                JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày nhập!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                            int maphieunhap = mapn;
+                            dtmchitietphieunhap.setRowCount(0);
+                        } catch (NumberFormatException ex) {
                             ex.printStackTrace();
+                            JOptionPane.showMessageDialog(null, "Mã phiếu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                         }
-                        int maphieunhap = mapn;
+                    } else {
+                        System.out.println("Không có hàng nào được chọn hoặc bảng rỗng!");
+                        // Reset các trường nhập liệu
+                        lblmaphieunhap.setText("Mã Phiếu Nhập");
+                        txtManhanvienphieunhap.setText("");
+                        txtManccPhieuNhap.setText("");
                         dtmchitietphieunhap.setRowCount(0);
                     }
                 }
@@ -3346,57 +3353,72 @@ public class MainFrame extends JFrame {
                             thongbao("Ngày Nhập");
                             return;
                         }
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                        int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                        int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                    }
-                });
-
-                btnsuaphieunhap.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        int i = tablephieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            if (txtManhanvienphieunhap.getText().isEmpty()) {
-                                thongbao("Mã nhân viên");
-                                return;
-                            }
-                            if (txtManccPhieuNhap.getText().isEmpty()) {
-                                thongbao("Mã NCC");
-                                return;
-                            }
-                            if (NgayNhapPhieuNhap.getDate() == null) {
-                                thongbao("Ngày Nhập");
-                                return;
-                            }
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                            String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                            int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                            int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                        } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                        
+                        PhieuNhapDTO phieunhapmoi = new PhieuNhapDTO();
+                        phieunhapmoi.setNgaynhap(NgayNhapPhieuNhap.getDate());
+                        phieunhapmoi.setManv(Integer.parseInt(txtManhanvienphieunhap.getText()));
+                        phieunhapmoi.setMancc(Integer.parseInt(txtManccPhieuNhap.getText()));
+                        boolean i = PhieuNhapBUS.gI().addPhieuNhap(phieunhapmoi);
+                        if (i){
+                            loadphieunhap();
                         }
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                        String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
+//                        int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
+//                        int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
                     }
                 });
 
-                btnxoaphieunhap.addActionListener(new ActionListener() {
+                btnsuaphieunhap.addActionListener(new ActionListener(){
+                   @Override
+                   public void actionPerformed(ActionEvent arg0){
+                       int i = tablephieunhap.getSelectedRow();
+                       if (i>=0){
+                           if (txtManhanvienphieunhap.getText().isEmpty()){
+                               thongbao("Mã nhân viên");
+                               return;
+                           }
+                           if (txtManccPhieuNhap.getText().isEmpty()){
+                               thongbao("Mã nhà cung cấp");
+                               return;
+                           }
+                           if (NgayNhapPhieuNhap.getDate() == null){
+                               thongbao("Ngày nhập");
+                               return;
+                           }
+                           
+                           int maphieunhap = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                           int manv = Integer.parseInt(txtManhanvienphieunhap.getText());
+                           int mancc = Integer.parseInt(txtManccPhieuNhap.getText());
+                           Date ngaysua = NgayNhapPhieuNhap.getDate();
+                           PhieuNhapDTO phieunhapsua = new PhieuNhapDTO(maphieunhap, mancc, manv, ngaysua);
+                           boolean j = PhieuNhapBUS.gI().updatePhieuNhap(phieunhapsua);
+                           if (j){
+                               loadphieunhap();
+                               JOptionPane.showMessageDialog(contentPane, "Đã sửa phiếu nhập có mã "+mapn);
+                           }
+                       } else {
+                           JOptionPane.showMessageDialog(contentPane,  "Bạn Chưa Chọn vào table");
+                       }
+                   }
+                });
+
+                btnxoaphieunhap.addActionListener(new ActionListener(){
                     @Override
-                    public void actionPerformed(ActionEvent arg0) {
+                    public void actionPerformed(ActionEvent arg0){
                         int i = tablephieunhap.getSelectedRow();
-                        if (i >= 0) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            int vitri = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                            String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
-                            int Manv = Integer.parseInt(txtManhanvienphieunhap.getText());
-                            int Mancc = Integer.parseInt(txtManccPhieuNhap.getText());
-                            int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                            if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
+                        if (i>0){
+                            int mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+                            if (JOptionPane.showConfirmDialog(contentPane,  "Bạn chắc chắn xóa", "",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+                             boolean j = PhieuNhapBUS.gI().deletePhieuNhap(mapn);
+                             
+                             if (j){
+                                 loadphieunhap();
+                                 JOptionPane.showMessageDialog(contentPane, "Đã xóa phiếu nhập có mã "+mapn);
+                             }
                             }
                         } else {
-                            JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                            JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn cột nào");
                         }
                     }
                 });
@@ -3533,17 +3555,46 @@ public class MainFrame extends JFrame {
         public void loadctphieumuon() {
             dtmctpm.setRowCount(0);
         }
+        public static ArrayList<PhieuNhapDTO> phieunhap = new ArrayList<PhieuNhapDTO>();
 
         public void loadphieunhap() {
-            dtmphieunhap.setRowCount(0);
-        }
+            System.out.println("Đã gọi loadphieunhap");
+            dtmphieunhap.setRowCount(0); // Xóa tất cả hàng hiện tại
+            phieunhap = PhieuNhapBUS.gI().getAllPhieuNhap(); // Lấy danh sách phiếu nhập
 
+            if (phieunhap == null || phieunhap.isEmpty()) {
+                System.out.println("Không có dữ liệu phiếu nhập!");
+                JOptionPane.showMessageDialog(null, "Không có phiếu nhập nào để hiển thị!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                // Reset các trường nhập liệu
+                lblmaphieunhap.setText("Mã Phiếu Nhập");
+                txtManhanvienphieunhap.setText("");
+                txtManccPhieuNhap.setText("");
+                NgayNhapPhieuNhap.setDate(null);
+                dtmchitietphieunhap.setRowCount(0);
+                return;
+            }
+
+            for (PhieuNhapDTO pn : phieunhap) {
+                dtmphieunhap.addRow(new Object[]{
+                    pn.getMaphieunhap(),
+                    pn.getManv(),
+                    pn.getMancc(),
+                    pn.getNgaynhap(),
+                    pn.getTongTien()
+                });
+            }
+            System.out.println("Số hàng trong bảng: " + dtmphieunhap.getRowCount());
+        }
         public void loadthongkephieunhap() {
+            System.out.println("Đã gọi load chi tiết phiếu nhập");
             dtmthongkenhaphang.setRowCount(0);
+            
         }
-
+        
+        public static ArrayList<ChiTietPhieuNhapDTO
         public void loadctphieunhap() {
             dtmchitietphieunhap.setRowCount(0);
+            ctpn
         }
 
         public String tinhtrangmuon() {
