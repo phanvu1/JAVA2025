@@ -61,6 +61,7 @@ import dto.PhieuNhapDTO;
 import dto.ChiTietPhieuNhapDTO;
 
 import bus.PhieuNhapBUS;
+import bus.ChiTietPhieuNhapBUS;
 
 import java.util.logging.SimpleFormatter;
 
@@ -298,6 +299,7 @@ public class MainFrame extends JFrame {
     private JLabel lblNewLabel_14;
     private JTextField txtgianhap;
     private JLabel lblmaphieunhap;
+    private JTextField txtmpnctpn;
     private JButton btnthemchitietphieunhap;
     private JButton btnsuactpn;
     private JButton btnxoactpn;
@@ -337,7 +339,7 @@ public class MainFrame extends JFrame {
         menuleft();
         addEvent();
         loadphieunhap();
-        
+        loadctphieunhap();
     }
 
     public void thanhtitle() {
@@ -893,6 +895,7 @@ public class MainFrame extends JFrame {
         btntailai.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     loadphieunhap();
+                    loadctphieunhap();
                 }
         });
         btntailai.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -962,6 +965,14 @@ public class MainFrame extends JFrame {
         lblmaphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblmaphieunhap.setBounds(12, 13, 127, 33);
         panel_6_1.add(lblmaphieunhap);
+        
+        txtmpnctpn = new JTextField();
+        txtmpnctpn.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtmpnctpn.setColumns(10);
+        txtmpnctpn.setBounds(152, 13, 91, 33);
+        txtmpnctpn.setEditable(false);
+        txtmpnctpn.setFocusable(false);
+        panel_6_1.add(txtmpnctpn);
 
         btnthemchitietphieunhap = new JButton("Thêm");
         btnthemchitietphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -983,12 +994,10 @@ public class MainFrame extends JFrame {
         pnPhieuNhap.add(scrollPane_9_1);
 
         dtmchitietphieunhap = new DefaultTableModel();
-        dtmchitietphieunhap.addColumn("Mã CTPN");
         dtmchitietphieunhap.addColumn("Mã PN");
         dtmchitietphieunhap.addColumn("Mã Sách");
         dtmchitietphieunhap.addColumn("Số Lượng");
         dtmchitietphieunhap.addColumn("Đơn Giá");
-        dtmchitietphieunhap.addColumn("Thành Tiền");
         tablechitietphieunhap = new MyTable(dtmchitietphieunhap);
 
         scrollPane_9_1.setViewportView(tablechitietphieunhap);
@@ -2110,8 +2119,7 @@ public class MainFrame extends JFrame {
                     int i = tablephieunhap.getSelectedRow();
                     if (i >= 0) {
                         try {
-                            mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                            lblmaphieunhap.setText("Mã Phiếu Nhập " + mapn);
+                            txtmpnctpn.setText(dtmphieunhap.getValueAt(i, 0).toString());
                             txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
                             txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 2).toString());
                             Date date2;
@@ -2156,10 +2164,10 @@ public class MainFrame extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     int i = tablechitietphieunhap.getSelectedRow();
                     if (i >= 0) {
-                        lblmaphieunhap.setText("Mã Phiếu Nhập " + dtmchitietphieunhap.getValueAt(i, 1).toString());
-                        txtMaSachctpn.setText(dtmchitietphieunhap.getValueAt(i, 2).toString());
-                        txtsoluongctpn.setText(dtmchitietphieunhap.getValueAt(i, 3).toString());
-                        txtgianhap.setText(dtmchitietphieunhap.getValueAt(i, 4).toString());
+                        txtmpnctpn.setText(dtmphieunhap.getValueAt(i, 0).toString());
+                        txtMaSachctpn.setText(dtmchitietphieunhap.getValueAt(i, 1).toString());
+                        txtsoluongctpn.setText(dtmchitietphieunhap.getValueAt(i, 2).toString());
+                        txtgianhap.setText(dtmchitietphieunhap.getValueAt(i, 3).toString());
                     }
                 }
             });
@@ -3591,11 +3599,20 @@ public class MainFrame extends JFrame {
             
         }
         
-//        public static ArrayList<ChiTietPhieuNhapDTO
-//        public void loadctphieunhap() {
-//            dtmchitietphieunhap.setRowCount(0);
-//            ctpn
-//        }
+        public static ArrayList<ChiTietPhieuNhapDTO> ctpn = new ArrayList<ChiTietPhieuNhapDTO>();
+        public void loadctphieunhap() {
+            dtmchitietphieunhap.setRowCount(0);
+            ctpn = ChiTietPhieuNhapBUS.gI().getAllChiTietPhieuNhap();
+            
+            for (ChiTietPhieuNhapDTO ct : ctpn){
+                dtmchitietphieunhap.addRow(new Object[]{
+                    ct.getMaphieunhap(),
+                    ct.getMasach(),
+                    ct.getGia(),
+                    ct.getSoluong()
+                });
+            }
+        }
 
         public String tinhtrangmuon() {
             if (rdmuon.isSelected()) {
