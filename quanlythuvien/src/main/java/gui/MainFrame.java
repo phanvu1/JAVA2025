@@ -3591,11 +3591,11 @@ public class MainFrame extends JFrame {
             
         }
         
-        public static ArrayList<ChiTietPhieuNhapDTO
-        public void loadctphieunhap() {
-            dtmchitietphieunhap.setRowCount(0);
-            ctpn
-        }
+//        public static ArrayList<ChiTietPhieuNhapDTO
+//        public void loadctphieunhap() {
+//            dtmchitietphieunhap.setRowCount(0);
+//            ctpn
+//        }
 
         public String tinhtrangmuon() {
             if (rdmuon.isSelected()) {
@@ -3674,4 +3674,4 @@ public class MainFrame extends JFrame {
                 return false;
             }
         }
-}
+    }
