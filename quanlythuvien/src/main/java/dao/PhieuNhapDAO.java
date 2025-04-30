@@ -1,6 +1,7 @@
 package dao;
 
 import dto.PhieuNhapDTO;
+import dao.ChiTietPhieuNhapDAO;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -18,6 +19,33 @@ public class PhieuNhapDAO {
         }
     }
     
+    public boolean updateTongTienByMaPN(int maphieunhap) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            ChiTietPhieuNhapDAO chiTietDAO = new ChiTietPhieuNhapDAO();
+            double tongtien = chiTietDAO.getTongTienByMaPN(maphieunhap);
+
+            String sql = "UPDATE phieunhap SET tongtien = ? WHERE maphieunhap = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setDouble(1, tongtien);
+            stmt.setInt(2, maphieunhap);
+
+            int rows = stmt.executeUpdate();
+            result = rows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL trong updateTongTienByMaPN: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
     public ArrayList<PhieuNhapDTO> getAll() {
         ArrayList<PhieuNhapDTO> phieunhaplist = new ArrayList<>();
         PreparedStatement stmt = null;
@@ -161,6 +189,7 @@ public class PhieuNhapDAO {
         return result;
     }
     
+    
     public void close() {
         if (conn != null) {
             try {
@@ -171,4 +200,5 @@ public class PhieuNhapDAO {
             }
         }
     }
+    
 }

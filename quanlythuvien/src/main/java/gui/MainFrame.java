@@ -2130,8 +2130,18 @@ public class MainFrame extends JFrame {
                                 ex.printStackTrace();
                                 JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày nhập!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                             }
-                            int maphieunhap = mapn;
+                            int maphieunhap = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
                             dtmchitietphieunhap.setRowCount(0);
+                            for (ChiTietPhieuNhapDTO ct :ctpn){
+                                if (ct.getMaphieunhap() == maphieunhap){
+                                    dtmchitietphieunhap.addRow(new Object[]{
+                                    ct.getMaphieunhap(),
+                                    ct.getMasach(),
+                                    ct.getSoluong(),
+                                    ct.getGia()
+                                });
+                               }
+                            }
                         } catch (NumberFormatException ex) {
                             ex.printStackTrace();
                             JOptionPane.showMessageDialog(null, "Mã phiếu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -2164,7 +2174,7 @@ public class MainFrame extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     int i = tablechitietphieunhap.getSelectedRow();
                     if (i >= 0) {
-                        txtmpnctpn.setText(dtmphieunhap.getValueAt(i, 0).toString());
+                        txtmpnctpn.setText(dtmchitietphieunhap.getValueAt(i, 0).toString());
                         txtMaSachctpn.setText(dtmchitietphieunhap.getValueAt(i, 1).toString());
                         txtsoluongctpn.setText(dtmchitietphieunhap.getValueAt(i, 2).toString());
                         txtgianhap.setText(dtmchitietphieunhap.getValueAt(i, 3).toString());
@@ -3369,6 +3379,8 @@ public class MainFrame extends JFrame {
                         boolean i = PhieuNhapBUS.gI().addPhieuNhap(phieunhapmoi);
                         if (i){
                             loadphieunhap();
+                            dtmchitietphieunhap.setRowCount(0);
+                            txtMaSachctpn.requestFocusInWindow();
                         }
 //                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //                        String ngaynhap = sdf.format(NgayNhapPhieuNhap.getDate());
@@ -3403,6 +3415,7 @@ public class MainFrame extends JFrame {
                            boolean j = PhieuNhapBUS.gI().updatePhieuNhap(phieunhapsua);
                            if (j){
                                loadphieunhap();
+                               txtMaSachctpn.requestFocusInWindow();
                                JOptionPane.showMessageDialog(contentPane, "Đã sửa phiếu nhập có mã "+mapn);
                            }
                        } else {
@@ -3415,9 +3428,10 @@ public class MainFrame extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent arg0){
                         int i = tablephieunhap.getSelectedRow();
-                        if (i>0){
+                        if (i>=0){
                             int mapn = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
                             if (JOptionPane.showConfirmDialog(contentPane,  "Bạn chắc chắn xóa", "",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+                             boolean t = ChiTietPhieuNhapBUS.gI().deleteByMaPN(mapn);
                              boolean j = PhieuNhapBUS.gI().deletePhieuNhap(mapn);
                              
                              if (j){
@@ -3434,6 +3448,10 @@ public class MainFrame extends JFrame {
                 btnthemchitietphieunhap.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
+                        if (txtmpnctpn.getText().isEmpty()) {
+                            thongbao("Hãy chọn mã phiếu nhập mà bạn cần thêm chi tiết phiếu nhập");
+                            return;
+                        }
                         if (txtMaSachctpn.getText().isEmpty()) {
                             thongbao("Mã sách");
                             return;
@@ -3454,9 +3472,29 @@ public class MainFrame extends JFrame {
                             thongbao("Giá nhập");
                             return;
                         }
+                        int mapn = Integer.parseInt(txtmpnctpn.getText());
                         int masach = Integer.parseInt(txtMaSachctpn.getText());
                         int sl = Integer.parseInt(txtsoluongctpn.getText());
-                        int gia = Integer.parseInt(txtgianhap.getText());
+                        double gia = Double.parseDouble(txtgianhap.getText());
+                        
+                        ChiTietPhieuNhapDTO ctpnmoi = new ChiTietPhieuNhapDTO(mapn, masach, gia, sl);
+                        boolean j = ChiTietPhieuNhapBUS.gI().addChiTietPhieuNhap(ctpnmoi);
+                        if (j){
+                            ctpn.add(ctpnmoi);
+                            boolean t = PhieuNhapBUS.gI().updateTongTienByMaPN(mapn);
+                            loadphieunhap();
+                            dtmchitietphieunhap.setRowCount(0);
+                            for (ChiTietPhieuNhapDTO ct :ctpn){
+                                if (ct.getMaphieunhap() == mapn){
+                                    dtmchitietphieunhap.addRow(new Object[]{
+                                    ct.getMaphieunhap(),
+                                    ct.getMasach(),
+                                    ct.getSoluong(),
+                                    ct.getGia()
+                                });
+                               }
+                            }
+                        }
                     }
                 });
 
@@ -3465,13 +3503,29 @@ public class MainFrame extends JFrame {
                     public void actionPerformed(ActionEvent arg0) {
                         int i = tablechitietphieunhap.getSelectedRow();
                         if (i >= 0) {
+                            int mapn = Integer.parseInt(txtmpnctpn.getText());
                             int masach = Integer.parseInt(txtMaSachctpn.getText());
-                            int sl = Integer.parseInt(txtsoluongctpn.getText());
-                            int gia = Integer.parseInt(txtgianhap.getText());
-                            int mactpn = Integer.parseInt(dtmchitietphieunhap.getValueAt(i, 0).toString());
                             int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
                             if (a == JOptionPane.YES_OPTION) {
-                                // Không có thông báo GUI ở đây
+                                boolean j = ChiTietPhieuNhapBUS.gI().deleteChiTietPhieuNhap(mapn, masach);
+                                if (j){
+                                    ctpn.removeLast();
+                                    boolean t = PhieuNhapBUS.gI().updateTongTienByMaPN(mapn);
+                                    loadphieunhap();
+                                    dtmchitietphieunhap.setRowCount(0);
+                                    for (ChiTietPhieuNhapDTO ct :ctpn){
+                                        if (ct.getMaphieunhap() == mapn){
+                                            dtmchitietphieunhap.addRow(new Object[]{
+                                            ct.getMaphieunhap(),
+                                            ct.getMasach(),
+                                            ct.getSoluong(),
+                                            ct.getGia()
+                                        });
+                                       }
+                                    }
+                                    JOptionPane.showMessageDialog(contentPane, "Đã xóa sản phẩm có mã phiếu nhập "+mapn+" và mã sách "+masach);
+                                }
+                                
                             }
                         } else {
                             JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
@@ -3608,8 +3662,8 @@ public class MainFrame extends JFrame {
                 dtmchitietphieunhap.addRow(new Object[]{
                     ct.getMaphieunhap(),
                     ct.getMasach(),
-                    ct.getGia(),
-                    ct.getSoluong()
+                    ct.getSoluong(),
+                    ct.getGia()
                 });
             }
         }

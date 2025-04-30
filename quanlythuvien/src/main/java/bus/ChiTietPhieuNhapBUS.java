@@ -35,6 +35,10 @@ public class ChiTietPhieuNhapBUS {
     public ChiTietPhieuNhapDTO getChiTietPhieuNhapById(int maphieunhap, int masach) {
         return chitietphieunhapdao.getById(maphieunhap, masach);
     }
+    
+    public boolean deleteByMaPN(int maphieunhap) {
+        return chitietphieunhapdao.deleteByMaPN(maphieunhap);
+    }
 
     public static ChiTietPhieuNhapBUS iBus = null;
 

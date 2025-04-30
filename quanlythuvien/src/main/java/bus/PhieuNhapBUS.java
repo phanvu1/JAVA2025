@@ -25,6 +25,10 @@ public class PhieuNhapBUS {
     public boolean updatePhieuNhap(PhieuNhapDTO phieunhap) {
         return phieunhapdao.update(phieunhap);
     }
+    
+    public boolean updateTongTienByMaPN(int maphieunhap) {
+        return phieunhapdao.updateTongTienByMaPN(maphieunhap);
+    }
 
     // Xóa phiếu nhập
     public boolean deletePhieuNhap(int maphieunhap) {

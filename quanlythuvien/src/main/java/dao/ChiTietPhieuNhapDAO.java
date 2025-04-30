@@ -17,6 +17,35 @@ public class ChiTietPhieuNhapDAO {
             throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
         }
     }
+    
+    public double getTongTienByMaPN(int maphieunhap) {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        double tongtien = 0.0;
+
+        try {
+            String sql = "SELECT SUM(soluong * gia) AS tongtien FROM chitietphieunhap WHERE maphieunhap = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maphieunhap);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                tongtien = rs.getDouble("tongtien");
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL trong getTongTienByMaPN: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return tongtien;
+    }
+
 
     public ArrayList<ChiTietPhieuNhapDTO> getAll() {
         ArrayList<ChiTietPhieuNhapDTO> chitietphieunhaplist = new ArrayList<>();
@@ -149,6 +178,29 @@ public class ChiTietPhieuNhapDAO {
             int rows = stmt.executeUpdate();
             result = rows > 0;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    public boolean deleteByMaPN(int maphieunhap) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "DELETE FROM chitietphieunhap WHERE maphieunhap = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maphieunhap);
+
+            int rows = stmt.executeUpdate();
+            result = rows >= 0; // Xóa thành công hoặc không có bản ghi nào cũng được coi là thành công
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL trong deleteByMaPN: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
