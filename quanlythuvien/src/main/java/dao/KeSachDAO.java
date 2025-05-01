@@ -24,7 +24,7 @@ public class KeSachDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM makesach";
+            String sql = "SELECT * FROM kesach";
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
 
@@ -56,7 +56,7 @@ public class KeSachDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM makesach WHERE makesach = ?";
+            String sql = "SELECT * FROM kesach WHERE makesach = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, makesach);
             rs = stmt.executeQuery();
@@ -84,7 +84,7 @@ public class KeSachDAO {
         boolean result = false;
 
         try {
-            String sql = "INSERT INTO makesach (vitri) VALUES (?)";
+            String sql = "INSERT INTO kesach (vitri) VALUES (?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, keSach.getVitri());
 
@@ -107,7 +107,7 @@ public class KeSachDAO {
         boolean result = false;
 
         try {
-            String sql = "UPDATE makesach SET vitri = ? WHERE makesach = ?";
+            String sql = "UPDATE kesach SET vitri = ? WHERE makesach = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, keSach.getVitri());
             stmt.setInt(2, keSach.getMakesach());
@@ -131,7 +131,7 @@ public class KeSachDAO {
         boolean result = false;
 
         try {
-            String sql = "DELETE FROM makesach WHERE makesach = ?";
+            String sql = "DELETE FROM kesach WHERE makesach = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, makesach);
 

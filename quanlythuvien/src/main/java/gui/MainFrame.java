@@ -60,16 +60,22 @@ import java.awt.BorderLayout;
 
 import dto.PhieuNhapDTO;
 import dto.ChiTietPhieuNhapDTO;
+import dto.SachDTO;
+import dto.DocGiaDTO;
+import dto.TacGiaDTO;
+import dto.NhaCungCapDTO;
+import dto.KeSachDTO;
+import dto.LoaiSachDTO;
 
 import bus.PhieuNhapBUS;
 import bus.ChiTietPhieuNhapBUS;
-
-import dto.SachDTO;
 import bus.SachBUS;
-import dto.DocGiaDTO;
 import bus.DocGiaBUS;
-import dto.TacGiaDTO;
 import bus.TacGiaBUS;
+import bus.NhaCungCapBUS;
+import bus.KeSachBUS;
+import bus.LoaiSachBUS;
+
 import dao.DocGiaDAO;
 import dao.SachDAO;
 import dao.TacGiaDAO;
@@ -352,6 +358,9 @@ public class MainFrame extends JFrame {
         addEvent();
         loadphieunhap();
         loadctphieunhap();
+        loadnhacungcap();
+        loadkesach();
+        loadloaisach();
     }
 
     public void thanhtitle() {
@@ -3829,23 +3838,65 @@ public class MainFrame extends JFrame {
         this.setLocation(x - x_mouse, y - y_mouse);
     }
 
+    public static ArrayList<LoaiSachDTO> loasachlist = new ArrayList<LoaiSachDTO>();
     public void loadloaisach() {
-        dtmloai.setRowCount(0);
-        cmbmaloai.removeAllItems();
+        System.out.println("Đã gọi loadloaisach");
+        dtmloai.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
+        cmbmaloai.removeAllItems(); // Xóa tất cả mục trong combobox
+        loasachlist = LoaiSachBUS.gI().getAllLoaiSach(); // Lấy danh sách loại sách
+
+
+        for (LoaiSachDTO loai : loasachlist) {
+            // Thêm vào bảng dtmloai
+            dtmloai.addRow(new Object[] {
+                    loai.getMaloai(),
+                    loai.getTenloai()
+            });
+            // Thêm vào combobox cmbmaloai
+            cmbmaloai.addItem(loai.getMaloai() + " - " + loai.getTenloai());
+        }
+        System.out.println("Số hàng trong bảng: " + dtmloai.getRowCount());
     }
 
     public void loadnxb() {
         dtmnhaxuatban.setRowCount(0);
         cmbmanhaxuatban.removeAllItems();
     }
-
+    
+    public static ArrayList<NhaCungCapDTO> ncclist = new ArrayList<NhaCungCapDTO>();
     public void loadnhacungcap() {
-        dtmncc.setRowCount(0);
-    }
+        System.out.println("Đã gọi loadnhacungcap");
+        dtmncc.setRowCount(0); // Xóa tất cả hàng hiện tại
+        ncclist = NhaCungCapBUS.gI().getAllNhaCungCap(); // Lấy danh sách nhà cung cấp
 
+
+        for (NhaCungCapDTO ncc : ncclist) {
+            dtmncc.addRow(new Object[] {
+                    ncc.getMancc(),
+                    ncc.getTenncc()
+            });
+        }
+        System.out.println("Số hàng trong bảng: " + dtmncc.getRowCount());
+    }
+    
+    public static ArrayList<KeSachDTO> kesach = new ArrayList<KeSachDTO>();
     public void loadkesach() {
-        dtmke.setRowCount(0);
-        cmbmakesach.removeAllItems();
+        System.out.println("Đã gọi loadkesach");
+        dtmke.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
+        cmbmakesach.removeAllItems(); // Xóa tất cả mục trong combobox
+        kesach = KeSachBUS.gI().getAllKeSach(); // Lấy danh sách kệ sách
+
+
+        for (KeSachDTO ke : kesach) {
+            // Thêm vào bảng dtmke
+            dtmke.addRow(new Object[] {
+                    ke.getMakesach(),
+                    ke.getVitri()
+            });
+            // Thêm vào combobox cmbmakesach
+            cmbmakesach.addItem(ke.getMakesach() + " - " + ke.getVitri());
+        }
+        System.out.println("Số hàng trong bảng: " + dtmke.getRowCount());
     }
 
     public void loadnhanvien() {
