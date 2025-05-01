@@ -7,6 +7,11 @@ import dao.SachDAO;
 import dto.SachDTO;
 
 public class SachBUS {
+
+    public static Object gI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private SachDAO sachDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -63,5 +68,17 @@ public class SachBUS {
             throw new IllegalArgumentException("Tên sách không được để trống");
         }
         return sachDAO.findSachByName(tenSach);
+    }
+
+    public boolean updateSach(SachDTO sach) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean deleteSach(int masach) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addSach(SachDTO sach) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

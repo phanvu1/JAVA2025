@@ -7,6 +7,11 @@ import dao.DocGiaDAO;
 import dto.DocGiaDTO;
 
 public class DocGiaBUS {
+
+    public static Object gI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private DocGiaDAO docGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -66,5 +71,17 @@ public class DocGiaBUS {
             throw new IllegalArgumentException("Tên độc giả không được để trống");
         }
         return docGiaDAO.findDocGiaByName(tenDocGia);
+    }
+
+    public boolean deleteDocGia(int maDocGia) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean updateDocGia(DocGiaDTO docGiaSua) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addDocGia(DocGiaDTO docGiaMoi) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

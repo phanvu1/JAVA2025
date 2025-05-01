@@ -38,6 +38,11 @@ public class SachDTO {
         this.hinhAnh = hinhAnh;
     }
 
+    public SachDTO(int masach, String tensach, String maloai, String manxb, String matg, int namxb, int soluong,
+            String make, String hinhanh) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     // Getter và Setter
     public int getMaSach() {
         return maSach;

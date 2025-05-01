@@ -28,6 +28,10 @@ public class DocGiaDTO {
         this.maThe = maThe;
     }
 
+    public DocGiaDTO(int i, String tenDocGia, String gioiTinh, String soDienThoai, String diaChi) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     // Getter và Setter
     public int getMaDocGia() {
         return maDocGia;

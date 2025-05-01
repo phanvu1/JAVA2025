@@ -7,6 +7,11 @@ import dao.TacGiaDAO;
 import dto.TacGiaDTO;
 
 public class TacGiaBUS {
+
+    public static Object gI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private TacGiaDAO tacGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -63,5 +68,17 @@ public class TacGiaBUS {
             throw new IllegalArgumentException("Tên tác giả không được để trống");
         }
         return tacGiaDAO.findTacGiaByName(tenTacGia);
+    }
+
+    public boolean deleteTacGia(int maTacGia) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean updateTacGia(TacGiaDTO tacGiaSua) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addTacGia(TacGiaDTO tacGiaMoi) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
