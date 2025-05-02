@@ -24,7 +24,7 @@ public class LoaiSachDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM maloai";
+            String sql = "SELECT * FROM loai";
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
 
@@ -56,7 +56,7 @@ public class LoaiSachDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM maloai WHERE maloai = ?";
+            String sql = "SELECT * FROM loai WHERE maloai = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, maloai);
             rs = stmt.executeQuery();
@@ -84,7 +84,7 @@ public class LoaiSachDAO {
         boolean result = false;
 
         try {
-            String sql = "INSERT INTO maloai (tenloai) VALUES (?)";
+            String sql = "INSERT INTO loai (tenloai) VALUES (?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, loaiSach.getTenloai());
 
@@ -107,7 +107,7 @@ public class LoaiSachDAO {
         boolean result = false;
 
         try {
-            String sql = "UPDATE maloai SET tenloai = ? WHERE maloai = ?";
+            String sql = "UPDATE loai SET tenloai = ? WHERE maloai = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, loaiSach.getTenloai());
             stmt.setInt(2, loaiSach.getMaloai());
@@ -131,7 +131,7 @@ public class LoaiSachDAO {
         boolean result = false;
 
         try {
-            String sql = "DELETE FROM maloai WHERE maloai = ?";
+            String sql = "DELETE FROM loai WHERE maloai = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, maloai);
 

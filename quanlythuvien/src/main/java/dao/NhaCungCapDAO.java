@@ -24,7 +24,7 @@ public class NhaCungCapDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM mancc";
+            String sql = "SELECT * FROM nhacungcap";
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
 
@@ -56,7 +56,7 @@ public class NhaCungCapDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM mancc WHERE mancc = ?";
+            String sql = "SELECT * FROM nhacungcap WHERE mancc = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, mancc);
             rs = stmt.executeQuery();
@@ -84,7 +84,7 @@ public class NhaCungCapDAO {
         boolean result = false;
 
         try {
-            String sql = "INSERT INTO mancc (tenncc) VALUES (?)";
+            String sql = "INSERT INTO nhacungcap (tenncc) VALUES (?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, nhaCungCap.getTenncc());
 
@@ -107,7 +107,7 @@ public class NhaCungCapDAO {
         boolean result = false;
 
         try {
-            String sql = "UPDATE mancc SET tenncc = ? WHERE mancc = ?";
+            String sql = "UPDATE nhacungcap SET tenncc = ? WHERE mancc = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, nhaCungCap.getTenncc());
             stmt.setInt(2, nhaCungCap.getMancc());
@@ -131,7 +131,7 @@ public class NhaCungCapDAO {
         boolean result = false;
 
         try {
-            String sql = "DELETE FROM mancc WHERE mancc = ?";
+            String sql = "DELETE FROM nhacungcap WHERE mancc = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, mancc);
 
