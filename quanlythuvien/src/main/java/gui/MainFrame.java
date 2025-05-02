@@ -2331,8 +2331,8 @@ public class MainFrame extends JFrame {
                         txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString());
                         txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 3).toString());
                         txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 4).toString());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
                                 JOptionPane.ERROR_MESSAGE);
                     }
@@ -2868,16 +2868,25 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                int i = tablesach.getSelectedRow();
-                if (i > -1) {
-                    txttensach.setText(dtmsach.getValueAt(i, 1).toString());
-                    int maloai = Integer.parseInt(dtmsach.getValueAt(i, 2).toString());
-                    int manxb = Integer.parseInt(dtmsach.getValueAt(i, 3).toString());
-                    int matg = Integer.parseInt(dtmsach.getValueAt(i, 4).toString());
-                    int make = Integer.parseInt(dtmsach.getValueAt(i, 7).toString());
-                    txtnamxbsach.setText(dtmsach.getValueAt(i, 5).toString());
-                    txtsoluongsach.setText(dtmsach.getValueAt(i, 6).toString());
-                    hinhanh = dtmsach.getValueAt(i, 8).toString();
+                int selectedRow = tablesach.getSelectedRow();
+                if (selectedRow >= 0) {
+                    try {
+                        txttensach.setText(dtmsach.getValueAt(selectedRow, 1).toString());
+                        cmbmaloai.setSelectedItem(dtmsach.getValueAt(selectedRow, 2).toString());
+                        cmbmanhaxuatban.setSelectedItem(dtmsach.getValueAt(selectedRow, 3).toString());
+                        cmbmatg.setSelectedItem(dtmsach.getValueAt(selectedRow, 4).toString());
+                        cmbmakesach.setSelectedItem(dtmsach.getValueAt(selectedRow, 7).toString());
+                        txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5).toString());
+                        txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6).toString());
+                        hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
+                        lblhinhanhpre.setIcon(getAnhSP(hinhanh));
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng: " + ex.getMessage(), "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng nào trong bảng!", "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -3854,16 +3863,50 @@ public class MainFrame extends JFrame {
     }
 
     public void loadtacgia() {
-        dtmtacgia.setRowCount(0);
-        cmbmatg.removeAllItems();
+        dtmtacgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        ArrayList<TacGiaDTO> listTacGia = new ArrayList<TacGiaDTO>(); // Lấy danh sách tác giả từ BUS
+        for (TacGiaDTO tacGia : listTacGia) {
+            dtmtacgia.addRow(new Object[] {
+                    tacGia.getMaTacGia(),
+                    tacGia.getTenTacGia(),
+                    tacGia.getNamSinh(),
+                    tacGia.getQueQuan()
+            });
+        }
     }
 
     public void loaddocgia() {
-        dtmdocgia.setRowCount(0);
+        dtmdocgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        ArrayList<DocGiaDTO> listDocGia = new ArrayList<DocGiaDTO>(); // Lấy danh sách độc giả từ BUS
+
+        for (DocGiaDTO docGia : listDocGia) {
+            dtmdocgia.addRow(new Object[] {
+                    docGia.getMaDocGia(),
+                    docGia.getTenDocGia(),
+                    docGia.getGioiTinh(),
+                    docGia.getSoDienThoai(),
+                    docGia.getDiaChi()
+            });
+        }
     }
 
     public void loadsach() {
-        dtmsach.setRowCount(0);
+        dtmsach.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        ArrayList<SachDTO> listSach = new ArrayList<SachDTO>(); // Lấy danh sách sách từ BUS
+
+        for (SachDTO sach : listSach) {
+            dtmsach.addRow(new Object[] {
+                    sach.getMaSach(),
+                    sach.getTenSach(),
+                    sach.getMaTacGia(),
+                    sach.getMaNXB(),
+                    sach.getMaLoai(),
+                    sach.getNamXB(),
+                    sach.getSoLuong(),
+                    sach.getMaKe(),
+                    sach.getHinhAnh()
+            });
+        }
     }
 
     public void loadphieumuon() {

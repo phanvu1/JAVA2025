@@ -107,4 +107,12 @@ public class SachDTO {
     public void setHinhAnh(String hinhAnh) {
         this.hinhAnh = hinhAnh;
     }
+
+    public Object getMaTacGia() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getMaKe() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
