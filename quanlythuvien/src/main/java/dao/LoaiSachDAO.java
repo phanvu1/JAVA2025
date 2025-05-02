@@ -79,14 +79,14 @@ public class LoaiSachDAO {
         return loaiSach;
     }
 
-    public boolean insert(LoaiSachDTO loaiSach) {
+    public boolean insert(String loaisach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
             String sql = "INSERT INTO loai (tenloai) VALUES (?)";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, loaiSach.getTenloai());
+            stmt.setString(1, loaisach);
 
             int rows = stmt.executeUpdate();
             result = rows > 0;

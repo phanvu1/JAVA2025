@@ -2945,7 +2945,13 @@ public class MainFrame extends JFrame {
         btnthemkesach.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(contentPane, "Thêm Thất bại");
+                if (txtKeSach.getText().isEmpty()){
+                    thongbao("Kệ sách");
+                }
+               boolean i = KeSachBUS.gI().addKeSach(txtKeSach.getText());
+               if (i){
+                   loadkesach();
+               }
             }
         });
 
@@ -2953,11 +2959,22 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tablekesach.getSelectedRow();
-                if (i > -1) {
+                if (i >= 0) {
+                    if (txtKeSach.getText().isEmpty()){
+                        thongbao("Tên kệ sách");
+                    }
                     int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                    JOptionPane.showMessageDialog(contentPane, "Sửa Thất bại");
+                    String tenkemoi = txtKeSach.getText();
+                    KeSachDTO kesachmoi = new KeSachDTO(vitri, tenkemoi);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa ma loai"+vitri, "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                       boolean j = KeSachBUS.gI().updateKeSach(kesachmoi);
+                       if (j){
+                           loadkesach();
+                       }
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -2966,14 +2983,20 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tablekesach.getSelectedRow();
-                if (i > -1) {
+                if (i >= 0) {
+                    if (txtKeSach.getText().isEmpty()){
+                        thongbao("Tên kệ sách");
+                    }
                     int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ma kệ sách"+vitri, "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá Thất bại");
+                       boolean j = KeSachBUS.gI().deleteKeSach(vitri);
+                       if (j){
+                           loadkesach();
+                       }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -2982,10 +3005,17 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tableloai.getSelectedRow();
-                int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                if (a == JOptionPane.YES_OPTION) {
-                    // Không có thông báo GUI ở đây
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ma loai"+vitri, "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                       boolean j = LoaiSachBUS.gI().deleteLoaiSach(vitri);
+                       if (j){
+                           loadloaisach();
+                       }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -2993,7 +3023,13 @@ public class MainFrame extends JFrame {
         btnThemloai.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Không có thông báo GUI ở đây
+                if (txttenloai.getText().isEmpty()){
+                    thongbao("Tên loại");
+                }
+               boolean i = LoaiSachBUS.gI().addLoaiSach(txttenloai.getText());
+               if (i){
+                   loadloaisach();
+               }
             }
         });
         btnsualoai.addActionListener(new ActionListener() {
@@ -3001,10 +3037,18 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int i = tableloai.getSelectedRow();
                 if (i >= 0) {
+                    if (txttenloai.getText().isEmpty()){
+                        thongbao("Tên loại");
+                    }
                     int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa", "", JOptionPane.YES_NO_OPTION);
+                    String tenloaimoi = txttenloai.getText();
+                    LoaiSachDTO loaisachmoi = new LoaiSachDTO(vitri, tenloaimoi);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa ma loai"+vitri, "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        // Không có thông báo GUI ở đây
+                       boolean j = LoaiSachBUS.gI().updateLoaiSach(loaisachmoi);
+                       if (j){
+                           loadloaisach();
+                       }
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");

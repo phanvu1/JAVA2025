@@ -79,14 +79,14 @@ public class NhaCungCapDAO {
         return nhaCungCap;
     }
 
-    public boolean insert(NhaCungCapDTO nhaCungCap) {
+    public boolean insert(String nhaCungCap) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
             String sql = "INSERT INTO nhacungcap (tenncc) VALUES (?)";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nhaCungCap.getTenncc());
+            stmt.setString(1, nhaCungCap);
 
             int rows = stmt.executeUpdate();
             result = rows > 0;

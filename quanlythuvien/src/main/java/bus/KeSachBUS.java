@@ -17,7 +17,7 @@ public class KeSachBUS {
     }
 
     // Thêm kệ sách mới
-    public boolean addKeSach(KeSachDTO keSach) {
+    public boolean addKeSach(String keSach) {
         return keSachDAO.insert(keSach);
     }
 

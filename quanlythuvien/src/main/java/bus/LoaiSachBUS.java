@@ -17,7 +17,7 @@ public class LoaiSachBUS {
     }
 
     // Thêm loại sách mới
-    public boolean addLoaiSach(LoaiSachDTO loaiSach) {
+    public boolean addLoaiSach(String loaiSach) {
         return loaiSachDAO.insert(loaiSach);
     }
 
