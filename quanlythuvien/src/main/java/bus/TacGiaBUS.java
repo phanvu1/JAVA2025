@@ -8,10 +8,6 @@ import dto.TacGiaDTO;
 
 public class TacGiaBUS {
 
-    public static Object gI() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     private TacGiaDAO tacGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -70,15 +66,31 @@ public class TacGiaBUS {
         return tacGiaDAO.findTacGiaByName(tenTacGia);
     }
 
-    public boolean deleteTacGia(int maTacGia) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public boolean updateTacGia(TacGiaDTO tacGiaSua) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (tacGiaSua.getMaTacGia() <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
+        }
+        return tacGiaDAO.updateTacGia(tacGiaSua);
     }
 
     public boolean addTacGia(TacGiaDTO tacGiaMoi) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return themTacGia(tacGiaMoi);
     }
+
+    public static TacGiaBUS iBus = null;
+
+    public static TacGiaBUS gI() {
+        if (iBus == null) {
+            iBus = new TacGiaBUS(null); // Thay null bằng kết nối thực tế nếu cần
+        }
+        return iBus;
+    }
+
+    public boolean deleteTacGia(int maTacGia) {
+        if (maTacGia <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
+        }
+        return tacGiaDAO.deleteTacGia(maTacGia);
+    }
+
 }

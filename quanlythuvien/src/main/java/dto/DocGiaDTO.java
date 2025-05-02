@@ -72,4 +72,8 @@ public class DocGiaDTO {
     public void setMaThe(int maThe) {
         this.maThe = maThe;
     }
+
+    public Object getSoDienThoai() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

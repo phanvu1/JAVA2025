@@ -2340,8 +2340,8 @@ public class MainFrame extends JFrame {
                         txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString());
                         txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 3).toString());
                         txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 4).toString());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
                                 JOptionPane.ERROR_MESSAGE);
                     }
@@ -2877,16 +2877,25 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                int i = tablesach.getSelectedRow();
-                if (i > -1) {
-                    txttensach.setText(dtmsach.getValueAt(i, 1).toString());
-                    int maloai = Integer.parseInt(dtmsach.getValueAt(i, 2).toString());
-                    int manxb = Integer.parseInt(dtmsach.getValueAt(i, 3).toString());
-                    int matg = Integer.parseInt(dtmsach.getValueAt(i, 4).toString());
-                    int make = Integer.parseInt(dtmsach.getValueAt(i, 7).toString());
-                    txtnamxbsach.setText(dtmsach.getValueAt(i, 5).toString());
-                    txtsoluongsach.setText(dtmsach.getValueAt(i, 6).toString());
-                    hinhanh = dtmsach.getValueAt(i, 8).toString();
+                int selectedRow = tablesach.getSelectedRow();
+                if (selectedRow >= 0) {
+                    try {
+                        txttensach.setText(dtmsach.getValueAt(selectedRow, 1).toString());
+                        cmbmaloai.setSelectedItem(dtmsach.getValueAt(selectedRow, 2).toString());
+                        cmbmanhaxuatban.setSelectedItem(dtmsach.getValueAt(selectedRow, 3).toString());
+                        cmbmatg.setSelectedItem(dtmsach.getValueAt(selectedRow, 4).toString());
+                        cmbmakesach.setSelectedItem(dtmsach.getValueAt(selectedRow, 7).toString());
+                        txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5).toString());
+                        txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6).toString());
+                        hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
+                        lblhinhanhpre.setIcon(getAnhSP(hinhanh));
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng: " + ex.getMessage(), "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng nào trong bảng!", "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -3883,12 +3892,12 @@ public class MainFrame extends JFrame {
     }
 
     public static ArrayList<LoaiSachDTO> loasachlist = new ArrayList<LoaiSachDTO>();
+
     public void loadloaisach() {
         System.out.println("Đã gọi loadloaisach");
         dtmloai.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
         cmbmaloai.removeAllItems(); // Xóa tất cả mục trong combobox
         loasachlist = LoaiSachBUS.gI().getAllLoaiSach(); // Lấy danh sách loại sách
-
 
         for (LoaiSachDTO loai : loasachlist) {
             // Thêm vào bảng dtmloai
@@ -3906,13 +3915,13 @@ public class MainFrame extends JFrame {
         dtmnhaxuatban.setRowCount(0);
         cmbmanhaxuatban.removeAllItems();
     }
-    
+
     public static ArrayList<NhaCungCapDTO> ncclist = new ArrayList<NhaCungCapDTO>();
+
     public void loadnhacungcap() {
         System.out.println("Đã gọi loadnhacungcap");
         dtmncc.setRowCount(0); // Xóa tất cả hàng hiện tại
         ncclist = NhaCungCapBUS.gI().getAllNhaCungCap(); // Lấy danh sách nhà cung cấp
-
 
         for (NhaCungCapDTO ncc : ncclist) {
             dtmncc.addRow(new Object[] {
@@ -3922,14 +3931,14 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng: " + dtmncc.getRowCount());
     }
-    
+
     public static ArrayList<KeSachDTO> kesach = new ArrayList<KeSachDTO>();
+
     public void loadkesach() {
         System.out.println("Đã gọi loadkesach");
         dtmke.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
         cmbmakesach.removeAllItems(); // Xóa tất cả mục trong combobox
         kesach = KeSachBUS.gI().getAllKeSach(); // Lấy danh sách kệ sách
-
 
         for (KeSachDTO ke : kesach) {
             // Thêm vào bảng dtmke
@@ -3949,16 +3958,86 @@ public class MainFrame extends JFrame {
     }
 
     public void loadtacgia() {
-        dtmtacgia.setRowCount(0);
-        cmbmatg.removeAllItems();
+        System.out.println("Đã gọi loadtacgia");
+        dtmtacgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+
+        ArrayList<TacGiaDTO> listTacGia = (ArrayList<TacGiaDTO>) TacGiaBUS.gI().getAllTacGia(); // Lấy danh sách tác giả
+                                                                                                // từ BUS
+
+        if (listTacGia == null || listTacGia.isEmpty()) {
+            System.out.println("Không có dữ liệu tác giả!");
+            JOptionPane.showMessageDialog(null, "Không có tác giả nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        for (TacGiaDTO tacGia : listTacGia) {
+            dtmtacgia.addRow(new Object[] {
+                    tacGia.getMaTacGia(),
+                    tacGia.getTenTacGia(),
+                    tacGia.getNamSinh(),
+                    tacGia.getQueQuan()
+            });
+        }
+
+        System.out.println("Số hàng trong bảng: " + dtmtacgia.getRowCount());
     }
 
     public void loaddocgia() {
-        dtmdocgia.setRowCount(0);
+        System.out.println("Đã gọi loaddocgia");
+        dtmdocgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+
+        ArrayList<DocGiaDTO> listDocGia = (ArrayList<DocGiaDTO>) DocGiaBUS.gI().getAllDocGia(); // Lấy danh sách độc giả
+                                                                                                // từ BUS
+
+        if (listDocGia == null || listDocGia.isEmpty()) {
+            System.out.println("Không có dữ liệu độc giả!");
+            JOptionPane.showMessageDialog(null, "Không có độc giả nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        for (DocGiaDTO docGia : listDocGia) {
+            dtmdocgia.addRow(new Object[] {
+                    docGia.getMaDocGia(),
+                    docGia.getTenDocGia(),
+                    docGia.getGioiTinh(),
+                    docGia.getSoDienThoai(),
+                    docGia.getDiaChi()
+            });
+        }
+
+        System.out.println("Số hàng trong bảng: " + dtmdocgia.getRowCount());
     }
 
     public void loadsach() {
-        dtmsach.setRowCount(0);
+        System.out.println("Đã gọi loadsach");
+        dtmsach.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+
+        ArrayList<SachDTO> listSach = (ArrayList<SachDTO>) SachBUS.gI().getAllSach(); // Lấy danh sách sách từ BUS
+
+        if (listSach == null || listSach.isEmpty()) {
+            System.out.println("Không có dữ liệu sách!");
+            JOptionPane.showMessageDialog(null, "Không có sách nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        for (SachDTO sach : listSach) {
+            dtmsach.addRow(new Object[] {
+                    sach.getMaSach(),
+                    sach.getTenSach(),
+                    sach.getMaTacGia(),
+                    sach.getMaNXB(),
+                    sach.getMaLoai(),
+                    sach.getNamXB(),
+                    sach.getSoLuong(),
+                    sach.getMaKeSach(),
+                    sach.getHinhAnh()
+            });
+        }
+
+        System.out.println("Số hàng trong bảng: " + dtmsach.getRowCount());
     }
 
     public void loadphieumuon() {
