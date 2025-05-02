@@ -3848,12 +3848,12 @@ public class MainFrame extends JFrame {
     }
 
     public static ArrayList<LoaiSachDTO> loasachlist = new ArrayList<LoaiSachDTO>();
+
     public void loadloaisach() {
         System.out.println("Đã gọi loadloaisach");
         dtmloai.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
         cmbmaloai.removeAllItems(); // Xóa tất cả mục trong combobox
         loasachlist = LoaiSachBUS.gI().getAllLoaiSach(); // Lấy danh sách loại sách
-
 
         for (LoaiSachDTO loai : loasachlist) {
             // Thêm vào bảng dtmloai
@@ -3871,13 +3871,13 @@ public class MainFrame extends JFrame {
         dtmnhaxuatban.setRowCount(0);
         cmbmanhaxuatban.removeAllItems();
     }
-    
+
     public static ArrayList<NhaCungCapDTO> ncclist = new ArrayList<NhaCungCapDTO>();
+
     public void loadnhacungcap() {
         System.out.println("Đã gọi loadnhacungcap");
         dtmncc.setRowCount(0); // Xóa tất cả hàng hiện tại
         ncclist = NhaCungCapBUS.gI().getAllNhaCungCap(); // Lấy danh sách nhà cung cấp
-
 
         for (NhaCungCapDTO ncc : ncclist) {
             dtmncc.addRow(new Object[] {
@@ -3887,14 +3887,14 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng: " + dtmncc.getRowCount());
     }
-    
+
     public static ArrayList<KeSachDTO> kesach = new ArrayList<KeSachDTO>();
+
     public void loadkesach() {
         System.out.println("Đã gọi loadkesach");
         dtmke.setRowCount(0); // Xóa tất cả hàng hiện tại trong bảng
         cmbmakesach.removeAllItems(); // Xóa tất cả mục trong combobox
         kesach = KeSachBUS.gI().getAllKeSach(); // Lấy danh sách kệ sách
-
 
         for (KeSachDTO ke : kesach) {
             // Thêm vào bảng dtmke
@@ -3914,8 +3914,19 @@ public class MainFrame extends JFrame {
     }
 
     public void loadtacgia() {
+        System.out.println("Đã gọi loadtacgia");
         dtmtacgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-        ArrayList<TacGiaDTO> listTacGia = new ArrayList<TacGiaDTO>(); // Lấy danh sách tác giả từ BUS
+
+        ArrayList<TacGiaDTO> listTacGia = (ArrayList<TacGiaDTO>) TacGiaBUS.gI().getAllTacGia(); // Lấy danh sách tác giả
+                                                                                                // từ BUS
+
+        if (listTacGia == null || listTacGia.isEmpty()) {
+            System.out.println("Không có dữ liệu tác giả!");
+            JOptionPane.showMessageDialog(null, "Không có tác giả nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         for (TacGiaDTO tacGia : listTacGia) {
             dtmtacgia.addRow(new Object[] {
                     tacGia.getMaTacGia(),
@@ -3924,11 +3935,23 @@ public class MainFrame extends JFrame {
                     tacGia.getQueQuan()
             });
         }
+
+        System.out.println("Số hàng trong bảng: " + dtmtacgia.getRowCount());
     }
 
     public void loaddocgia() {
+        System.out.println("Đã gọi loaddocgia");
         dtmdocgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-        ArrayList<DocGiaDTO> listDocGia = new ArrayList<DocGiaDTO>(); // Lấy danh sách độc giả từ BUS
+
+        ArrayList<DocGiaDTO> listDocGia = (ArrayList<DocGiaDTO>) DocGiaBUS.gI().getAllDocGia(); // Lấy danh sách độc giả
+                                                                                                // từ BUS
+
+        if (listDocGia == null || listDocGia.isEmpty()) {
+            System.out.println("Không có dữ liệu độc giả!");
+            JOptionPane.showMessageDialog(null, "Không có độc giả nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         for (DocGiaDTO docGia : listDocGia) {
             dtmdocgia.addRow(new Object[] {
@@ -3939,11 +3962,22 @@ public class MainFrame extends JFrame {
                     docGia.getDiaChi()
             });
         }
+
+        System.out.println("Số hàng trong bảng: " + dtmdocgia.getRowCount());
     }
 
     public void loadsach() {
+        System.out.println("Đã gọi loadsach");
         dtmsach.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-        ArrayList<SachDTO> listSach = new ArrayList<SachDTO>(); // Lấy danh sách sách từ BUS
+
+        ArrayList<SachDTO> listSach = (ArrayList<SachDTO>) SachBUS.gI().getAllSach(); // Lấy danh sách sách từ BUS
+
+        if (listSach == null || listSach.isEmpty()) {
+            System.out.println("Không có dữ liệu sách!");
+            JOptionPane.showMessageDialog(null, "Không có sách nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         for (SachDTO sach : listSach) {
             dtmsach.addRow(new Object[] {
@@ -3954,10 +3988,12 @@ public class MainFrame extends JFrame {
                     sach.getMaLoai(),
                     sach.getNamXB(),
                     sach.getSoLuong(),
-                    sach.getMaKe(),
+                    sach.getMaKeSach(),
                     sach.getHinhAnh()
             });
         }
+
+        System.out.println("Số hàng trong bảng: " + dtmsach.getRowCount());
     }
 
     public void loadphieumuon() {

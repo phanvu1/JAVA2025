@@ -8,10 +8,6 @@ import dto.TacGiaDTO;
 
 public class TacGiaBUS {
 
-    public static Object gI() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     private TacGiaDAO tacGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -81,4 +77,14 @@ public class TacGiaBUS {
     public boolean addTacGia(TacGiaDTO tacGiaMoi) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public static TacGiaBUS iBus = null;
+
+    public static TacGiaBUS gI() {
+        if (iBus == null) {
+            iBus = new TacGiaBUS(null);
+        }
+        return iBus;
+    }
+
 }

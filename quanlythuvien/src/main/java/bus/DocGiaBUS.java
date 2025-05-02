@@ -7,11 +7,6 @@ import dao.DocGiaDAO;
 import dto.DocGiaDTO;
 
 public class DocGiaBUS {
-
-    public static Object gI() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     private DocGiaDAO docGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -73,15 +68,30 @@ public class DocGiaBUS {
         return docGiaDAO.findDocGiaByName(tenDocGia);
     }
 
-    public boolean deleteDocGia(int maDocGia) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public boolean updateDocGia(DocGiaDTO docGiaSua) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (docGiaSua.getMaDocGia() <= 0) {
+            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
+        }
+        return docGiaDAO.updateDocGia(docGiaSua);
     }
 
     public boolean addDocGia(DocGiaDTO docGiaMoi) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static DocGiaBUS iBus = null;
+
+    public static DocGiaBUS gI() {
+        if (iBus == null) {
+            iBus = new DocGiaBUS(null);
+        }
+        return iBus;
+    }
+
+    public boolean deleteDocGia(int maDocGia) {
+        if (maDocGia <= 0) {
+            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
+        }
+        return docGiaDAO.deleteDocGia(maDocGia);
     }
 }

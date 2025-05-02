@@ -7,11 +7,6 @@ import dao.SachDAO;
 import dto.SachDTO;
 
 public class SachBUS {
-
-    public static Object gI() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     private SachDAO sachDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
@@ -80,5 +75,14 @@ public class SachBUS {
 
     public boolean addSach(SachDTO sach) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static SachBUS iBus = null;
+
+    public static SachBUS gI() {
+        if (iBus == null) {
+            iBus = new SachBUS(null); // Thay null bằng kết nối thực tế
+        }
+        return iBus;
     }
 }
