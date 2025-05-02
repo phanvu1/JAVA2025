@@ -76,7 +76,7 @@ public class DocGiaBUS {
     }
 
     public boolean addDocGia(DocGiaDTO docGiaMoi) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return themDocGia(docGiaMoi);
     }
 
     public static DocGiaBUS iBus = null;

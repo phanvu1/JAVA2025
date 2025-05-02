@@ -66,22 +66,28 @@ public class SachBUS {
     }
 
     public boolean updateSach(SachDTO sach) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sach.getMaSach() <= 0) {
+            throw new IllegalArgumentException("Mã sách không hợp lệ");
+        }
+        return sachDAO.updateSach(sach);
     }
 
-    public boolean deleteSach(int masach) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean deleteSach(int maSach) {
+        if (maSach <= 0) {
+            throw new IllegalArgumentException("Mã sách không hợp lệ");
+        }
+        return sachDAO.deleteSach(maSach);
     }
 
     public boolean addSach(SachDTO sach) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return themSach(sach);
     }
 
     public static SachBUS iBus = null;
 
     public static SachBUS gI() {
         if (iBus == null) {
-            iBus = new SachBUS(null); // Thay null bằng kết nối thực tế
+            iBus = new SachBUS(null);
         }
         return iBus;
     }
