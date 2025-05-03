@@ -66,6 +66,7 @@ import dto.TacGiaDTO;
 import dto.NhaCungCapDTO;
 import dto.KeSachDTO;
 import dto.LoaiSachDTO;
+import dto.ThongKePhieuNhapDTO;
 
 import bus.PhieuNhapBUS;
 import bus.ChiTietPhieuNhapBUS;
@@ -75,10 +76,12 @@ import bus.TacGiaBUS;
 import bus.NhaCungCapBUS;
 import bus.KeSachBUS;
 import bus.LoaiSachBUS;
+import bus.ThongKePhieuNhapBUS;
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
 import dao.TacGiaDAO;
+
 
 import java.util.logging.SimpleFormatter;
 
@@ -361,6 +364,7 @@ public class MainFrame extends JFrame {
         loadnhacungcap();
         loadkesach();
         loadloaisach();
+        loadthongkephieunhap();
     }
 
     public void thanhtitle() {
@@ -1268,7 +1272,6 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Nhập Hàng", null, panel, null);
         panel.setLayout(null);
         dtmthongkenhaphang = new DefaultTableModel();
-        dtmthongkenhaphang.addColumn("Mã CTPN");
         dtmthongkenhaphang.addColumn("Mã PN");
         dtmthongkenhaphang.addColumn("Mã Sách");
         dtmthongkenhaphang.addColumn("Giá Nhập");
@@ -1336,7 +1339,7 @@ public class MainFrame extends JFrame {
         btnNewButton_2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                // Bỏ loadthongkephieunhap()
+                loadthongkephieunhap();
             }
         });
         btnNewButton_2.setBounds(547, 605, 97, 44);
@@ -2165,7 +2168,67 @@ public class MainFrame extends JFrame {
                 new TableSach().setVisible(true);
             }
         });
-
+        
+//        tablethongkenhaphang.addMouseListener(new MouseListener(){
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//            }
+//
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//            }
+//
+//            @Override
+//            public void mouseExited(MouseEvent e) {
+//            }
+//
+//            @Override
+//            public void mouseEntered(MouseEvent e) {
+//            }
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                int i = tablethongkenhaphang.getSelectedRow();
+//                if (i >= 0) {
+//                    try {
+//                        txtmpnctpn.setText(dtmphieunhap.getValueAt(i, 0).toString());
+//                        txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
+//                        txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 2).toString());
+//                        Date date2;
+//                        try {
+//                            date2 = new SimpleDateFormat("yyyy-MM-dd").parse(dtmphieunhap.getValueAt(i, 3).toString());
+//                            NgayNhapPhieuNhap.setDate(date2);
+//                        } catch (ParseException ex) {
+//                            ex.printStackTrace();
+//                            JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày nhập!", "Lỗi",
+//                                    JOptionPane.ERROR_MESSAGE);
+//                        }
+//                        int maphieunhap = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+//                        dtmchitietphieunhap.setRowCount(0);
+//                        for (ChiTietPhieuNhapDTO ct : ctpn) {
+//                            if (ct.getMaphieunhap() == maphieunhap) {
+//                                dtmchitietphieunhap.addRow(new Object[] {
+//                                        ct.getMaphieunhap(),
+//                                        ct.getMasach(),
+//                                        ct.getSoluong(),
+//                                        ct.getGia()
+//                                });
+//                            }
+//                        }
+//                    } catch (NumberFormatException ex) {
+//                        ex.printStackTrace();
+//                        JOptionPane.showMessageDialog(null, "Mã phiếu nhập không hợp lệ!", "Lỗi",
+//                                JOptionPane.ERROR_MESSAGE);
+//                    }
+//                } else {
+//                    System.out.println("Không có hàng nào được chọn hoặc bảng rỗng!");
+//                    // Reset các trường nhập liệu
+//                    lblmaphieunhap.setText("Mã Phiếu Nhập");
+//                    txtManhanvienphieunhap.setText("");
+//                    txtManccPhieuNhap.setText("");
+//                    dtmchitietphieunhap.setRowCount(0);
+//                }
+//            }
+//        });
         tablephieunhap.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -2954,7 +3017,13 @@ public class MainFrame extends JFrame {
         btnthemkesach.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(contentPane, "Thêm Thất bại");
+                if (txtKeSach.getText().isEmpty()){
+                    thongbao("Kệ sách");
+                }
+               boolean i = KeSachBUS.gI().addKeSach(txtKeSach.getText());
+               if (i){
+                   loadkesach();
+               }
             }
         });
 
@@ -2962,11 +3031,22 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tablekesach.getSelectedRow();
-                if (i > -1) {
+                if (i >= 0) {
+                    if (txtKeSach.getText().isEmpty()){
+                        thongbao("Tên kệ sách");
+                    }
                     int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                    JOptionPane.showMessageDialog(contentPane, "Sửa Thất bại");
+                    String tenkemoi = txtKeSach.getText();
+                    KeSachDTO kesachmoi = new KeSachDTO(vitri, tenkemoi);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa ma loai "+vitri, "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                       boolean j = KeSachBUS.gI().updateKeSach(kesachmoi);
+                       if (j){
+                           loadkesach();
+                       }
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -2975,14 +3055,20 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tablekesach.getSelectedRow();
-                if (i > -1) {
+                if (i >= 0) {
+                    if (txtKeSach.getText().isEmpty()){
+                        thongbao("Tên kệ sách");
+                    }
                     int vitri = Integer.parseInt(dtmke.getValueAt(i, 0).toString());
-                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ma kệ sách "+vitri, "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá Thất bại");
+                       boolean j = KeSachBUS.gI().deleteKeSach(vitri);
+                       if (j){
+                           loadkesach();
+                       }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ nào.");
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -2991,10 +3077,17 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tableloai.getSelectedRow();
-                int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
-                if (a == JOptionPane.YES_OPTION) {
-                    // Không có thông báo GUI ở đây
+                if (i >= 0) {
+                    int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ma loai "+vitri, "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                       boolean j = LoaiSachBUS.gI().deleteLoaiSach(vitri);
+                       if (j){
+                           loadloaisach();
+                       }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
                 }
             }
         });
@@ -3002,7 +3095,13 @@ public class MainFrame extends JFrame {
         btnThemloai.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Không có thông báo GUI ở đây
+                if (txttenloai.getText().isEmpty()){
+                    thongbao("Tên loại");
+                }
+               boolean i = LoaiSachBUS.gI().addLoaiSach(txttenloai.getText());
+               if (i){
+                   loadloaisach();
+               }
             }
         });
         btnsualoai.addActionListener(new ActionListener() {
@@ -3010,10 +3109,18 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int i = tableloai.getSelectedRow();
                 if (i >= 0) {
+                    if (txttenloai.getText().isEmpty()){
+                        thongbao("Tên loại");
+                    }
                     int vitri = Integer.parseInt(dtmloai.getValueAt(i, 0).toString());
-                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa", "", JOptionPane.YES_NO_OPTION);
+                    String tenloaimoi = txttenloai.getText();
+                    LoaiSachDTO loaisachmoi = new LoaiSachDTO(vitri, tenloaimoi);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa ma loại "+vitri, "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        // Không có thông báo GUI ở đây
+                       boolean j = LoaiSachBUS.gI().updateLoaiSach(loaisachmoi);
+                       if (j){
+                           loadloaisach();
+                       }
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Bạn chưa chọn loại nào");
@@ -3027,12 +3134,15 @@ public class MainFrame extends JFrame {
                 int i = tablencc.getSelectedRow();
                 if (i >= 0) {
                     int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
-                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ma nhà cung cấp "+vitri, "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        // Không có thông báo GUI ở đây
+                       boolean j = NhaCungCapBUS.gI().deleteNhaCungCap(vitri);
+                       if (j){
+                           loadnhacungcap();
+                       }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào.");
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
                 }
             }
         });
@@ -3040,7 +3150,13 @@ public class MainFrame extends JFrame {
         btnThemncc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Không có thông báo GUI ở đây
+                if (txtNcc.getText().isEmpty()){
+                    thongbao("Tên nhà cung cấp");
+                }
+               boolean i = NhaCungCapBUS.gI().addNhaCungCap(txtNcc.getText());
+               if (i){
+                   loadnhacungcap();
+               }
             }
         });
 
@@ -3048,9 +3164,20 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = tablencc.getSelectedRow();
-                if (i > -1) {
+                if (i >= 0) {
+                    if (txtNcc.getText().isEmpty()){
+                        thongbao("Tên nhà cung cấp");
+                    }
                     int vitri = Integer.parseInt(dtmncc.getValueAt(i, 0).toString());
-                    // Không có thông báo GUI ở đây
+                    String tennccmoi = txtNcc.getText();
+                    NhaCungCapDTO nhaccmoi = new NhaCungCapDTO(vitri, tennccmoi);
+                    int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn sửa ma nhà cung cấp "+vitri, "", JOptionPane.YES_NO_OPTION);
+                    if (a == JOptionPane.YES_OPTION) {
+                       boolean j = NhaCungCapBUS.gI().updateNhaCungCap(nhaccmoi);
+                       if (j){
+                           loadnhacungcap();
+                       }
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
                 }
@@ -4035,11 +4162,28 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng: " + dtmphieunhap.getRowCount());
     }
-
+    public static ArrayList<ThongKePhieuNhapDTO> tkpn = new ArrayList<ThongKePhieuNhapDTO>();
     public void loadthongkephieunhap() {
         System.out.println("Đã gọi load chi tiết phiếu nhập");
         dtmthongkenhaphang.setRowCount(0);
-
+        tkpn = ThongKePhieuNhapBUS.gI().getAllThongKe();
+        int soluongsachdanhap = 0;
+        int tongtien = 0;
+        for (ThongKePhieuNhapDTO ct : tkpn){
+            dtmthongkenhaphang.addRow(new Object[]{
+                ct.getmaphieunhap(),
+                ct.getmasach(),
+                ct.getgianhap(),
+                ct.getsoluong(),
+                ct.getthanhtien(),
+                ct.getngaynhap(),
+                ct.gettensach()
+            });
+            soluongsachdanhap+=ct.getsoluong();
+            tongtien+=ct.getthanhtien();
+        }
+        lblsosachdanhap.setText(soluongsachdanhap +"");
+        lbltongtien.setText(tongtien+ "");
     }
 
     public static ArrayList<ChiTietPhieuNhapDTO> ctpn = new ArrayList<ChiTietPhieuNhapDTO>();

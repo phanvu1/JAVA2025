@@ -79,14 +79,14 @@ public class KeSachDAO {
         return keSach;
     }
 
-    public boolean insert(KeSachDTO keSach) {
+    public boolean insert(String keSach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
             String sql = "INSERT INTO kesach (vitri) VALUES (?)";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, keSach.getVitri());
+            stmt.setString(1, keSach);
 
             int rows = stmt.executeUpdate();
             result = rows > 0;

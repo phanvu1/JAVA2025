@@ -17,7 +17,7 @@ public class NhaCungCapBUS {
     }
 
     // Thêm nhà cung cấp mới
-    public boolean addNhaCungCap(NhaCungCapDTO nhaCungCap) {
+    public boolean addNhaCungCap(String nhaCungCap) {
         return nhaCungCapDAO.insert(nhaCungCap);
     }
 
