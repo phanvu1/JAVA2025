@@ -1,7 +1,7 @@
 package bus;
 
 import java.sql.Connection;
-import java.util.List;
+import java.util.ArrayList;
 
 import dao.TacGiaDAO;
 import dto.TacGiaDTO;
@@ -16,7 +16,7 @@ public class TacGiaBUS {
     }
 
     // Thêm tác giả mới
-    public boolean themTacGia(TacGiaDTO tacGia) {
+    public boolean addTacGia(TacGiaDTO tacGia) {
         if (tacGia.getTenTacGia() == null || tacGia.getTenTacGia().trim().isEmpty()) {
             throw new IllegalArgumentException("Tên tác giả không được để trống");
         }
@@ -30,15 +30,15 @@ public class TacGiaBUS {
     }
 
     // Cập nhật thông tin tác giả
-    public boolean suaTacGia(TacGiaDTO tacGia) {
+    public boolean updateTacGia(TacGiaDTO tacGia) {
         if (tacGia.getMaTacGia() <= 0) {
             throw new IllegalArgumentException("Mã tác giả không hợp lệ");
         }
-        return themTacGia(tacGia); // Tái sử dụng logic kiểm tra từ phương thức thêm
+        return tacGiaDAO.updateTacGia(tacGia);
     }
 
     // Xóa tác giả theo mã tác giả
-    public boolean xoaTacGia(int maTacGia) {
+    public boolean deleteTacGia(int maTacGia) {
         if (maTacGia <= 0) {
             throw new IllegalArgumentException("Mã tác giả không hợp lệ");
         }
@@ -46,7 +46,7 @@ public class TacGiaBUS {
     }
 
     // Lấy danh sách tất cả tác giả
-    public List<TacGiaDTO> getAllTacGia() {
+    public ArrayList<TacGiaDTO> getAllTacGia() {
         return tacGiaDAO.getAllTacGia();
     }
 
@@ -59,38 +59,20 @@ public class TacGiaBUS {
     }
 
     // Tìm tác giả theo tên
-    public List<TacGiaDTO> timTacGiaTheoTen(String tenTacGia) {
+    public ArrayList<TacGiaDTO> timTacGiaTheoTen(String tenTacGia) {
         if (tenTacGia == null || tenTacGia.trim().isEmpty()) {
             throw new IllegalArgumentException("Tên tác giả không được để trống");
         }
         return tacGiaDAO.findTacGiaByName(tenTacGia);
     }
 
-    public boolean updateTacGia(TacGiaDTO tacGiaSua) {
-        if (tacGiaSua.getMaTacGia() <= 0) {
-            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
-        }
-        return tacGiaDAO.updateTacGia(tacGiaSua);
-    }
-
-    public boolean addTacGia(TacGiaDTO tacGiaMoi) {
-        return themTacGia(tacGiaMoi);
-    }
-
     public static TacGiaBUS iBus = null;
 
     public static TacGiaBUS gI() {
         if (iBus == null) {
-            iBus = new TacGiaBUS(null); // Thay null bằng kết nối thực tế nếu cần
+            iBus = new TacGiaBUS(null);
         }
         return iBus;
-    }
-
-    public boolean deleteTacGia(int maTacGia) {
-        if (maTacGia <= 0) {
-            throw new IllegalArgumentException("Mã tác giả không hợp lệ");
-        }
-        return tacGiaDAO.deleteTacGia(maTacGia);
     }
 
 }

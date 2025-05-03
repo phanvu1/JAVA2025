@@ -22,7 +22,8 @@ public class PhieuNhapDTO {
         this.tongtien = tongtien;
     }
 
-    // Constructor mới với 4 tham số (không có tongtien, gán mặc định tongtien = 0.0)
+    // Constructor mới với 4 tham số (không có tongtien, gán mặc định tongtien =
+    // 0.0)
     public PhieuNhapDTO(int maphieunhap, int mancc, int manv, Date ngaynhap) {
         this.maphieunhap = maphieunhap;
         this.mancc = mancc;
@@ -55,11 +56,11 @@ public class PhieuNhapDTO {
     public int getMancc() {
         return mancc;
     }
-    
+
     public double getTongTien() {
         return tongtien;
     }
-    
+
     public void setTongtien(double tongtien) {
         this.tongtien = tongtien;
     }

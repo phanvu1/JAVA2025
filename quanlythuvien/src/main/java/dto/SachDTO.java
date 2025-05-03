@@ -38,8 +38,22 @@ public class SachDTO {
         this.hinhAnh = hinhAnh;
     }
 
-    public SachDTO(int masach, String tensach, String maloai, String manxb, String matg, int namxb, int soluong,
-            String make, String hinhanh) {
+    // Tạo constructor mới lấy từ một SachDTO khác
+    public void setFromSachDTO(SachDTO sach) {
+        if (sach != null) {
+            this.maSach = sach.maSach;
+            this.tenSach = sach.tenSach;
+            this.maLoai = sach.maLoai;
+            this.maNXB = sach.maNXB;
+            this.namXB = sach.namXB;
+            this.soLuong = sach.soLuong;
+            this.maKeSach = sach.maKeSach;
+            this.hinhAnh = sach.hinhAnh;
+        }
+    }
+
+    public SachDTO(int i, String tensach, String maloai, String manxb, String matg, int namxb, int soluong, String make,
+            String hinhanh) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

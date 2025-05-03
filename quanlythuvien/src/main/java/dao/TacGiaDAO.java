@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 import dto.TacGiaDTO;
 
@@ -14,8 +13,11 @@ public class TacGiaDAO {
     private Connection connection;
 
     // Constructor: Nhận kết nối từ bên ngoài
-    public TacGiaDAO(Connection connection) {
-        this.connection = connection;
+    public TacGiaDAO() {
+        this.connection = DBConnect.getConnection();
+        if (this.connection == null) {
+            throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
+        }
     }
 
     // Thêm tác giả mới
@@ -76,8 +78,8 @@ public class TacGiaDAO {
     }
 
     // Lấy danh sách tất cả tác giả
-    public List<TacGiaDTO> getAllTacGia() {
-        List<TacGiaDTO> result = new ArrayList<>();
+    public ArrayList<TacGiaDTO> getAllTacGia() {
+        ArrayList<TacGiaDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM tacgia";
         try (PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
@@ -116,8 +118,8 @@ public class TacGiaDAO {
     }
 
     // Tìm tác giả theo tên (phục vụ giao diện tìm kiếm)
-    public List<TacGiaDTO> findTacGiaByName(String tenTacGia) {
-        List<TacGiaDTO> result = new ArrayList<>();
+    public ArrayList<TacGiaDTO> findTacGiaByName(String tenTacGia) {
+        ArrayList<TacGiaDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM tacgia WHERE tentacgia LIKE ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, "%" + tenTacGia + "%");
@@ -135,5 +137,17 @@ public class TacGiaDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    // Đóng kết nối cơ sở dữ liệu
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Đóng kết nối cơ sở dữ liệu thành công.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

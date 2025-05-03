@@ -1,17 +1,23 @@
 package dao;
 
-import dto.SachDTO;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+
+import dto.SachDTO;
 
 public class SachDAO {
     private Connection connection;
 
     // Constructor: Nhận kết nối từ bên ngoài
-    public SachDAO(Connection connection) {
-        this.connection = connection;
+    public SachDAO() {
+        this.connection = DBConnect.getConnection();
+        if (this.connection == null) {
+            throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
+        }
     }
 
     // Thêm sách mới
@@ -80,8 +86,8 @@ public class SachDAO {
     }
 
     // Lấy danh sách tất cả sách
-    public List<SachDTO> getAllSach() {
-        List<SachDTO> result = new ArrayList<>();
+    public ArrayList<SachDTO> getAllSach() {
+        ArrayList<SachDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM sach";
         try (PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
@@ -128,8 +134,8 @@ public class SachDAO {
     }
 
     // Tìm sách theo tên sách (phục vụ giao diện tìm kiếm)
-    public List<SachDTO> findSachByName(String tenSach) {
-        List<SachDTO> result = new ArrayList<>();
+    public ArrayList<SachDTO> findSachByName(String tenSach) {
+        ArrayList<SachDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM sach WHERE tensach LIKE ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, "%" + tenSach + "%");
@@ -151,5 +157,17 @@ public class SachDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    // Đóng kết nối cơ sở dữ liệu
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Đóng kết nối cơ sở dữ liệu thành công.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

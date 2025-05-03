@@ -1,7 +1,7 @@
 package bus;
 
 import java.sql.Connection;
-import java.util.List;
+import java.util.ArrayList;
 
 import dao.SachDAO;
 import dto.SachDTO;
@@ -15,7 +15,7 @@ public class SachBUS {
     }
 
     // Thêm sách mới
-    public boolean themSach(SachDTO sach) {
+    public boolean addSach(SachDTO sach) {
         if (sach.getTenSach() == null || sach.getTenSach().trim().isEmpty()) {
             throw new IllegalArgumentException("Tên sách không được để trống");
         }
@@ -29,15 +29,15 @@ public class SachBUS {
     }
 
     // Cập nhật thông tin sách
-    public boolean suaSach(SachDTO sach) {
+    public boolean updateSach(SachDTO sach) {
         if (sach.getMaSach() <= 0) {
             throw new IllegalArgumentException("Mã sách không hợp lệ");
         }
-        return themSach(sach); // Tái sử dụng logic kiểm tra từ phương thức thêm
+        return addSach(sach); // Tái sử dụng logic kiểm tra từ phương thức thêm
     }
 
     // Xóa sách theo mã sách
-    public boolean xoaSach(int maSach) {
+    public boolean deleteSach(int maSach) {
         if (maSach <= 0) {
             throw new IllegalArgumentException("Mã sách không hợp lệ");
         }
@@ -45,7 +45,7 @@ public class SachBUS {
     }
 
     // Lấy danh sách tất cả sách
-    public List<SachDTO> getAllSach() {
+    public ArrayList<SachDTO> getAllSach() {
         return sachDAO.getAllSach();
     }
 
@@ -58,29 +58,11 @@ public class SachBUS {
     }
 
     // Tìm sách theo tên sách
-    public List<SachDTO> timSachTheoTen(String tenSach) {
+    public ArrayList<SachDTO> timSachTheoTen(String tenSach) {
         if (tenSach == null || tenSach.trim().isEmpty()) {
             throw new IllegalArgumentException("Tên sách không được để trống");
         }
         return sachDAO.findSachByName(tenSach);
-    }
-
-    public boolean updateSach(SachDTO sach) {
-        if (sach.getMaSach() <= 0) {
-            throw new IllegalArgumentException("Mã sách không hợp lệ");
-        }
-        return sachDAO.updateSach(sach);
-    }
-
-    public boolean deleteSach(int maSach) {
-        if (maSach <= 0) {
-            throw new IllegalArgumentException("Mã sách không hợp lệ");
-        }
-        return sachDAO.deleteSach(maSach);
-    }
-
-    public boolean addSach(SachDTO sach) {
-        return themSach(sach);
     }
 
     public static SachBUS iBus = null;

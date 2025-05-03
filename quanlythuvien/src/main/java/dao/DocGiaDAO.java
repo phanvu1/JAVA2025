@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 import dto.DocGiaDTO;
 
@@ -14,8 +13,11 @@ public class DocGiaDAO {
     private Connection connection;
 
     // Constructor: Nhận kết nối từ bên ngoài
-    public DocGiaDAO(Connection connection) {
-        this.connection = connection;
+    public DocGiaDAO() {
+        this.connection = DBConnect.getConnection();
+        if (this.connection == null) {
+            throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
+        }
     }
 
     // Thêm độc giả mới
@@ -78,8 +80,8 @@ public class DocGiaDAO {
     }
 
     // Lấy danh sách tất cả độc giả
-    public List<DocGiaDTO> getAllDocGia() {
-        List<DocGiaDTO> result = new ArrayList<>();
+    public ArrayList<DocGiaDTO> getAllDocGia() {
+        ArrayList<DocGiaDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM docgia";
         try (PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
@@ -120,8 +122,8 @@ public class DocGiaDAO {
     }
 
     // Tìm độc giả theo tên (phục vụ giao diện tìm kiếm)
-    public List<DocGiaDTO> findDocGiaByName(String tenDocGia) {
-        List<DocGiaDTO> result = new ArrayList<>();
+    public ArrayList<DocGiaDTO> findDocGiaByName(String tenDocGia) {
+        ArrayList<DocGiaDTO> result = new ArrayList<>();
         String sql = "SELECT * FROM docgia WHERE tendg LIKE ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, "%" + tenDocGia + "%");
@@ -140,5 +142,17 @@ public class DocGiaDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    // Đóng kết nối cơ sở dữ liệu
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Đóng kết nối cơ sở dữ liệu thành công.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

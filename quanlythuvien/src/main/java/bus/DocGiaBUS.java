@@ -1,7 +1,7 @@
 package bus;
 
 import java.sql.Connection;
-import java.util.List;
+import java.util.ArrayList;
 
 import dao.DocGiaDAO;
 import dto.DocGiaDTO;
@@ -15,7 +15,7 @@ public class DocGiaBUS {
     }
 
     // Thêm độc giả mới
-    public boolean themDocGia(DocGiaDTO docGia) {
+    public boolean addDocGia(DocGiaDTO docGia) {
         if (docGia.getTenDocGia() == null || docGia.getTenDocGia().trim().isEmpty()) {
             throw new IllegalArgumentException("Tên độc giả không được để trống");
         }
@@ -32,15 +32,15 @@ public class DocGiaBUS {
     }
 
     // Cập nhật thông tin độc giả
-    public boolean suaDocGia(DocGiaDTO docGia) {
+    public boolean updateDocGia(DocGiaDTO docGia) {
         if (docGia.getMaDocGia() <= 0) {
             throw new IllegalArgumentException("Mã độc giả không hợp lệ");
         }
-        return themDocGia(docGia); // Tái sử dụng logic kiểm tra từ phương thức thêm
+        return docGiaDAO.updateDocGia(docGia);
     }
 
     // Xóa độc giả theo mã độc giả
-    public boolean xoaDocGia(int maDocGia) {
+    public boolean deleteDocGia(int maDocGia) {
         if (maDocGia <= 0) {
             throw new IllegalArgumentException("Mã độc giả không hợp lệ");
         }
@@ -48,7 +48,7 @@ public class DocGiaBUS {
     }
 
     // Lấy danh sách tất cả độc giả
-    public List<DocGiaDTO> getAllDocGia() {
+    public ArrayList<DocGiaDTO> getAllDocGia() {
         return docGiaDAO.getAllDocGia();
     }
 
@@ -61,22 +61,11 @@ public class DocGiaBUS {
     }
 
     // Tìm độc giả theo tên
-    public List<DocGiaDTO> timDocGiaTheoTen(String tenDocGia) {
+    public ArrayList<DocGiaDTO> timDocGiaTheoTen(String tenDocGia) {
         if (tenDocGia == null || tenDocGia.trim().isEmpty()) {
             throw new IllegalArgumentException("Tên độc giả không được để trống");
         }
         return docGiaDAO.findDocGiaByName(tenDocGia);
-    }
-
-    public boolean updateDocGia(DocGiaDTO docGiaSua) {
-        if (docGiaSua.getMaDocGia() <= 0) {
-            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
-        }
-        return docGiaDAO.updateDocGia(docGiaSua);
-    }
-
-    public boolean addDocGia(DocGiaDTO docGiaMoi) {
-        return themDocGia(docGiaMoi);
     }
 
     public static DocGiaBUS iBus = null;
@@ -86,12 +75,5 @@ public class DocGiaBUS {
             iBus = new DocGiaBUS(null);
         }
         return iBus;
-    }
-
-    public boolean deleteDocGia(int maDocGia) {
-        if (maDocGia <= 0) {
-            throw new IllegalArgumentException("Mã độc giả không hợp lệ");
-        }
-        return docGiaDAO.deleteDocGia(maDocGia);
     }
 }
