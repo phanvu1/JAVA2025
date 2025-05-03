@@ -1,5 +1,6 @@
 package gui;
 
+import dto.ThongKePhieuMuonDTO;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JDialog;
@@ -10,6 +11,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import bus.ThongKePhieuMuonBUS;
 
 public class TableThongKePhieuMuon extends JDialog {
 
@@ -20,6 +26,8 @@ public class TableThongKePhieuMuon extends JDialog {
     /**
      * Create the frame.
      */
+    
+    
     public TableThongKePhieuMuon() {
         setModal(true);
         setResizable(false);
@@ -34,7 +42,6 @@ public class TableThongKePhieuMuon extends JDialog {
         scrollPane.setBounds(12, 123, 708, 251);
         contentPane.add(scrollPane);
         dtmthongkephieumuon = new DefaultTableModel();
-        dtmthongkephieumuon.addColumn("Mã CTPM");
         dtmthongkephieumuon.addColumn("Mã PM");
         dtmthongkephieumuon.addColumn("Mã Sách");
         dtmthongkephieumuon.addColumn("Ngày Mượn");
@@ -53,6 +60,14 @@ public class TableThongKePhieuMuon extends JDialog {
         JButton btnNewButton_1 = new JButton("Đóng");
         btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnNewButton_1.setBounds(623, 394, 97, 36);
+        btnNewButton_1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				
+			}
+		});
         contentPane.add(btnNewButton_1);
 
         JLabel lblNewLabel = new JLabel("THỐNG KÊ SÁCH ĐÃ MƯỢN");
@@ -60,7 +75,23 @@ public class TableThongKePhieuMuon extends JDialog {
         lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
         lblNewLabel.setBounds(201, 29, 292, 69);
         contentPane.add(lblNewLabel);
-
+        loadthongkephieumuon();
         setLocationRelativeTo(null);
+    }
+    
+    public static ArrayList<ThongKePhieuMuonDTO> ctpmthongke = new ArrayList<ThongKePhieuMuonDTO>();
+    public void loadthongkephieumuon(){
+        ctpmthongke = null;
+        dtmthongkephieumuon.setRowCount(0);
+        ctpmthongke = ThongKePhieuMuonBUS.getInstance().getAllThongKe();
+        for (ThongKePhieuMuonDTO tkpm : ctpmthongke){
+            dtmthongkephieumuon.addRow(new Object[]{
+                tkpm.getMaPM(),
+                tkpm.getMaSach(),
+                tkpm.getNgayMuon(),
+                tkpm.getNgayTra(),
+                tkpm.getGhiChu()
+            });
+        }
     }
 }

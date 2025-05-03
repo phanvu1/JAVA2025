@@ -77,11 +77,14 @@ import bus.NhaCungCapBUS;
 import bus.KeSachBUS;
 import bus.LoaiSachBUS;
 import bus.ThongKePhieuNhapBUS;
+import bus.ChiTietPhieuMuonBUS;
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
 import dao.TacGiaDAO;
 
+import export.ExportEx;
+import export.ImportEx;
 
 import java.util.logging.SimpleFormatter;
 
@@ -1245,10 +1248,13 @@ public class MainFrame extends JFrame {
         panelThongKe = new JPanel();
         DefaultPieDataset p = new DefaultPieDataset();
         // Bỏ phần tính toán dùng SachBus và chitietpmbus
-        p.setValue("Sách Đã Mượn", 0); // Giá trị giả lập
-        p.setValue("Sách Còn Lại", 100); // Giá trị giả lập
+        int sachdamuon = ChiTietPhieuMuonBUS.gI().getSoLuongSachDangMuon();
+        int tongsach = sachdamuon + SachBUS.gI().soluongsach();
+        float phantramsachdamuon = (float)(sachdamuon*1.0/tongsach*100);
+        p.setValue("Sách Đã Mượn", phantramsachdamuon); // Giá trị giả lập
+        p.setValue("Sách Còn Lại", 100 - phantramsachdamuon); // Giá trị giả lập
 
-        JFreeChart chart = ChartFactory.createPieChart3D("Thống Kê Sách Đã Mượn", p);
+        JFreeChart chart = ChartFactory.createPieChart3D("ấd Kê Sách Đã Mượn", p);
         TextTitle tt = new TextTitle("Thống Kê Sách Đã Mượn", new Font("Arial", Font.BOLD, 15));
         tt.setPadding(5, 5, 5, 5);
         chart.setTitle(tt);
@@ -2046,6 +2052,8 @@ public class MainFrame extends JFrame {
         btnlocthongke.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int soluongsachdanhap = 0;
+                int tongtien = 0;
                 if (!rdloctheonam.isSelected() && !rdloctheongay.isSelected()) {
                     JOptionPane.showMessageDialog(null, "Bạn cần chọn lọc theo ngày / năm");
                     return;
@@ -2058,18 +2066,51 @@ public class MainFrame extends JFrame {
                     ngaybd.setDate(null);
                     ngayketthuc.setDate(null);
                     dtmthongkenhaphang.setRowCount(0);
-                    lbltongtien.setText("0");
-                    lblsosachdanhap.setText("0");
+                   
+                    Calendar calendar = Calendar.getInstance();
+                    for (ThongKePhieuNhapDTO tk : tkpn){
+                        calendar.setTime(tk.getngaynhap());
+                        if (calendar.get(Calendar.YEAR) == Integer.parseInt(namselect)){
+                            dtmthongkenhaphang.addRow(new Object[]{
+                            tk.getmaphieunhap(),
+                            tk.getmasach(),
+                            tk.getgianhap(),
+                            tk.getsoluong(),
+                            tk.getthanhtien(),
+                            tk.getngaynhap(),
+                            tk.gettensach()
+                        });
+                        soluongsachdanhap+=tk.getsoluong();
+                        tongtien+=tk.getthanhtien();
+                        }
+                    }
+                    lbltongtien.setText(tongtien+"");
+                    lblsosachdanhap.setText(soluongsachdanhap+"");
                 } else if (ngaybd.getDate() != null && ngayketthuc.getDate() != null && rdloctheongay.isSelected()) {
                     namselect = "";
                     comboBox.setSelectedIndex(0);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String date1 = sdf.format(ngaybd.getDate());
-                    String date2 = sdf.format(ngayketthuc.getDate());
+                    Date date1 = ngaybd.getDate();
+                    Date date2 = ngayketthuc.getDate();
                     System.out.println(date2);
                     dtmthongkenhaphang.setRowCount(0);
-                    lbltongtien.setText("0");
-                    lblsosachdanhap.setText("0");
+                    for (ThongKePhieuNhapDTO tk : tkpn){
+                        if (tk.getngaynhap().after(date1) && tk.getngaynhap().before(date2)){
+                            dtmthongkenhaphang.addRow(new Object[]{
+                            tk.getmaphieunhap(),
+                            tk.getmasach(),
+                            tk.getgianhap(),
+                            tk.getsoluong(),
+                            tk.getthanhtien(),
+                            tk.getngaynhap(),
+                            tk.gettensach()
+                        });
+                        soluongsachdanhap+=tk.getsoluong();
+                        tongtien+=tk.getthanhtien();
+                        }
+                    }
+                    lbltongtien.setText(tongtien+"");
+                    lblsosachdanhap.setText(soluongsachdanhap+"");
                 }
             }
         });
@@ -2135,16 +2176,20 @@ public class MainFrame extends JFrame {
         });
 
         btnxuatexcel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Bỏ xuatExcel
-            }
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                        export.ExportEx ex = new ExportEx();
+                        ex.xuatEx(tablephieunhap);
+
+                }
         });
 
         btnnhapexcel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // Bỏ nhapExcel
+                export.ImportEx ex = new ImportEx();
+                ex.nhapExcel(tablephieunhap);
             }
         });
 
@@ -4134,6 +4179,7 @@ public class MainFrame extends JFrame {
     public static ArrayList<PhieuNhapDTO> phieunhap = new ArrayList<PhieuNhapDTO>();
 
     public void loadphieunhap() {
+        phieunhap = null;
         System.out.println("Đã gọi loadphieunhap");
         dtmphieunhap.setRowCount(0); // Xóa tất cả hàng hiện tại
         phieunhap = PhieuNhapBUS.gI().getAllPhieuNhap(); // Lấy danh sách phiếu nhập
@@ -4164,6 +4210,7 @@ public class MainFrame extends JFrame {
     }
     public static ArrayList<ThongKePhieuNhapDTO> tkpn = new ArrayList<ThongKePhieuNhapDTO>();
     public void loadthongkephieunhap() {
+        tkpn=null;
         System.out.println("Đã gọi load chi tiết phiếu nhập");
         dtmthongkenhaphang.setRowCount(0);
         tkpn = ThongKePhieuNhapBUS.gI().getAllThongKe();
@@ -4189,6 +4236,7 @@ public class MainFrame extends JFrame {
     public static ArrayList<ChiTietPhieuNhapDTO> ctpn = new ArrayList<ChiTietPhieuNhapDTO>();
 
     public void loadctphieunhap() {
+        ctpn=null;
         dtmchitietphieunhap.setRowCount(0);
         ctpn = ChiTietPhieuNhapBUS.gI().getAllChiTietPhieuNhap();
 
