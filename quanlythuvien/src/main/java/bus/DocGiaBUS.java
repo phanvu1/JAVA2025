@@ -1,6 +1,5 @@
 package bus;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import dao.DocGiaDAO;
@@ -10,8 +9,8 @@ public class DocGiaBUS {
     private DocGiaDAO docGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
-    public DocGiaBUS(Connection connection) {
-        this.docGiaDAO = new DocGiaDAO(connection);
+    public DocGiaBUS() {
+        this.docGiaDAO = new DocGiaDAO();
     }
 
     // Thêm độc giả mới
@@ -72,7 +71,7 @@ public class DocGiaBUS {
 
     public static DocGiaBUS gI() {
         if (iBus == null) {
-            iBus = new DocGiaBUS(null);
+            iBus = new DocGiaBUS();
         }
         return iBus;
     }

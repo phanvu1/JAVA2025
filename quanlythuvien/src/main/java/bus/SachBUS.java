@@ -1,6 +1,5 @@
 package bus;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import dao.SachDAO;
@@ -10,8 +9,8 @@ public class SachBUS {
     private SachDAO sachDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
-    public SachBUS(Connection connection) {
-        this.sachDAO = new SachDAO(connection);
+    public SachBUS() {
+        this.sachDAO = new SachDAO();
     }
 
     // Thêm sách mới
@@ -69,7 +68,7 @@ public class SachBUS {
 
     public static SachBUS gI() {
         if (iBus == null) {
-            iBus = new SachBUS(null);
+            iBus = new SachBUS();
         }
         return iBus;
     }

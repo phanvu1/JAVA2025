@@ -1,6 +1,5 @@
 package bus;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import dao.TacGiaDAO;
@@ -11,8 +10,8 @@ public class TacGiaBUS {
     private TacGiaDAO tacGiaDAO;
 
     // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
-    public TacGiaBUS(Connection connection) {
-        this.tacGiaDAO = new TacGiaDAO(connection);
+    public TacGiaBUS() {
+        this.tacGiaDAO = new TacGiaDAO();
     }
 
     // Thêm tác giả mới
@@ -70,7 +69,7 @@ public class TacGiaBUS {
 
     public static TacGiaBUS gI() {
         if (iBus == null) {
-            iBus = new TacGiaBUS(null);
+            iBus = new TacGiaBUS();
         }
         return iBus;
     }
