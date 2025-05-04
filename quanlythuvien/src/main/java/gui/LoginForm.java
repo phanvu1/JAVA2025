@@ -14,11 +14,14 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.border.MatteBorder;
 
+import bus.TaiKhoanBUS;
+
 public class LoginForm extends JFrame {
 
     private JTextField txtUser;
     private JPasswordField txtPass;
     public static boolean dangnhap = false; // Khai báo biến dangnhap
+    public static int idnhomquyen = 0;
 
     /**
      * Create the frame.
@@ -79,8 +82,10 @@ public class LoginForm extends JFrame {
             String password = new String(txtPass.getPassword()); // Lấy mật khẩu từ JPasswordField
 
             // Kiểm tra tài khoản cứng
-            if (username.equals("admin") && password.equals("123")) {
+            if (!username.equals("") && !password.equals("")) {
+                if (TaiKhoanBUS.gI().checkTaiKhoan(username, password)>0)
                 dangnhap = true; // Cập nhật trạng thái đăng nhập
+                idnhomquyen = TaiKhoanBUS.gI().checkTaiKhoan(username, password);
                 JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
                 setVisible(false); // Ẩn form đăng nhập
                 dispose(); // Giải phóng tài nguyên

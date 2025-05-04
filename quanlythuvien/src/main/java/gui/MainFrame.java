@@ -57,6 +57,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.awt.BorderLayout;
+import gui.LoginForm;
 
 import dto.PhieuNhapDTO;
 import dto.ChiTietPhieuNhapDTO;
@@ -89,6 +90,7 @@ import export.ImportEx;
 import java.util.logging.SimpleFormatter;
 
 public class MainFrame extends JFrame {
+    public static int quyen = LoginForm.idnhomquyen;
     public static String Ma;
     public static boolean isdangxuat;
     private JPanel contentPane;
@@ -516,7 +518,7 @@ public class MainFrame extends JFrame {
 
         // Thêm mục Phân quyền
         lblphanquyen = new JLabel("  Phân Quyền");
-        lblphanquyen.setIcon(new ImageIcon("img\\permission.png")); // Placeholder, thay bằng ảnh thực tế
+        lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
         lblphanquyen.setOpaque(true);
         lblphanquyen.setForeground(Color.WHITE);
         lblphanquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
