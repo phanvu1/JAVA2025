@@ -83,6 +83,9 @@ import dao.DocGiaDAO;
 import dao.SachDAO;
 import dao.TacGiaDAO;
 
+import export.ExportEx;
+import export.ImportEx;
+
 import java.util.logging.SimpleFormatter;
 
 public class MainFrame extends JFrame {
@@ -1246,7 +1249,7 @@ public class MainFrame extends JFrame {
         DefaultPieDataset p = new DefaultPieDataset();
         // Bỏ phần tính toán dùng SachBus và chitietpmbus
         int sachdamuon = ChiTietPhieuMuonBUS.gI().getSoLuongSachDangMuon();
-        int tongsach = sachdamuon + SachBUS.gI().soluongsach();
+        int tongsach = sachdamuon + SachBUS.gI().getTongSoLuongSach();
         float phantramsachdamuon = (float) (sachdamuon * 1.0 / tongsach * 100);
         p.setValue("Sách Đã Mượn", phantramsachdamuon); // Giá trị giả lập
         p.setValue("Sách Còn Lại", 100 - phantramsachdamuon); // Giá trị giả lập

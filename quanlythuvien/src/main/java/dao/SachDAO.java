@@ -1,17 +1,8 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-
 import dto.SachDTO;
-
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -20,13 +11,16 @@ import java.util.List;
 public class SachDAO {
     private Connection conn;
 
-    // Constructor: Nhận kết nối từ bên ngoài
-    public SachDAO(Connection connection) {
-        this.connection = connection;
+    // Constructor: Kết nối đến cơ sở dữ liệu
+    public SachDAO() {
+        this.conn = DBConnect.getConnection();
+        if (this.conn == null) {
+            throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
+        }
     }
 
     // Thêm sách mới
-    public boolean saveSach(SachDTO sach) {
+    public boolean insert(SachDTO sach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
@@ -47,16 +41,15 @@ public class SachDAO {
                 if (generatedKeys.next()) {
                     sach.setMaSach(generatedKeys.getInt(1)); // Lấy ID tự động tạo
                 }
-                System.out.println("Lưu sách thành công: " + sach.getMaSach());
+                System.out.println("Thêm sách thành công: " + sach.getMaSach());
                 result = true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong saveSach: " + e.getMessage());
+            System.err.println("Lỗi SQL trong insert: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null)
-                    stmt.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -65,7 +58,7 @@ public class SachDAO {
     }
 
     // Cập nhật thông tin sách
-    public boolean updateSach(SachDTO sach) {
+    public boolean update(SachDTO sach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
@@ -87,12 +80,11 @@ public class SachDAO {
                 result = true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong updateSach: " + e.getMessage());
+            System.err.println("Lỗi SQL trong update: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null)
-                    stmt.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -101,7 +93,7 @@ public class SachDAO {
     }
 
     // Xóa sách theo mã sách
-    public boolean deleteSach(int maSach) {
+    public boolean delete(int maSach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
@@ -116,12 +108,11 @@ public class SachDAO {
                 result = true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong deleteSach: " + e.getMessage());
+            System.err.println("Lỗi SQL trong delete: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null)
-                    stmt.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -130,46 +121,49 @@ public class SachDAO {
     }
 
     // Lấy danh sách tất cả sách
-    public List<SachDTO> getAllSach() {
-        List<SachDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM sach";
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                SachDTO sach = new SachDTO(
-                        rs.getInt("masach"),
-                        rs.getString("tensach"),
-                        rs.getInt("maloai"),
-                        rs.getInt("manxb"),
-                        rs.getInt("namxb"),
-                        rs.getInt("soluong"),
-                        rs.getInt("makesach"),
-                        rs.getString("hinhanh"));
-                result.add(sach);
+    public ArrayList<SachDTO> getAll() {
+        ArrayList<SachDTO> sachList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM sach";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SachDTO sach = new SachDTO();
+                sach.setMaSach(rs.getInt("masach"));
+                sach.setTenSach(rs.getString("tensach"));
+                sach.setMaLoai(rs.getInt("maloai"));
+                sach.setMaNXB(rs.getInt("manxb"));
+                sach.setNamXB(rs.getInt("namxb"));
+                sach.setSoLuong(rs.getInt("soluong"));
+                sach.setMaKeSach(rs.getInt("makesach"));
+                sach.setHinhAnh(rs.getString("hinhanh"));
+                sachList.add(sach);
             }
-            System.out.println("getAllSach trả về " + result.size() + " sách");
+            System.out.println("getAll trả về " + sachList.size() + " sách");
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong getAllSach: " + e.getMessage());
+            System.err.println("Lỗi SQL trong getAll: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Trả về ArrayList rỗng để tránh null
+            return new ArrayList<>(); // Trả về danh sách rỗng để tránh null
         } finally {
             try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return result;
+        return sachList;
     }
 
     // Tìm sách theo mã sách
-    public SachDTO findSachById(int maSach) {
+    public SachDTO getById(int maSach) {
+        SachDTO sach = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        SachDTO sach = null;
 
         try {
             String sql = "SELECT * FROM sach WHERE masach = ?";
@@ -178,25 +172,23 @@ public class SachDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                sach = new SachDTO(
-                        rs.getInt("masach"),
-                        rs.getString("tensach"),
-                        rs.getInt("maloai"),
-                        rs.getInt("manxb"),
-                        rs.getInt("namxb"),
-                        rs.getInt("soluong"),
-                        rs.getInt("makesach"),
-                        rs.getString("hinhanh"));
+                sach = new SachDTO();
+                sach.setMaSach(rs.getInt("masach"));
+                sach.setTenSach(rs.getString("tensach"));
+                sach.setMaLoai(rs.getInt("maloai"));
+                sach.setMaNXB(rs.getInt("manxb"));
+                sach.setNamXB(rs.getInt("namxb"));
+                sach.setSoLuong(rs.getInt("soluong"));
+                sach.setMaKeSach(rs.getInt("makesach"));
+                sach.setHinhAnh(rs.getString("hinhanh"));
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong findSachById: " + e.getMessage());
+            System.err.println("Lỗi SQL trong getById: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -204,41 +196,84 @@ public class SachDAO {
         return sach;
     }
 
-    // Tìm sách theo tên sách (phục vụ giao diện tìm kiếm)
-    public List<SachDTO> findSachByName(String tenSach) {
-        List<SachDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM sach WHERE tensach LIKE ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "%" + tenSach + "%");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    SachDTO sach = new SachDTO(
-                            resultSet.getInt("masach"),
-                            resultSet.getString("tensach"),
-                            resultSet.getInt("maloai"),
-                            resultSet.getInt("manxb"),
-                            resultSet.getInt("namxb"),
-                            resultSet.getInt("soluong"),
-                            resultSet.getInt("makesach"),
-                            resultSet.getString("hinhanh"));
-                    result.add(sach);
-                }
+    // Tìm sách theo tên sách
+    public ArrayList<SachDTO> findSachByName(String tenSach) {
+        ArrayList<SachDTO> sachList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM sach WHERE tensach LIKE ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, "%" + tenSach + "%");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SachDTO sach = new SachDTO();
+                sach.setMaSach(rs.getInt("masach"));
+                sach.setTenSach(rs.getString("tensach"));
+                sach.setMaLoai(rs.getInt("maloai"));
+                sach.setMaNXB(rs.getInt("manxb"));
+                sach.setNamXB(rs.getInt("namxb"));
+                sach.setSoLuong(rs.getInt("soluong"));
+                sach.setMaKeSach(rs.getInt("makesach"));
+                sach.setHinhAnh(rs.getString("hinhanh"));
+                sachList.add(sach);
             }
-            System.out.println("findSachByName trả về " + result.size() + " sách");
+            System.out.println("findSachByName trả về " + sachList.size() + " sách");
         } catch (SQLException e) {
             System.err.println("Lỗi SQL trong findSachByName: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Trả về ArrayList rỗng để tránh null
+            return new ArrayList<>(); // Trả về danh sách rỗng để tránh null
         } finally {
             try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return result;
+        return sachList;
+    }
+    
+    public int soluongsach() {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        int total = 0;
+
+        try {
+            String sql = "SELECT SUM(soluong) AS total FROM sach";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getInt("total");
+            }
+            System.out.println("Tổng số lượng sách: " + total);
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL trong soluongsach: " + e.getMessage());
+            e.printStackTrace();
+            return 0; // Trả về 0 nếu có lỗi
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return total;
+    }
+
+    // Đóng kết nối
+    public void close() {
+        if (conn != null) {
+            try {
+                conn.close();
+                System.out.println("Đóng kết nối trong SachDAO thành công!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
