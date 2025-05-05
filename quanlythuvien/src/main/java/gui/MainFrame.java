@@ -545,7 +545,7 @@ public class MainFrame extends JFrame {
         lblchung.setBackground(Color.DARK_GRAY);
         lblchung.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lblchung);
-        
+
         JLabel lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
@@ -563,7 +563,7 @@ public class MainFrame extends JFrame {
         lbldangxuat.setBackground(Color.DARK_GRAY);
         lbldangxuat.setBounds(0, 782, 187, 46);
         menuItemsPanel.add(lbldangxuat);
-        
+
         // Phần còn lại giữ nguyên
         PanelChinh.add(pnTrangChu, "name_890335498390600");
 
@@ -1081,11 +1081,11 @@ public class MainFrame extends JFrame {
         panel_7.add(txttimphieunhap);
         txttimphieunhap.setColumns(10);
 
-//        btninphieunhap = new JButton("In");
-//        btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
-//        btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
-//        btninphieunhap.setBounds(687, 10, 97, 46);
-//        panel_7.add(btninphieunhap);
+        // btninphieunhap = new JButton("In");
+        // btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
+        // btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
+        // btninphieunhap.setBounds(687, 10, 97, 46);
+        // panel_7.add(btninphieunhap);
 
         btnxuatexcel = new JButton("Xuất\r\n");
         btnxuatexcel.setIcon(new ImageIcon("img\\Export Excel.png"));
@@ -2176,17 +2176,18 @@ public class MainFrame extends JFrame {
             }
         });
 
-//        btninphieunhap.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int i = tablephieunhap.getSelectedRow();
-//                if (i > -1) {
-//                    int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
-//                }
-//            }
-//        });
+        // btninphieunhap.addActionListener(new ActionListener() {
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // int i = tablephieunhap.getSelectedRow();
+        // if (i > -1) {
+        // int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+        // } else {
+        // JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá
+        // Đơn");
+        // }
+        // }
+        // });
 
         btnxuatexcel.addActionListener(new ActionListener() {
 
@@ -2940,7 +2941,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
             }
         });
-        
+
         lblphanquyen.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -2959,6 +2960,7 @@ public class MainFrame extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 lblphanquyen.setBackground(Color.blue);
             }
+
             @Override
             public void mouseClicked(MouseEvent arg0) {
                 pnTrangChu.show(false);
