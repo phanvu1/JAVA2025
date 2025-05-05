@@ -1697,7 +1697,11 @@ public class MainFrame extends JFrame {
         btnTiLi.setIcon(new ImageIcon("img\\update.png"));
         btnTiLi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                // Bỏ loaddocgia()
+                loaddocgia();
+                txtTendocgia.setText("");
+                txtdiachidocgia.setText("");
+                txtgioitinhdocgia.setText("");
+                txtsdtdocgia.setText("");
             }
         });
         btnTiLi.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -1845,7 +1849,7 @@ public class MainFrame extends JFrame {
         btnreloadtacgia = new JButton("Tải Lại");
         btnreloadtacgia.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Bỏ loadtacgia()
+                loadtacgia();
             }
         });
         btnreloadtacgia.setIcon(new ImageIcon("img\\update.png"));
