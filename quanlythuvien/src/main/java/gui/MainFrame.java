@@ -516,7 +516,7 @@ public class MainFrame extends JFrame {
 
         // Thêm mục Phân quyền
         lblphanquyen = new JLabel("  Phân Quyền");
-        lblphanquyen.setIcon(new ImageIcon("img\\permission.png")); // Placeholder, thay bằng ảnh thực tế
+        lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
         lblphanquyen.setOpaque(true);
         lblphanquyen.setForeground(Color.WHITE);
         lblphanquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
