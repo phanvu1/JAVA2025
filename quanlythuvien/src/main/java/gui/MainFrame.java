@@ -371,6 +371,13 @@ public class MainFrame extends JFrame {
     private JTextField txtIdDanhMucChucNang;
     private JLabel lblTenChucNang;
     private JTextField txtTenChucNang;
+    private JButton btnThemNhomQuyen;
+    private JButton btnSuaNhomQuyen;
+    private JButton btnXoaNhomQuyen;
+    private JTable tableChiTietNhomQuyen;
+    private JButton btnThemChiTietNhomQuyen;
+    private JButton btnSuaChiTietNhomQuyen;
+    private JButton btnXoaChiTietNhomQuyen;
     
 
     public static void main(String[] args) {
@@ -1206,17 +1213,17 @@ public class MainFrame extends JFrame {
         txtMoTa.setColumns(10);
 
         // Các nút chức năng
-        JButton btnThemNhomQuyen = new JButton("Thêm");
+        btnThemNhomQuyen = new JButton("Thêm");
         btnThemNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnThemNhomQuyen.setBounds(12, 242, 97, 46);
         panelNhomQuyen.add(btnThemNhomQuyen);
 
-        JButton btnSuaNhomQuyen = new JButton("Sửa");
+        btnSuaNhomQuyen = new JButton("Sửa");
         btnSuaNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnSuaNhomQuyen.setBounds(119, 242, 97, 46);
         panelNhomQuyen.add(btnSuaNhomQuyen);
 
-        JButton btnXoaNhomQuyen = new JButton("Xoá");
+        btnXoaNhomQuyen = new JButton("Xoá");
         btnXoaNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnXoaNhomQuyen.setBounds(226, 242, 97, 46);
         panelNhomQuyen.add(btnXoaNhomQuyen);
@@ -1295,17 +1302,17 @@ public class MainFrame extends JFrame {
         txtTenChucNang.setColumns(10);
 
         // Các nút chức năng cho Chi Tiết Nhóm Quyền
-        JButton btnThemChiTietNhomQuyen = new JButton("Thêm");
+        btnThemChiTietNhomQuyen = new JButton("Thêm");
         btnThemChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnThemChiTietNhomQuyen.setBounds(12, 245, 97, 46);
         panelChiTietNhomQuyen.add(btnThemChiTietNhomQuyen);
 
-        JButton btnSuaChiTietNhomQuyen = new JButton("Sửa");
+        btnSuaChiTietNhomQuyen = new JButton("Sửa");
         btnSuaChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnSuaChiTietNhomQuyen.setBounds(138, 245, 97, 46);
         panelChiTietNhomQuyen.add(btnSuaChiTietNhomQuyen);
 
-        JButton btnXoaChiTietNhomQuyen = new JButton("Xoá");
+        btnXoaChiTietNhomQuyen = new JButton("Xoá");
         btnXoaChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnXoaChiTietNhomQuyen.setBounds(261, 245, 97, 46);
         panelChiTietNhomQuyen.add(btnXoaChiTietNhomQuyen);
@@ -1320,7 +1327,7 @@ public class MainFrame extends JFrame {
         dtmChiTietNhomQuyen.addColumn("ID Danh Mục Chức Năng");
         dtmChiTietNhomQuyen.addColumn("Tên Chức Năng");
 
-        JTable tableChiTietNhomQuyen = new MyTable(dtmChiTietNhomQuyen);
+        tableChiTietNhomQuyen = new MyTable(dtmChiTietNhomQuyen);
         scrollPaneChiTietNhomQuyen.setViewportView(tableChiTietNhomQuyen);
 
         // Panel tìm kiếm
@@ -2643,7 +2650,7 @@ public class MainFrame extends JFrame {
                                 });
                             }
                         }
-
+                        txtIdNhomQuyen.setText(idNhomQuyen+"");
                         System.out.println("Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
                     } catch (NumberFormatException ex) {
                         ex.printStackTrace();
@@ -2656,6 +2663,48 @@ public class MainFrame extends JFrame {
                     txtTendocgia.setText("");
                     txtMoTa.setText("");
                     dtmChiTietNhomQuyen.setRowCount(0);
+                }
+            }
+        });
+        
+        tableChiTietNhomQuyen.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tableChiTietNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        // Populate input fields with selected ChiTietNhomQuyen data
+                        txtIdNhomQuyen.setText(dtmChiTietNhomQuyen.getValueAt(i, 0).toString()); // idnhomquyen
+                        txtIdDanhMucChucNang.setText(dtmChiTietNhomQuyen.getValueAt(i, 1).toString()); // iddanhmucchucnang
+                        txtTenChucNang.setText(dtmChiTietNhomQuyen.getValueAt(i, 2).toString()); // hanhdong
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Dữ liệu chi tiết nhóm quyền không hợp lệ!", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    System.out.println("Không có hàng nào được chọn hoặc bảng chi tiết nhóm quyền rỗng!");
+                    // Reset input fields
+                    txtIdNhomQuyen.setText("");
+                    txtIdDanhMucChucNang.setText("");
+                    txtTenChucNang.setText("");
                 }
             }
         });
@@ -4294,6 +4343,279 @@ public class MainFrame extends JFrame {
                     }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
+                }
+            }
+        });
+        
+        btnThemNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (txtTenNhomQuyen.getText().isEmpty()) {
+                    thongbao("Tên nhóm quyền");
+                    return;
+                }
+                if (txtMoTa.getText().isEmpty()) {
+                    thongbao("Mô tả");
+                    return;
+                }
+
+                NhomQuyenDTO nhomQuyenMoi = new NhomQuyenDTO();
+                nhomQuyenMoi.setTennhomquyen(txtTenNhomQuyen.getText());
+                nhomQuyenMoi.setMota(txtMoTa.getText());
+
+                boolean success = NhomQuyenBUS.gI().addNhomQuyen(nhomQuyenMoi);
+                if (success) {
+                    loadNhomQuyen();
+                    dtmChiTietNhomQuyen.setRowCount(0);
+                    txtIdDanhMucChucNang.requestFocusInWindow();
+                }
+            }
+        });
+        
+        btnSuaNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tableNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    if (txtTenNhomQuyen.getText().isEmpty()) {
+                        thongbao("Tên nhóm quyền");
+                        return;
+                    }
+                    if (txtMoTa.getText().isEmpty()) {
+                        thongbao("Mô tả");
+                        return;
+                    }
+
+                    try {
+                        int idNhomQuyen = Integer.parseInt(dtmNhomQuyen.getValueAt(i, 0).toString());
+                        String tenNhomQuyen = txtTenNhomQuyen.getText();
+                        String moTa = txtMoTa.getText();
+
+                        NhomQuyenDTO nhomQuyenSua = new NhomQuyenDTO(idNhomQuyen, tenNhomQuyen, moTa);
+                        boolean success = NhomQuyenBUS.gI().updateNhomQuyen(nhomQuyenSua);
+                        if (success) {
+                            loadNhomQuyen();
+                            dtmChiTietNhomQuyen.setRowCount(0);
+                            txtTenNhomQuyen.requestFocusInWindow();
+                            JOptionPane.showMessageDialog(contentPane, "Đã sửa nhóm quyền có mã " + idNhomQuyen);
+                        } else {
+                            JOptionPane.showMessageDialog(contentPane, "Sửa nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
+                }
+            }
+        });
+
+        // ActionListener for btnXoaNhomQuyen
+        btnXoaNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tableNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        int idNhomQuyen = Integer.parseInt(dtmNhomQuyen.getValueAt(i, 0).toString());
+                        if (JOptionPane.showConfirmDialog(contentPane, "Bạn chắc chắn xóa nhóm quyền có mã " + idNhomQuyen + "?", "",
+                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            // Delete associated ChiTietNhomQuyen entries first
+                            boolean detailSuccess = ChiTietNhomQuyenBUS.gI().deleteByIdNhomQuyen(idNhomQuyen);
+                            boolean groupSuccess = NhomQuyenBUS.gI().deleteNhomQuyen(idNhomQuyen);
+
+                            if (groupSuccess) {
+                                loadNhomQuyen();
+                                dtmChiTietNhomQuyen.setRowCount(0);
+                                txtTenNhomQuyen.setText("");
+                                txtMoTa.setText("");
+                                JOptionPane.showMessageDialog(contentPane, "Đã xóa nhóm quyền có mã " + idNhomQuyen);
+                            } else {
+                                JOptionPane.showMessageDialog(contentPane, "Xóa nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn cột nào");
+                }
+            }
+        });
+        
+
+        btnThemChiTietNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (txtIdNhomQuyen.getText().isEmpty()) {
+                    thongbao("Hãy chọn mã nhóm quyền mà bạn cần thêm chi tiết nhóm quyền");
+                    return;
+                }
+                if (!isNumber(txtIdNhomQuyen.getText())) {
+                    JOptionPane.showMessageDialog(null, "Mã nhóm quyền phải là số");
+                    return;
+                }
+                if (txtIdDanhMucChucNang.getText().isEmpty()) {
+                    thongbao("Mã danh mục chức năng");
+                    return;
+                }
+                if (!isNumber(txtIdDanhMucChucNang.getText())) {
+                    JOptionPane.showMessageDialog(null, "Mã danh mục chức năng phải là số");
+                    return;
+                }
+                if (txtTenChucNang.getText().isEmpty()) {
+                    thongbao("Hành động");
+                    return;
+                }
+
+                try {
+                    int idNhomQuyen = Integer.parseInt(txtIdNhomQuyen.getText());
+                    int idDanhMucChucNang = Integer.parseInt(txtIdDanhMucChucNang.getText());
+                    String hanhDong = txtTenChucNang.getText();
+
+                    ChiTietNhomQuyenDTO ctMoi = new ChiTietNhomQuyenDTO(idNhomQuyen, idDanhMucChucNang, hanhDong);
+                    boolean success = ChiTietNhomQuyenBUS.gI().add(ctMoi);
+                    if (success) {
+                        dsChiTietNhomQuyen.add(ctMoi);
+                        dtmChiTietNhomQuyen.setRowCount(0);
+                        for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
+                            if (ct.getIdnhomquyen() == idNhomQuyen) {
+                                dtmChiTietNhomQuyen.addRow(new Object[] {
+                                        ct.getIdnhomquyen(),
+                                        ct.getIddanhmucchucnang(),
+                                        ct.getHanhdong()
+                                });
+                            }
+                        }
+                        JOptionPane.showMessageDialog(contentPane, 
+                                "Đã thêm chi tiết nhóm quyền cho mã nhóm quyền " + idNhomQuyen);
+                        txtIdDanhMucChucNang.setText("");
+                        txtTenChucNang.setText("");
+                        txtIdDanhMucChucNang.requestFocusInWindow();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, 
+                                "Thêm chi tiết nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(contentPane, 
+                            "Dữ liệu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        btnSuaChiTietNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tableChiTietNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    if (txtIdNhomQuyen.getText().isEmpty()) {
+                        thongbao("Mã nhóm quyền");
+                        return;
+                    }
+                    if (!isNumber(txtIdNhomQuyen.getText())) {
+                        JOptionPane.showMessageDialog(null, "Mã nhóm quyền phải là số");
+                        return;
+                    }
+                    if (txtIdDanhMucChucNang.getText().isEmpty()) {
+                        thongbao("Mã danh mục chức năng");
+                        return;
+                    }
+                    if (!isNumber(txtIdDanhMucChucNang.getText())) {
+                        JOptionPane.showMessageDialog(null, "Mã danh mục chức năng phải là số");
+                        return;
+                    }
+                    if (txtTenChucNang.getText().isEmpty()) {
+                        thongbao("Hành động");
+                        return;
+                    }
+
+                    try {
+                        int idNhomQuyen = Integer.parseInt(txtIdNhomQuyen.getText());
+                        int idDanhMucChucNang = Integer.parseInt(dtmChiTietNhomQuyen.getValueAt(i, 1).toString());
+                        String hanhDong = txtTenChucNang.getText();
+
+                        ChiTietNhomQuyenDTO ctSua = new ChiTietNhomQuyenDTO(idNhomQuyen, idDanhMucChucNang, hanhDong);
+                        boolean success = ChiTietNhomQuyenBUS.gI().update(ctSua);
+                        if (success) {
+                            dtmChiTietNhomQuyen.setRowCount(0);
+                            for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
+                                if (ct.getIdnhomquyen() == idNhomQuyen) {
+                                    if (ct.getIddanhmucchucnang() == idDanhMucChucNang) {
+                                        ct.setHanhdong(hanhDong);
+                                    }
+                                    dtmChiTietNhomQuyen.addRow(new Object[] {
+                                            ct.getIdnhomquyen(),
+                                            ct.getIddanhmucchucnang(),
+                                            ct.getHanhdong()
+                                    });
+                                }
+                            }
+                            JOptionPane.showMessageDialog(contentPane,
+                                    "Đã sửa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
+                                    " và mã danh mục chức năng " + idDanhMucChucNang);
+                            txtIdDanhMucChucNang.setText("");
+                            txtTenChucNang.setText("");
+                            txtIdDanhMucChucNang.requestFocusInWindow();
+                        } else {
+                            JOptionPane.showMessageDialog(contentPane,
+                                    "Sửa chi tiết nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(contentPane,
+                                "Dữ liệu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
+                }
+            }
+        });
+
+        btnXoaChiTietNhomQuyen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tableChiTietNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        int idNhomQuyen = Integer.parseInt(txtIdNhomQuyen.getText());
+                        int idDanhMucChucNang = Integer.parseInt(dtmChiTietNhomQuyen.getValueAt(i, 1).toString());
+                        int confirm = JOptionPane.showConfirmDialog(null, 
+                                "Bạn có muốn xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
+                                " và mã danh mục chức năng " + idDanhMucChucNang + "?", 
+                                "", JOptionPane.YES_NO_OPTION);
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            boolean success = ChiTietNhomQuyenBUS.gI().delete(idNhomQuyen, idDanhMucChucNang);
+                            if (success) {
+                                // Remove from in-memory list
+                                dsChiTietNhomQuyen.removeIf(ct -> 
+                                        ct.getIdnhomquyen() == idNhomQuyen && 
+                                        ct.getIddanhmucchucnang() == idDanhMucChucNang);
+                                dtmChiTietNhomQuyen.setRowCount(0);
+                                for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
+                                    if (ct.getIdnhomquyen() == idNhomQuyen) {
+                                        dtmChiTietNhomQuyen.addRow(new Object[] {
+                                                ct.getIdnhomquyen(),
+                                                ct.getIddanhmucchucnang(),
+                                                ct.getHanhdong()
+                                        });
+                                    }
+                                }
+                                JOptionPane.showMessageDialog(contentPane,
+                                        "Đã xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
+                                        " và mã danh mục chức năng " + idDanhMucChucNang);
+                                txtIdDanhMucChucNang.setText("");
+                                txtTenChucNang.setText("");
+                                txtIdDanhMucChucNang.requestFocusInWindow();
+                            } else {
+                                JOptionPane.showMessageDialog(contentPane,
+                                        "Xóa chi tiết nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(contentPane,
+                                "Dữ liệu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
                 }
             }
         });

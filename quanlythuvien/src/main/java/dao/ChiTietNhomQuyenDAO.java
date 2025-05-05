@@ -77,6 +77,7 @@ public class ChiTietNhomQuyenDAO {
         }
         return list;
     }
+
     public boolean kiemTraQuyen(int idNhomQuyen, int idDanhMucChucNang) {
         String sql = "SELECT COUNT(*) FROM chitietnhomquyen WHERE idnhomquyen = ? AND iddanhmucchucnang = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,5 +94,30 @@ public class ChiTietNhomQuyenDAO {
             e.printStackTrace();
         }
         return false;
-    }  
+    }
+
+    public boolean deleteByIdNhomQuyen(int idnhomquyen) {
+        String sql = "DELETE FROM chitietnhomquyen WHERE idnhomquyen = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idnhomquyen);
+            return stmt.executeUpdate() >= 0; // Success even if no rows deleted
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean update(ChiTietNhomQuyenDTO ct) {
+        String sql = "UPDATE chitietnhomquyen SET hanhdong = ? WHERE idnhomquyen = ? AND iddanhmucchucnang = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, ct.getHanhdong());
+            stmt.setInt(2, ct.getIdnhomquyen());
+            stmt.setInt(3, ct.getIddanhmucchucnang());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
