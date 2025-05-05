@@ -87,9 +87,11 @@ import export.ExportEx;
 import export.ImportEx;
 
 import java.util.logging.SimpleFormatter;
+import gui.LoginForm;
 
 public class MainFrame extends JFrame {
     public static String Ma;
+    private static int idnhomquyen = LoginForm.idnhomquyen;
     public static boolean isdangxuat;
     private JPanel contentPane;
     private JLabel iconsgu;
@@ -180,6 +182,8 @@ public class MainFrame extends JFrame {
     private DefaultTableModel dtmnhaxuatban;
     public static JPanel pnPhieumuon;
     private JPanel pnPhieuNhap;
+    private JPanel pnTaiKhoan;
+    private JPanel pnNhomQuyen;
     private JPanel panel_2;
     private JLabel lbltennv;
     private JLabel lblnamsinhnv;
@@ -304,6 +308,7 @@ public class MainFrame extends JFrame {
     private JTable tablethongkenhaphang;
     private JLabel lblNewLabel_18;
     private JLabel lblsosachdanhap;
+    private JLabel lblnhomquyen;
     private JTextField txttimsach;
     private JButton btnTiLi;
     private JLabel lblTmKim;
@@ -411,6 +416,8 @@ public class MainFrame extends JFrame {
         nhanvien();
         pnPhieumuon = new JPanel();
         pnPhieuNhap = new JPanel();
+        pnTaiKhoan = new JPanel();
+        pnNhomQuyen = new JPanel();
 
         // Tạo menuleft
         menuleft = new JPanel();
@@ -519,7 +526,7 @@ public class MainFrame extends JFrame {
         menuItemsPanel.add(lblphieunhap);
 
         // Thêm mục Phân quyền
-        lblphanquyen = new JLabel("  Phân Quyền");
+        lblphanquyen = new JLabel("  Tài Khoản");
         lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
         lblphanquyen.setOpaque(true);
         lblphanquyen.setForeground(Color.WHITE);
@@ -546,7 +553,7 @@ public class MainFrame extends JFrame {
         lblchung.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lblchung);
         
-        JLabel lblnhomquyen = new JLabel("  Nhóm Quyền");
+        lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
         lblnhomquyen.setForeground(Color.WHITE);
@@ -1126,7 +1133,214 @@ public class MainFrame extends JFrame {
         btntimphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
         btntimphieunhap.setBounds(578, 10, 97, 46);
         panel_7.add(btntimphieunhap);
+        
+        PanelChinh.add(pnNhomQuyen, "NhomQuyenPanel"); // Định danh rõ ràng
+        pnNhomQuyen.setLayout(null);
 
+        // Panel nhập thông tin Nhóm Quyền
+        JPanel panelNhomQuyen = new JPanel();
+        panelNhomQuyen.setBorder(new TitledBorder(null, "Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelNhomQuyen.setBounds(22, 13, 434, 304);
+        pnNhomQuyen.add(panelNhomQuyen);
+        panelNhomQuyen.setLayout(null);
+
+        // Nhãn và trường nhập Tên Nhóm Quyền
+        JLabel lblTenNhomQuyen = new JLabel("Tên Nhóm Quyền");
+        lblTenNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTenNhomQuyen.setBounds(12, 42, 130, 33);
+        panelNhomQuyen.add(lblTenNhomQuyen);
+
+        JTextField txtTenNhomQuyen = new JTextField();
+        txtTenNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTenNhomQuyen.setBounds(144, 43, 200, 33);
+        panelNhomQuyen.add(txtTenNhomQuyen);
+        txtTenNhomQuyen.setColumns(10);
+
+        // Nhãn và trường nhập Mô Tả
+        JLabel lblMoTa = new JLabel("Mô Tả");
+        lblMoTa.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblMoTa.setBounds(12, 104, 102, 33);
+        panelNhomQuyen.add(lblMoTa);
+
+        JTextField txtMoTa = new JTextField();
+        txtMoTa.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtMoTa.setBounds(144, 104, 200, 33);
+        panelNhomQuyen.add(txtMoTa);
+        txtMoTa.setColumns(10);
+
+        // Các nút chức năng
+        JButton btnThemNhomQuyen = new JButton("Thêm");
+        btnThemNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnThemNhomQuyen.setBounds(12, 242, 97, 46);
+        panelNhomQuyen.add(btnThemNhomQuyen);
+
+        JButton btnSuaNhomQuyen = new JButton("Sửa");
+        btnSuaNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnSuaNhomQuyen.setBounds(119, 242, 97, 46);
+        panelNhomQuyen.add(btnSuaNhomQuyen);
+
+        JButton btnXoaNhomQuyen = new JButton("Xoá");
+        btnXoaNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnXoaNhomQuyen.setBounds(226, 242, 97, 46);
+        panelNhomQuyen.add(btnXoaNhomQuyen);
+
+        JButton btnTaiLaiNhomQuyen = new JButton("Tải Lại");
+        btnTaiLaiNhomQuyen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+//                    loadNhomQuyen();
+//                    loadChiTietNhomQuyen();
+            }
+        });
+        btnTaiLaiNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnTaiLaiNhomQuyen.setBounds(335, 242, 97, 46);
+        panelNhomQuyen.add(btnTaiLaiNhomQuyen);
+
+        // Bảng hiển thị danh sách Nhóm Quyền
+        JScrollPane scrollPaneNhomQuyen = new JScrollPane();
+        scrollPaneNhomQuyen.setBounds(467, 13, 614, 304);
+        pnNhomQuyen.add(scrollPaneNhomQuyen);
+
+        DefaultTableModel dtmNhomQuyen = new DefaultTableModel();
+        dtmNhomQuyen.addColumn("ID");
+        dtmNhomQuyen.addColumn("Tên Nhóm Quyền");
+        dtmNhomQuyen.addColumn("Mô Tả");
+
+        JTable tableNhomQuyen = new MyTable(dtmNhomQuyen); // Sử dụng MyTable giống pnPhieuNhap
+        scrollPaneNhomQuyen.setViewportView(tableNhomQuyen);
+
+        // Panel Chi Tiết Nhóm Quyền
+        JPanel panelChiTietNhomQuyen = new JPanel();
+        panelChiTietNhomQuyen.setBorder(new TitledBorder(null, "Chi Tiết Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelChiTietNhomQuyen.setBounds(22, 418, 422, 304);
+        pnNhomQuyen.add(panelChiTietNhomQuyen);
+        panelChiTietNhomQuyen.setLayout(null);
+
+        // Nhãn và trường nhập ID Nhóm Quyền (không chỉnh sửa)
+        JLabel lblIdNhomQuyen = new JLabel("ID Nhóm Quyền");
+        lblIdNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblIdNhomQuyen.setBounds(12, 13, 127, 33);
+        panelChiTietNhomQuyen.add(lblIdNhomQuyen);
+
+        JTextField txtIdNhomQuyen = new JTextField();
+        txtIdNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtIdNhomQuyen.setBounds(152, 13, 91, 33);
+        txtIdNhomQuyen.setEditable(false);
+        txtIdNhomQuyen.setFocusable(false);
+        panelChiTietNhomQuyen.add(txtIdNhomQuyen);
+        txtIdNhomQuyen.setColumns(10);
+
+        // Nhãn và trường nhập ID Danh Mục Chức Năng
+        JLabel lblIdDanhMucChucNang = new JLabel("ID Chức Năng");
+        lblIdDanhMucChucNang.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblIdDanhMucChucNang.setBounds(12, 60, 102, 33);
+        panelChiTietNhomQuyen.add(lblIdDanhMucChucNang);
+
+        JTextField txtIdDanhMucChucNang = new JTextField();
+        txtIdDanhMucChucNang.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtIdDanhMucChucNang.setBounds(152, 60, 91, 33);
+        panelChiTietNhomQuyen.add(txtIdDanhMucChucNang);
+        txtIdDanhMucChucNang.setColumns(10);
+
+        JButton btnChonChucNang = new JButton("...");
+        btnChonChucNang.setBounds(278, 65, 48, 25);
+        panelChiTietNhomQuyen.add(btnChonChucNang);
+
+        // Nhãn và trường nhập Tên Chức Năng
+        JLabel lblTenChucNang = new JLabel("Tên Chức Năng");
+        lblTenChucNang.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTenChucNang.setBounds(12, 122, 102, 33);
+        panelChiTietNhomQuyen.add(lblTenChucNang);
+
+        JTextField txtTenChucNang = new JTextField();
+        txtTenChucNang.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTenChucNang.setBounds(152, 122, 174, 33);
+        panelChiTietNhomQuyen.add(txtTenChucNang);
+        txtTenChucNang.setColumns(10);
+
+        // Các nút chức năng cho Chi Tiết Nhóm Quyền
+        JButton btnThemChiTietNhomQuyen = new JButton("Thêm");
+        btnThemChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnThemChiTietNhomQuyen.setBounds(12, 245, 97, 46);
+        panelChiTietNhomQuyen.add(btnThemChiTietNhomQuyen);
+
+        JButton btnSuaChiTietNhomQuyen = new JButton("Sửa");
+        btnSuaChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnSuaChiTietNhomQuyen.setBounds(138, 245, 97, 46);
+        panelChiTietNhomQuyen.add(btnSuaChiTietNhomQuyen);
+
+        JButton btnXoaChiTietNhomQuyen = new JButton("Xoá");
+        btnXoaChiTietNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnXoaChiTietNhomQuyen.setBounds(261, 245, 97, 46);
+        panelChiTietNhomQuyen.add(btnXoaChiTietNhomQuyen);
+
+        // Bảng hiển thị Chi Tiết Nhóm Quyền
+        JScrollPane scrollPaneChiTietNhomQuyen = new JScrollPane();
+        scrollPaneChiTietNhomQuyen.setBounds(456, 418, 625, 304);
+        pnNhomQuyen.add(scrollPaneChiTietNhomQuyen);
+
+        DefaultTableModel dtmChiTietNhomQuyen = new DefaultTableModel();
+        dtmChiTietNhomQuyen.addColumn("ID Nhóm Quyền");
+        dtmChiTietNhomQuyen.addColumn("ID Danh Mục Chức Năng");
+        dtmChiTietNhomQuyen.addColumn("Tên Chức Năng");
+
+        JTable tableChiTietNhomQuyen = new MyTable(dtmChiTietNhomQuyen);
+        scrollPaneChiTietNhomQuyen.setViewportView(tableChiTietNhomQuyen);
+
+        // Panel tìm kiếm
+        JPanel panelTimKiem = new JPanel();
+        panelTimKiem.setBorder(new LineBorder(new Color(253, 245, 230), 2));
+        panelTimKiem.setBounds(22, 330, 1059, 68);
+        pnNhomQuyen.add(panelTimKiem);
+        panelTimKiem.setLayout(null);
+
+        JLabel lblTimKiem = new JLabel("Tìm Kiếm");
+        lblTimKiem.setToolTipText("Tìm Kiếm Theo Tên Nhóm Quyền");
+        lblTimKiem.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTimKiem.setBounds(12, 17, 127, 33);
+        panelTimKiem.add(lblTimKiem);
+
+        JTextField txtTimNhomQuyen = new JTextField();
+        txtTimNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTimNhomQuyen.setBounds(141, 13, 425, 42);
+        panelTimKiem.add(txtTimNhomQuyen);
+        txtTimNhomQuyen.setColumns(10);
+
+        // Nút Tìm Kiếm
+        JButton btnTimNhomQuyen = new JButton("");
+        btnTimNhomQuyen.setIcon(new ImageIcon("img\\Search.png"));
+        btnTimNhomQuyen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String tenNhomQuyen = txtTimNhomQuyen.getText().trim();
+                dtmNhomQuyen.setRowCount(0);
+                // Giả sử bạn có danh sách NhomQuyenDTO
+//                for (NhomQuyenDTO nq : nhomQuyen) {
+//                    if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
+//                        dtmNhomQuyen.addRow(new Object[] {
+//                            nq.getId(),
+//                            nq.getTenNhomQuyen(),
+//                            nq.getMoTa()
+//                        });
+//                    }
+//                }
+            }
+        });
+        btnTimNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnTimNhomQuyen.setBounds(578, 10, 97, 46);
+        panelTimKiem.add(btnTimNhomQuyen);
+
+        // Nút Xuất Excel
+        JButton btnXuatExcelNhomQuyen = new JButton("Xuất");
+        btnXuatExcelNhomQuyen.setIcon(new ImageIcon("img\\Export Excel.png"));
+        btnXuatExcelNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnXuatExcelNhomQuyen.setBounds(796, 10, 116, 46);
+        panelTimKiem.add(btnXuatExcelNhomQuyen);
+
+        // Nút Nhập Excel
+        JButton btnNhapExcelNhomQuyen = new JButton("Nhập");
+        btnNhapExcelNhomQuyen.setIcon(new ImageIcon("img\\Xls Import.png"));
+        btnNhapExcelNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnNhapExcelNhomQuyen.setBounds(924, 10, 116, 46);
+        panelTimKiem.add(btnNhapExcelNhomQuyen);
         pnchung();
         pnthongke();
     }
@@ -2941,7 +3155,7 @@ public class MainFrame extends JFrame {
             }
         });
         
-        lblphanquyen.addMouseListener(new MouseListener() {
+        lblnhomquyen.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
             }
@@ -2952,15 +3166,18 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                lblphanquyen.setBackground(new Color(64, 64, 64));
+                lblnhomquyen.setBackground(new Color(64, 64, 64));
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                lblphanquyen.setBackground(Color.blue);
+                lblnhomquyen.setBackground(Color.blue);
             }
             @Override
             public void mouseClicked(MouseEvent arg0) {
+                if (idnhomquyen!=1){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                } else {
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -2971,6 +3188,9 @@ public class MainFrame extends JFrame {
                 pnPhieuNhap.show(false);
                 pnchung.show(false);
                 panelThongKe.show(false);
+                pnNhomQuyen.show();
+                }
+               
             }
         });
 
