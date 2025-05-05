@@ -368,6 +368,7 @@ public class MainFrame extends JFrame {
         loadkesach();
         loadloaisach();
         loadthongkephieunhap();
+        loadtacgia();
     }
 
     public void thanhtitle() {
@@ -419,7 +420,7 @@ public class MainFrame extends JFrame {
         JPanel menuItemsPanel = new JPanel();
         menuItemsPanel.setBackground(new Color(64, 64, 64));
         menuItemsPanel.setLayout(null);
-        menuItemsPanel.setPreferredSize(new Dimension(187, 800)); // Chiều cao đủ lớn để chứa tất cả mục
+        menuItemsPanel.setPreferredSize(new Dimension(187, 870)); // Chiều cao đủ lớn để chứa tất cả mục
 
         // Tạo JScrollPane
         JScrollPane scrollPane = new JScrollPane(menuItemsPanel);
@@ -507,7 +508,7 @@ public class MainFrame extends JFrame {
 
         lblphieunhap = new JLabel("  Phiếu Nhập");
         lblphieunhap.setIcon(new ImageIcon("img\\phieunhap.png"));
-        lblphieumuon.setOpaque(true);
+        lblphieunhap.setOpaque(true);
         lblphieunhap.setForeground(Color.WHITE);
         lblphieunhap.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblphieunhap.setBackground(Color.DARK_GRAY);
@@ -530,7 +531,7 @@ public class MainFrame extends JFrame {
         lblthongke.setForeground(Color.WHITE);
         lblthongke.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblthongke.setBackground(Color.DARK_GRAY);
-        lblthongke.setBounds(0, 605, 187, 46);
+        lblthongke.setBounds(0, 664, 187, 46);
         menuItemsPanel.add(lblthongke);
 
         lblchung = new JLabel("  Chung");
@@ -539,8 +540,17 @@ public class MainFrame extends JFrame {
         lblchung.setForeground(Color.WHITE);
         lblchung.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblchung.setBackground(Color.DARK_GRAY);
-        lblchung.setBounds(0, 664, 187, 46);
+        lblchung.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lblchung);
+        
+        JLabel lblnhomquyen = new JLabel("  Nhóm Quyền");
+        lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
+        lblnhomquyen.setOpaque(true);
+        lblnhomquyen.setForeground(Color.WHITE);
+        lblnhomquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblnhomquyen.setBackground(Color.DARK_GRAY);
+        lblnhomquyen.setBounds(0, 605, 187, 46); // Điều chỉnh vị trí y (782) để đặt sau mục "Đăng Xuất"
+        menuItemsPanel.add(lblnhomquyen);
 
         lbldangxuat = new JLabel("  Đăng Xuất");
         lbldangxuat.setIcon(new ImageIcon("img\\Exit.png"));
@@ -548,9 +558,9 @@ public class MainFrame extends JFrame {
         lbldangxuat.setForeground(Color.WHITE);
         lbldangxuat.setFont(new Font("Tahoma", Font.BOLD, 18));
         lbldangxuat.setBackground(Color.DARK_GRAY);
-        lbldangxuat.setBounds(0, 723, 187, 46);
+        lbldangxuat.setBounds(0, 782, 187, 46);
         menuItemsPanel.add(lbldangxuat);
-
+        
         // Phần còn lại giữ nguyên
         PanelChinh.add(pnTrangChu, "name_890335498390600");
 
@@ -1068,11 +1078,11 @@ public class MainFrame extends JFrame {
         panel_7.add(txttimphieunhap);
         txttimphieunhap.setColumns(10);
 
-        btninphieunhap = new JButton("In");
-        btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
-        btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
-        btninphieunhap.setBounds(687, 10, 97, 46);
-        panel_7.add(btninphieunhap);
+//        btninphieunhap = new JButton("In");
+//        btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
+//        btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
+//        btninphieunhap.setBounds(687, 10, 97, 46);
+//        panel_7.add(btninphieunhap);
 
         btnxuatexcel = new JButton("Xuất\r\n");
         btnxuatexcel.setIcon(new ImageIcon("img\\Export Excel.png"));
@@ -2167,17 +2177,17 @@ public class MainFrame extends JFrame {
             }
         });
 
-        btninphieunhap.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int i = tablephieunhap.getSelectedRow();
-                if (i > -1) {
-                    int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-                } else {
-                    JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
-                }
-            }
-        });
+//        btninphieunhap.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int i = tablephieunhap.getSelectedRow();
+//                if (i > -1) {
+//                    int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+//                } else {
+//                    JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
+//                }
+//            }
+//        });
 
         btnxuatexcel.addActionListener(new ActionListener() {
 
@@ -2908,12 +2918,12 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mouseExited(MouseEvent arg0) {
+            public void mouseExited(MouseEvent e) {
                 lblphieunhap.setBackground(new Color(64, 64, 64));
             }
 
             @Override
-            public void mouseEntered(MouseEvent arg0) {
+            public void mouseEntered(MouseEvent e) {
                 lblphieunhap.setBackground(Color.blue);
             }
 
@@ -2927,6 +2937,39 @@ public class MainFrame extends JFrame {
                 pnnhanvien.show(false);
                 pnPhieumuon.show(false);
                 pnPhieuNhap.show();
+                pnchung.show(false);
+                panelThongKe.show(false);
+            }
+        });
+        
+        lblphanquyen.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lblphanquyen.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lblphanquyen.setBackground(Color.blue);
+            }
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnPhieuNhap.show(false);
                 pnchung.show(false);
                 panelThongKe.show(false);
             }
