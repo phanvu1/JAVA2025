@@ -67,6 +67,8 @@ import dto.NhaCungCapDTO;
 import dto.KeSachDTO;
 import dto.LoaiSachDTO;
 import dto.ThongKePhieuNhapDTO;
+import dto.NhomQuyenDTO;
+import dto.ChiTietNhomQuyenDTO;
 
 import bus.PhieuNhapBUS;
 import bus.ChiTietPhieuNhapBUS;
@@ -78,6 +80,8 @@ import bus.KeSachBUS;
 import bus.LoaiSachBUS;
 import bus.ThongKePhieuNhapBUS;
 import bus.ChiTietPhieuMuonBUS;
+import bus.NhomQuyenBUS;
+import bus.ChiTietNhomQuyenBUS;
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
@@ -270,7 +274,9 @@ public class MainFrame extends JFrame {
     private JDateChooser dateChooser_ngaytra;
     private JLabel lblthongke;
     private JTable tablephieunhap;
+    private JTable  tableNhomQuyen;
     private DefaultTableModel dtmphieunhap;
+    private DefaultTableModel dtmNhomQuyen;
     private DefaultTableModel dtmchitietphieunhap;
     private JDateChooser NgayNhapPhieuNhap;
     private JLabel lblphieunhap;
@@ -341,6 +347,16 @@ public class MainFrame extends JFrame {
     private JButton btnthongkesachmuon;
     private JTable tablemuon;
     public static int idtaikhoan;
+    private JTextField txtTenNhomQuyen;
+    private JTextField txtMoTa;
+    private DefaultTableModel dtmChiTietNhomQuyen;
+    private  JLabel lblIdNhomQuyen;
+    private JTextField txtIdNhomQuyen;
+    private JLabel lblIdDanhMucChucNang;
+    private JTextField txtIdDanhMucChucNang;
+    private JLabel lblTenChucNang;
+    private JTextField txtTenChucNang;
+    
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -1150,7 +1166,7 @@ public class MainFrame extends JFrame {
         lblTenNhomQuyen.setBounds(12, 42, 130, 33);
         panelNhomQuyen.add(lblTenNhomQuyen);
 
-        JTextField txtTenNhomQuyen = new JTextField();
+        txtTenNhomQuyen = new JTextField();
         txtTenNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtTenNhomQuyen.setBounds(144, 43, 200, 33);
         panelNhomQuyen.add(txtTenNhomQuyen);
@@ -1162,7 +1178,7 @@ public class MainFrame extends JFrame {
         lblMoTa.setBounds(12, 104, 102, 33);
         panelNhomQuyen.add(lblMoTa);
 
-        JTextField txtMoTa = new JTextField();
+        txtMoTa = new JTextField();
         txtMoTa.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtMoTa.setBounds(144, 104, 200, 33);
         panelNhomQuyen.add(txtMoTa);
@@ -1187,8 +1203,8 @@ public class MainFrame extends JFrame {
         JButton btnTaiLaiNhomQuyen = new JButton("Tải Lại");
         btnTaiLaiNhomQuyen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//                    loadNhomQuyen();
-//                    loadChiTietNhomQuyen();
+                    loadNhomQuyen();
+                    loadChiTietNhomQuyen();
             }
         });
         btnTaiLaiNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -1200,12 +1216,12 @@ public class MainFrame extends JFrame {
         scrollPaneNhomQuyen.setBounds(467, 13, 614, 304);
         pnNhomQuyen.add(scrollPaneNhomQuyen);
 
-        DefaultTableModel dtmNhomQuyen = new DefaultTableModel();
+        dtmNhomQuyen = new DefaultTableModel();
         dtmNhomQuyen.addColumn("ID");
         dtmNhomQuyen.addColumn("Tên Nhóm Quyền");
         dtmNhomQuyen.addColumn("Mô Tả");
 
-        JTable tableNhomQuyen = new MyTable(dtmNhomQuyen); // Sử dụng MyTable giống pnPhieuNhap
+        tableNhomQuyen = new MyTable(dtmNhomQuyen); // Sử dụng MyTable giống pnPhieuNhap
         scrollPaneNhomQuyen.setViewportView(tableNhomQuyen);
 
         // Panel Chi Tiết Nhóm Quyền
@@ -1216,12 +1232,12 @@ public class MainFrame extends JFrame {
         panelChiTietNhomQuyen.setLayout(null);
 
         // Nhãn và trường nhập ID Nhóm Quyền (không chỉnh sửa)
-        JLabel lblIdNhomQuyen = new JLabel("ID Nhóm Quyền");
+        lblIdNhomQuyen = new JLabel("ID Nhóm Quyền");
         lblIdNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblIdNhomQuyen.setBounds(12, 13, 127, 33);
         panelChiTietNhomQuyen.add(lblIdNhomQuyen);
 
-        JTextField txtIdNhomQuyen = new JTextField();
+        txtIdNhomQuyen = new JTextField();
         txtIdNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtIdNhomQuyen.setBounds(152, 13, 91, 33);
         txtIdNhomQuyen.setEditable(false);
@@ -1230,12 +1246,12 @@ public class MainFrame extends JFrame {
         txtIdNhomQuyen.setColumns(10);
 
         // Nhãn và trường nhập ID Danh Mục Chức Năng
-        JLabel lblIdDanhMucChucNang = new JLabel("ID Chức Năng");
+        lblIdDanhMucChucNang = new JLabel("ID Chức Năng");
         lblIdDanhMucChucNang.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblIdDanhMucChucNang.setBounds(12, 60, 102, 33);
         panelChiTietNhomQuyen.add(lblIdDanhMucChucNang);
 
-        JTextField txtIdDanhMucChucNang = new JTextField();
+        txtIdDanhMucChucNang = new JTextField();
         txtIdDanhMucChucNang.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtIdDanhMucChucNang.setBounds(152, 60, 91, 33);
         panelChiTietNhomQuyen.add(txtIdDanhMucChucNang);
@@ -1246,12 +1262,12 @@ public class MainFrame extends JFrame {
         panelChiTietNhomQuyen.add(btnChonChucNang);
 
         // Nhãn và trường nhập Tên Chức Năng
-        JLabel lblTenChucNang = new JLabel("Tên Chức Năng");
+        lblTenChucNang = new JLabel("Tên Chức Năng");
         lblTenChucNang.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblTenChucNang.setBounds(12, 122, 102, 33);
         panelChiTietNhomQuyen.add(lblTenChucNang);
 
-        JTextField txtTenChucNang = new JTextField();
+        txtTenChucNang = new JTextField();
         txtTenChucNang.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtTenChucNang.setBounds(152, 122, 174, 33);
         panelChiTietNhomQuyen.add(txtTenChucNang);
@@ -1278,7 +1294,7 @@ public class MainFrame extends JFrame {
         scrollPaneChiTietNhomQuyen.setBounds(456, 418, 625, 304);
         pnNhomQuyen.add(scrollPaneChiTietNhomQuyen);
 
-        DefaultTableModel dtmChiTietNhomQuyen = new DefaultTableModel();
+        dtmChiTietNhomQuyen = new DefaultTableModel();
         dtmChiTietNhomQuyen.addColumn("ID Nhóm Quyền");
         dtmChiTietNhomQuyen.addColumn("ID Danh Mục Chức Năng");
         dtmChiTietNhomQuyen.addColumn("Tên Chức Năng");
@@ -3177,9 +3193,11 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                if (idnhomquyen!=1){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                } else {
+//                if (idnhomquyen!=1){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                } else {
+                loadNhomQuyen();
+                loadChiTietNhomQuyen();
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3191,7 +3209,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show();
-                }
+//                }
                
             }
         });
@@ -4524,6 +4542,66 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng: " + dtmphieunhap.getRowCount());
     }
+    
+    public static ArrayList<NhomQuyenDTO> dsNhomQuyen = new ArrayList<NhomQuyenDTO>();
+
+    public void loadNhomQuyen() {
+        dsNhomQuyen = null;
+        System.out.println("Đã gọi loadNhomQuyen");
+        dtmNhomQuyen.setRowCount(0); // Xoá tất cả dòng hiện tại trong bảng
+
+        dsNhomQuyen = NhomQuyenBUS.gI().getAllNhomQuyen(); // Lấy danh sách nhóm quyền
+
+        if (dsNhomQuyen == null || dsNhomQuyen.isEmpty()) {
+            System.out.println("Không có dữ liệu nhóm quyền!");
+            JOptionPane.showMessageDialog(null, "Không có nhóm quyền nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            // Reset các trường nhập liệu nếu cần
+            txtTendocgia.setText("");
+            txtMoTa.setText("");
+            return;
+        }
+
+        for (NhomQuyenDTO nq : dsNhomQuyen) {
+            dtmNhomQuyen.addRow(new Object[] {
+                    nq.getIdnhomquyen(),
+                    nq.getTennhomquyen(),
+                    nq.getMota()
+            });
+        }
+        System.out.println("Số hàng trong bảng nhóm quyền: " + dtmNhomQuyen.getRowCount());
+    }
+    public static ArrayList<ChiTietNhomQuyenDTO> dsChiTietNhomQuyen = new ArrayList<ChiTietNhomQuyenDTO>();
+    public void loadChiTietNhomQuyen() {
+        dsChiTietNhomQuyen = null;
+        System.out.println("Đã gọi loadChiTietNhomQuyen");
+        dtmChiTietNhomQuyen.setRowCount(0); // Xoá dữ liệu cũ trong bảng
+
+        dsChiTietNhomQuyen = ChiTietNhomQuyenBUS.gI().getAll(); // Lấy danh sách từ BUS
+
+        if (dsChiTietNhomQuyen == null || dsChiTietNhomQuyen.isEmpty()) {
+            System.out.println("Không có dữ liệu chi tiết nhóm quyền!");
+            JOptionPane.showMessageDialog(null, "Không có chi tiết nhóm quyền nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            // Reset giao diện nếu cần
+            txtIdNhomQuyen.setText("");
+            txtIdDanhMucChucNang.setText("");
+            txtTenChucNang.setText("");
+            return;
+        }
+
+        for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
+            dtmChiTietNhomQuyen.addRow(new Object[] {
+                    ct.getIdnhomquyen(),
+                    ct.getIddanhmucchucnang(),
+                    ct.getHanhdong()
+            });
+        }
+
+        System.out.println("Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
+    }
+
+    
 
     public static ArrayList<ThongKePhieuNhapDTO> tkpn = new ArrayList<ThongKePhieuNhapDTO>();
 
