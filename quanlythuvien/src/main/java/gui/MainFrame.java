@@ -570,7 +570,7 @@ public class MainFrame extends JFrame {
         lbldangxuat.setBackground(Color.DARK_GRAY);
         lbldangxuat.setBounds(0, 782, 187, 46);
         menuItemsPanel.add(lbldangxuat);
-        
+
         // Phần còn lại giữ nguyên
         PanelChinh.add(pnTrangChu, "name_890335498390600");
 
@@ -1088,11 +1088,11 @@ public class MainFrame extends JFrame {
         panel_7.add(txttimphieunhap);
         txttimphieunhap.setColumns(10);
 
-//        btninphieunhap = new JButton("In");
-//        btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
-//        btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
-//        btninphieunhap.setBounds(687, 10, 97, 46);
-//        panel_7.add(btninphieunhap);
+        // btninphieunhap = new JButton("In");
+        // btninphieunhap.setIcon(new ImageIcon("img\\Print.png"));
+        // btninphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
+        // btninphieunhap.setBounds(687, 10, 97, 46);
+        // panel_7.add(btninphieunhap);
 
         btnxuatexcel = new JButton("Xuất\r\n");
         btnxuatexcel.setIcon(new ImageIcon("img\\Export Excel.png"));
@@ -2390,17 +2390,18 @@ public class MainFrame extends JFrame {
             }
         });
 
-//        btninphieunhap.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int i = tablephieunhap.getSelectedRow();
-//                if (i > -1) {
-//                    int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá Đơn");
-//                }
-//            }
-//        });
+        // btninphieunhap.addActionListener(new ActionListener() {
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // int i = tablephieunhap.getSelectedRow();
+        // if (i > -1) {
+        // int ma = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
+        // } else {
+        // JOptionPane.showMessageDialog(null, "Bạn Chưa Click Vào Table Để Xuất Hoá
+        // Đơn");
+        // }
+        // }
+        // });
 
         btnxuatexcel.addActionListener(new ActionListener() {
 
@@ -3173,6 +3174,7 @@ public class MainFrame extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 lblnhomquyen.setBackground(Color.blue);
             }
+
             @Override
             public void mouseClicked(MouseEvent arg0) {
                 if (idnhomquyen!=1){
@@ -3740,18 +3742,19 @@ public class MainFrame extends JFrame {
             }
         });
 
+        // Thêm độc giả
         btnthemdocgia.addActionListener(e -> {
-            String tenDocGia = txtTendocgia.getText();
-            String gioiTinh = txtgioitinhdocgia.getText();
-            String soDienThoai = txtsdtdocgia.getText();
-            String diaChi = txtdiachidocgia.getText();
-
-            if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
-                JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-                return;
-            }
-
             try {
+                String tenDocGia = txtTendocgia.getText().trim();
+                String gioiTinh = txtgioitinhdocgia.getText().trim();
+                String soDienThoai = txtsdtdocgia.getText().trim();
+                String diaChi = txtdiachidocgia.getText().trim();
+
+                if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
+
                 DocGiaDTO docGiaMoi = new DocGiaDTO(0, tenDocGia, gioiTinh, soDienThoai, diaChi);
                 boolean result = DocGiaBUS.gI().addDocGia(docGiaMoi);
 
@@ -3761,26 +3764,29 @@ public class MainFrame extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Thêm độc giả thất bại!");
                 }
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
             }
         });
 
+        // Sửa độc giả
         btnsuadocgia.addActionListener(e -> {
-            int i = tabledocgia.getSelectedRow();
-            if (i >= 0) {
-                String tenDocGia = txtTendocgia.getText();
-                String gioiTinh = txtgioitinhdocgia.getText();
-                String soDienThoai = txtsdtdocgia.getText();
-                String diaChi = txtdiachidocgia.getText();
-
-                if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
-                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-                    return;
-                }
-
+            int selectedRow = tabledocgia.getSelectedRow();
+            if (selectedRow >= 0) {
                 try {
-                    int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
+                    int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, 0).toString());
+                    String tenDocGia = txtTendocgia.getText().trim();
+                    String gioiTinh = txtgioitinhdocgia.getText().trim();
+                    String soDienThoai = txtsdtdocgia.getText().trim();
+                    String diaChi = txtdiachidocgia.getText().trim();
+
+                    if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
+                        JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                        return;
+                    }
+
                     DocGiaDTO docGiaSua = new DocGiaDTO(maDocGia, tenDocGia, gioiTinh, soDienThoai, diaChi);
                     boolean result = DocGiaBUS.gI().updateDocGia(docGiaSua);
 
@@ -3790,32 +3796,42 @@ public class MainFrame extends JFrame {
                     } else {
                         JOptionPane.showMessageDialog(contentPane, "Sửa độc giả thất bại!");
                     }
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
                 }
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một độc giả trong bảng để sửa!");
             }
         });
 
+        // Xóa độc giả
         btnxoadocgia.addActionListener(e -> {
-            int i = tabledocgia.getSelectedRow();
-            if (i >= 0) {
-                int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(i, 0).toString());
-                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
+            int selectedRow = tabledocgia.getSelectedRow();
+            if (selectedRow >= 0) {
+                int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, 0).toString());
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá độc giả này?", "Xác nhận",
+                        JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    boolean result = DocGiaBUS.gI().deleteDocGia(maDocGia);
+                    try {
+                        boolean result = DocGiaBUS.gI().deleteDocGia(maDocGia);
 
-                    if (result) {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thành công!");
-                        loaddocgia();
-                    } else {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thất bại!");
+                        if (result) {
+                            JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thành công!");
+                            loaddocgia();
+                        } else {
+                            JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thất bại!");
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một độc giả trong bảng để xoá!");
             }
         });
 
@@ -3859,53 +3875,79 @@ public class MainFrame extends JFrame {
             }
         });
 
-        btnsuasach.addActionListener(e -> {
-            int i = tablesach.getSelectedRow();
-            if (i >= 0) {
-                String tensach = txttensach.getText();
-                int namxb;
-                try {
-                    namxb = Integer.parseInt(txtnamxbsach.getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Năm xuất bản phải là số");
-                    return;
-                }
-                int soluong;
-                try {
-                    soluong = Integer.parseInt(txtsoluongsach.getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Số lượng phải là số");
-                    return;
-                }
+        // Thêm sách
+        btnthemsach.addActionListener(e -> {
+            try {
+                String tensach = txttensach.getText().trim();
+                int namxb = Integer.parseInt(txtnamxbsach.getText().trim());
+                int soluong = Integer.parseInt(txtsoluongsach.getText().trim());
                 String maloai = cmbmaloai.getSelectedItem().toString().split(" - ")[0];
                 String manxb = cmbmanhaxuatban.getSelectedItem().toString().split(" - ")[0];
                 String matg = cmbmatg.getSelectedItem().toString().split(" - ")[0];
                 String make = cmbmakesach.getSelectedItem().toString().split(" - ")[0];
 
                 if (tensach.isEmpty() || maloai.isEmpty() || manxb.isEmpty() || matg.isEmpty() || make.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin");
+                    JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
                     return;
                 }
 
-                int masach = Integer.parseInt(dtmsach.getValueAt(i, 0).toString());
-                SachDTO sach = new SachDTO(masach, tensach, maloai, manxb, matg, namxb, soluong, make, hinhanh);
+                SachDTO sach = new SachDTO(0, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb), namxb,
+                        soluong, Integer.parseInt(make), hinhanh);
+                boolean result = SachBUS.gI().addSach(sach);
 
+                if (result) {
+                    JOptionPane.showMessageDialog(null, "Thêm sách thành công!");
+                    loadsach();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Thêm sách thất bại!");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Năm xuất bản và số lượng phải là số!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage());
+            }
+        });
+
+        // Sửa sách
+        btnsuasach.addActionListener(e -> {
+            int selectedRow = tablesach.getSelectedRow();
+            if (selectedRow >= 0) {
                 try {
+                    int masach = Integer.parseInt(dtmsach.getValueAt(selectedRow, 0).toString());
+                    String tensach = txttensach.getText().trim();
+                    int namxb = Integer.parseInt(txtnamxbsach.getText().trim());
+                    int soluong = Integer.parseInt(txtsoluongsach.getText().trim());
+                    String maloai = cmbmaloai.getSelectedItem().toString().split(" - ")[0];
+                    String manxb = cmbmanhaxuatban.getSelectedItem().toString().split(" - ")[0];
+                    String matg = cmbmatg.getSelectedItem().toString().split(" - ")[0];
+                    String make = cmbmakesach.getSelectedItem().toString().split(" - ")[0];
+
+                    if (tensach.isEmpty() || maloai.isEmpty() || manxb.isEmpty() || matg.isEmpty() || make.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
+                        return;
+                    }
+
+                    SachDTO sach = new SachDTO(masach, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
+                            namxb, soluong, Integer.parseInt(make), hinhanh);
                     boolean result = SachBUS.gI().updateSach(sach);
+
                     if (result) {
-                        JOptionPane.showMessageDialog(null, "Sửa sách thành công");
+                        JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
                         loadsach();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Sửa sách thất bại");
+                        JOptionPane.showMessageDialog(null, "Sửa sách thất bại!");
                     }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Năm xuất bản và số lượng phải là số!");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage());
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Bạn chưa chọn vào bảng");
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách trong bảng để sửa!");
             }
         });
 
+        // Xóa sách
         btnxoasach.addActionListener(e -> {
             int selectedRow = tablesach.getSelectedRow();
             if (selectedRow >= 0) {
@@ -3920,36 +3962,14 @@ public class MainFrame extends JFrame {
                             JOptionPane.showMessageDialog(null, "Xoá sách thành công!");
                             loadsach();
                         } else {
-                            JOptionPane.showMessageDialog(null, "Xoá sách thất bại. Vui lòng thử lại!");
+                            JOptionPane.showMessageDialog(null, "Xoá sách thất bại!");
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage(), "Lỗi",
-                                JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage());
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách trong bảng để xoá!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
-        btnthemphieumuon.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (dateChooser.getDate() == null) {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
-                    return;
-                }
-                if (!rdmuon.isSelected() && !rdtra.isSelected()) {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
-                    return;
-                }
-                String tinhtrang = "Đã Trả";
-                if (rdmuon.isSelected()) {
-                    tinhtrang = "Đang Mượn";
-                }
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String ngaymuon = sdf.format(dateChooser.getDate());
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách trong bảng để xoá!");
             }
         });
 

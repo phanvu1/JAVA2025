@@ -28,7 +28,7 @@ public class ChiTietNhomQuyenBUS {
     }
     
      public boolean kiemTraQuyen(int idNhomQuyen, int idDanhMucChucNang) {
-        return chiTietDAO.kiemTraQuyen(idNhomQuyen, idDanhMucChucNang);
+        return dao.kiemTraQuyen(idNhomQuyen, idDanhMucChucNang);
     }
 
     public static ChiTietNhomQuyenBUS iBus = null;

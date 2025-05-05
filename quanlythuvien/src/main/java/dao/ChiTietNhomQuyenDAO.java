@@ -93,7 +93,5 @@ public class ChiTietNhomQuyenDAO {
             e.printStackTrace();
         }
         return false;
-    }
-
-    
+    }  
 }

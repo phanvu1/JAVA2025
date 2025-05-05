@@ -6,6 +6,7 @@ public class DocGiaDTO {
     private String gioiTinh;
     private String diaChi;
     private int maThe;
+    private String soDienThoai;
 
     // Constructor mặc định
     public DocGiaDTO() {
@@ -29,7 +30,11 @@ public class DocGiaDTO {
     }
 
     public DocGiaDTO(int i, String tenDocGia, String gioiTinh, String soDienThoai, String diaChi) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.maDocGia = i;
+        this.tenDocGia = tenDocGia;
+        this.gioiTinh = gioiTinh;
+        this.diaChi = diaChi;
+        this.soDienThoai = soDienThoai;
     }
 
     // Getter và Setter
@@ -73,7 +78,11 @@ public class DocGiaDTO {
         this.maThe = maThe;
     }
 
-    public Object getSoDienThoai() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String getSoDienThoai() {
+        return soDienThoai;
+    }
+
+    public void setSoDienThoai(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
     }
 }
