@@ -541,23 +541,13 @@ public class MainFrame extends JFrame {
         lblphieunhap.setBounds(0, 487, 187, 46);
         menuItemsPanel.add(lblphieunhap);
 
-        // Thêm mục Phân quyền
-        lblphanquyen = new JLabel("  Tài Khoản");
-        lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
-        lblphanquyen.setOpaque(true);
-        lblphanquyen.setForeground(Color.WHITE);
-        lblphanquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
-        lblphanquyen.setBackground(Color.DARK_GRAY);
-        lblphanquyen.setBounds(0, 546, 187, 46);
-        menuItemsPanel.add(lblphanquyen);
-
         lblthongke = new JLabel("  Thống Kê");
         lblthongke.setIcon(new ImageIcon("img\\Combo Chart.png"));
         lblthongke.setOpaque(true);
         lblthongke.setForeground(Color.WHITE);
         lblthongke.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblthongke.setBackground(Color.DARK_GRAY);
-        lblthongke.setBounds(0, 664, 187, 46);
+        lblthongke.setBounds(0, 546, 187, 46);
         menuItemsPanel.add(lblthongke);
 
         lblchung = new JLabel("  Chung");
@@ -566,8 +556,18 @@ public class MainFrame extends JFrame {
         lblchung.setForeground(Color.WHITE);
         lblchung.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblchung.setBackground(Color.DARK_GRAY);
-        lblchung.setBounds(0, 723, 187, 46);
+        lblchung.setBounds(0, 605, 187, 46);
         menuItemsPanel.add(lblchung);
+        
+         // Thêm mục Phân quyền
+        lblphanquyen = new JLabel("  Tài Khoản");
+        lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
+        lblphanquyen.setOpaque(true);
+        lblphanquyen.setForeground(Color.WHITE);
+        lblphanquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblphanquyen.setBackground(Color.DARK_GRAY);
+        lblphanquyen.setBounds(0, 723, 187, 46);
+        menuItemsPanel.add(lblphanquyen);
         
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
@@ -575,7 +575,7 @@ public class MainFrame extends JFrame {
         lblnhomquyen.setForeground(Color.WHITE);
         lblnhomquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblnhomquyen.setBackground(Color.DARK_GRAY);
-        lblnhomquyen.setBounds(0, 605, 187, 46); // Điều chỉnh vị trí y (782) để đặt sau mục "Đăng Xuất"
+        lblnhomquyen.setBounds(0, 664, 187, 46); // Điều chỉnh vị trí y (782) để đặt sau mục "Đăng Xuất"
         menuItemsPanel.add(lblnhomquyen);
 
         lbldangxuat = new JLabel("  Đăng Xuất");
@@ -2580,6 +2580,64 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        tableNhomQuyen.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tableNhomQuyen.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        // Populate input fields with selected NhomQuyen data
+                        txtTenNhomQuyen.setText(dtmNhomQuyen.getValueAt(i, 1).toString()); // tennhomquyen
+                        txtMoTa.setText(dtmNhomQuyen.getValueAt(i, 2).toString()); // mota
+
+                        // Get idnhomquyen of the selected row
+                        int idNhomQuyen = Integer.parseInt(dtmNhomQuyen.getValueAt(i, 0).toString());
+
+                        // Clear existing rows in ChiTietNhomQuyen table
+                        dtmChiTietNhomQuyen.setRowCount(0);
+
+                        // Populate ChiTietNhomQuyen table with matching entries
+                        for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
+                            if (ct.getIdnhomquyen() == idNhomQuyen) {
+                                dtmChiTietNhomQuyen.addRow(new Object[] {
+                                        ct.getIdnhomquyen(),
+                                        ct.getIddanhmucchucnang(),
+                                        ct.getHanhdong()
+                                });
+                            }
+                        }
+
+                        System.out.println("Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
+                    } catch (NumberFormatException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Mã nhóm quyền không hợp lệ!", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    System.out.println("Không có hàng nào được chọn hoặc bảng rỗng!");
+                    // Reset input fields and ChiTietNhomQuyen table
+                    txtTendocgia.setText("");
+                    txtMoTa.setText("");
+                    dtmChiTietNhomQuyen.setRowCount(0);
+                }
+            }
+        });
 
         tablechitietphieunhap.addMouseListener(new MouseListener() {
             @Override
@@ -2822,6 +2880,7 @@ public class MainFrame extends JFrame {
                 pnchung.show();
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
         exit.addMouseListener(new MouseAdapter() {
@@ -2868,6 +2927,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
 
@@ -2908,6 +2968,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
 
         });
@@ -2948,6 +3009,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
         lblTrangchu.addMouseListener(new MouseListener() {
@@ -2987,6 +3049,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 pnPhieuNhap.show(false);
                 panelThongKe.show(false);
+                pnNhomQuyen.show(false);
             }
         });
 
@@ -3027,6 +3090,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
         lbltacgia.addMouseListener(new MouseListener() {
@@ -3068,6 +3132,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
         lblthongke.addMouseListener(new MouseListener() {
@@ -3101,6 +3166,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show();
                 pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
             }
         });
 
@@ -3135,6 +3201,7 @@ public class MainFrame extends JFrame {
                 pnPhieuNhap.show(false);
                 pnchung.show(false);
                 panelThongKe.show(false);
+                pnNhomQuyen.show(false);
             }
         });
 
@@ -3169,6 +3236,7 @@ public class MainFrame extends JFrame {
                 pnPhieuNhap.show();
                 pnchung.show(false);
                 panelThongKe.show(false);
+                pnNhomQuyen.show(false);
             }
         });
         
