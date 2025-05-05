@@ -10,146 +10,208 @@ import java.util.ArrayList;
 import dto.DocGiaDTO;
 
 public class DocGiaDAO {
-    private Connection connection;
+    private Connection conn;
 
-    // Constructor: Nhận kết nối từ bên ngoài
     public DocGiaDAO() {
-        this.connection = DBConnect.getConnection();
-        if (this.connection == null) {
+        this.conn = DBConnect.getConnection();
+        if (this.conn == null) {
             throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
         }
     }
 
-    // Thêm độc giả mới
-    public boolean saveDocGia(DocGiaDTO docGia) {
-        String sql = "INSERT INTO docgia (tendg, gioitinh, diachi, mathe) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, docGia.getTenDocGia());
-            statement.setString(2, docGia.getGioiTinh());
-            statement.setString(3, docGia.getDiaChi());
-            statement.setInt(4, docGia.getMaThe());
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                ResultSet generatedKeys = statement.getGeneratedKeys();
+    public boolean addDocGia(DocGiaDTO docGia) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "INSERT INTO docgia (tendg, gioitinh, diachi, mathe) VALUES (?, ?, ?, ?)";
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, docGia.getTenDocGia());
+            stmt.setString(2, docGia.getGioiTinh());
+            stmt.setString(3, docGia.getDiaChi());
+            stmt.setInt(4, docGia.getMaThe());
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    docGia.setMaDocGia(generatedKeys.getInt(1)); // Lấy ID tự động tạo
+                    docGia.setMaDocGia(generatedKeys.getInt(1));
                 }
-                System.out.println("Lưu độc giả thành công: " + docGia.getMaDocGia());
-                return true;
+                result = true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Cập nhật thông tin độc giả
-    public boolean updateDocGia(DocGiaDTO docGia) {
-        String sql = "UPDATE docgia SET tendg = ?, gioitinh = ?, diachi = ?, mathe = ? WHERE madocgia = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, docGia.getTenDocGia());
-            statement.setString(2, docGia.getGioiTinh());
-            statement.setString(3, docGia.getDiaChi());
-            statement.setInt(4, docGia.getMaThe());
-            statement.setInt(5, docGia.getMaDocGia());
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Cập nhật độc giả thành công: " + docGia.getMaDocGia());
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Xóa độc giả theo mã độc giả
-    public boolean deleteDocGia(int maDocGia) {
-        String sql = "DELETE FROM docgia WHERE madocgia = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, maDocGia);
-            int rowsDeleted = statement.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Xóa độc giả thành công: " + maDocGia);
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Lấy danh sách tất cả độc giả
-    public ArrayList<DocGiaDTO> getAllDocGia() {
-        ArrayList<DocGiaDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM docgia";
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                DocGiaDTO docGia = new DocGiaDTO(
-                        resultSet.getInt("madocgia"),
-                        resultSet.getString("tendg"),
-                        resultSet.getString("gioitinh"),
-                        resultSet.getString("diachi"),
-                        resultSet.getInt("mathe"));
-                result.add(docGia);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    // Tìm độc giả theo mã độc giả
-    public DocGiaDTO findDocGiaById(int maDocGia) {
-        String sql = "SELECT * FROM docgia WHERE madocgia = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, maDocGia);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new DocGiaDTO(
-                            resultSet.getInt("madocgia"),
-                            resultSet.getString("tendg"),
-                            resultSet.getString("gioitinh"),
-                            resultSet.getString("diachi"),
-                            resultSet.getInt("mathe"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // Tìm độc giả theo tên (phục vụ giao diện tìm kiếm)
-    public ArrayList<DocGiaDTO> findDocGiaByName(String tenDocGia) {
-        ArrayList<DocGiaDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM docgia WHERE tendg LIKE ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "%" + tenDocGia + "%");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    DocGiaDTO docGia = new DocGiaDTO(
-                            resultSet.getInt("madocgia"),
-                            resultSet.getString("tendg"),
-                            resultSet.getString("gioitinh"),
-                            resultSet.getString("diachi"),
-                            resultSet.getInt("mathe"));
-                    result.add(docGia);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    // Đóng kết nối cơ sở dữ liệu
-    public void closeConnection() {
-        if (connection != null) {
+        } finally {
             try {
-                connection.close();
-                System.out.println("Đóng kết nối cơ sở dữ liệu thành công.");
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean updateDocGia(DocGiaDTO docGia) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "UPDATE docgia SET tendg = ?, gioitinh = ?, diachi = ?, mathe = ? WHERE madocgia = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, docGia.getTenDocGia());
+            stmt.setString(2, docGia.getGioiTinh());
+            stmt.setString(3, docGia.getDiaChi());
+            stmt.setInt(4, docGia.getMaThe());
+            stmt.setInt(5, docGia.getMaDocGia());
+
+            int rows = stmt.executeUpdate();
+            result = rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean deleteDocGia(int maDocGia) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "DELETE FROM docgia WHERE madocgia = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maDocGia);
+
+            int rows = stmt.executeUpdate();
+            result = rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<DocGiaDTO> getAllDocGia() {
+        ArrayList<DocGiaDTO> docGiaList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM docgia";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                DocGiaDTO docGia = new DocGiaDTO(
+                        rs.getInt("madocgia"),
+                        rs.getString("tendg"),
+                        rs.getString("gioitinh"),
+                        rs.getString("diachi"),
+                        rs.getInt("mathe"));
+                docGiaList.add(docGia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return docGiaList;
+    }
+
+    public DocGiaDTO findDocGiaById(int maDocGia) {
+        DocGiaDTO docGia = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM docgia WHERE madocgia = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maDocGia);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                docGia = new DocGiaDTO(
+                        rs.getInt("madocgia"),
+                        rs.getString("tendg"),
+                        rs.getString("gioitinh"),
+                        rs.getString("diachi"),
+                        rs.getInt("mathe"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return docGia;
+    }
+
+    public ArrayList<DocGiaDTO> findDocGiaByName(String tenDocGia) {
+        ArrayList<DocGiaDTO> docGiaList = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM docgia WHERE tendg LIKE ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, "%" + tenDocGia + "%");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                DocGiaDTO docGia = new DocGiaDTO(
+                        rs.getInt("madocgia"),
+                        rs.getString("tendg"),
+                        rs.getString("gioitinh"),
+                        rs.getString("diachi"),
+                        rs.getInt("mathe"));
+                docGiaList.add(docGia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return docGiaList;
+    }
+
+    public void close() {
+        if (conn != null) {
+            try {
+                conn.close();
+                System.out.println("Đóng kết nối trong DocGiaDAO thành công!");
             } catch (SQLException e) {
                 e.printStackTrace();
             }

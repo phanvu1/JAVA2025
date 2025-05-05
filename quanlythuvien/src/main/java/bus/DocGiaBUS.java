@@ -27,7 +27,7 @@ public class DocGiaBUS {
         if (docGia.getMaThe() <= 0) {
             throw new IllegalArgumentException("Mã thẻ không hợp lệ");
         }
-        return docGiaDAO.saveDocGia(docGia);
+        return docGiaDAO.addDocGia(docGia);
     }
 
     // Cập nhật thông tin độc giả

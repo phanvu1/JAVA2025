@@ -1697,7 +1697,11 @@ public class MainFrame extends JFrame {
         btnTiLi.setIcon(new ImageIcon("img\\update.png"));
         btnTiLi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                // Bỏ loaddocgia()
+                loaddocgia();
+                txtTendocgia.setText("");
+                txtdiachidocgia.setText("");
+                txtgioitinhdocgia.setText("");
+                txtsdtdocgia.setText("");
             }
         });
         btnTiLi.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -1845,7 +1849,10 @@ public class MainFrame extends JFrame {
         btnreloadtacgia = new JButton("Tải Lại");
         btnreloadtacgia.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Bỏ loadtacgia()
+                loadtacgia();
+                txtTentacgia.setText("");
+                txtnamsinhtacgia.setText("");
+                txtQueQuan.setText("");
             }
         });
         btnreloadtacgia.setIcon(new ImageIcon("img\\update.png"));
@@ -2463,6 +2470,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+
         tabletacgia.addMouseListener(new MouseListener() {
 
             @Override
@@ -2989,14 +2997,30 @@ public class MainFrame extends JFrame {
                 int selectedRow = tablesach.getSelectedRow();
                 if (selectedRow >= 0) {
                     try {
-                        txttensach.setText(dtmsach.getValueAt(selectedRow, 1).toString());
-                        cmbmaloai.setSelectedItem(dtmsach.getValueAt(selectedRow, 2).toString());
-                        cmbmanhaxuatban.setSelectedItem(dtmsach.getValueAt(selectedRow, 3).toString());
-                        cmbmatg.setSelectedItem(dtmsach.getValueAt(selectedRow, 4).toString());
-                        cmbmakesach.setSelectedItem(dtmsach.getValueAt(selectedRow, 7).toString());
-                        txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5).toString());
-                        txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6).toString());
-                        hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
+                        txttensach.setText(dtmsach.getValueAt(selectedRow, 1) != null
+                                ? dtmsach.getValueAt(selectedRow, 1).toString()
+                                : "");
+                        cmbmaloai.setSelectedItem(dtmsach.getValueAt(selectedRow, 2) != null
+                                ? dtmsach.getValueAt(selectedRow, 2).toString()
+                                : "");
+                        cmbmanhaxuatban.setSelectedItem(dtmsach.getValueAt(selectedRow, 3) != null
+                                ? dtmsach.getValueAt(selectedRow, 3).toString()
+                                : "");
+                        cmbmatg.setSelectedItem(dtmsach.getValueAt(selectedRow, 4) != null
+                                ? dtmsach.getValueAt(selectedRow, 4).toString()
+                                : "");
+                        cmbmakesach.setSelectedItem(dtmsach.getValueAt(selectedRow, 7) != null
+                                ? dtmsach.getValueAt(selectedRow, 7).toString()
+                                : "");
+                        txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5) != null
+                                ? dtmsach.getValueAt(selectedRow, 5).toString()
+                                : "");
+                        txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6) != null
+                                ? dtmsach.getValueAt(selectedRow, 6).toString()
+                                : "");
+                        hinhanh = dtmsach.getValueAt(selectedRow, 8) != null
+                                ? dtmsach.getValueAt(selectedRow, 8).toString()
+                                : "";
                         lblhinhanhpre.setIcon(getAnhSP(hinhanh));
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng: " + ex.getMessage(), "Lỗi",
