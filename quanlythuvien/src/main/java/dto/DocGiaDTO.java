@@ -35,6 +35,7 @@ public class DocGiaDTO {
         this.gioiTinh = gioiTinh;
         this.diaChi = diaChi;
         this.soDienThoai = soDienThoai;
+        this.maThe = 0; // Mặc định không có mã thẻ
     }
 
     // Getter và Setter
