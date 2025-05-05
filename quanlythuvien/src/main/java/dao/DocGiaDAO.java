@@ -29,7 +29,7 @@ public class DocGiaDAO {
             stmt.setString(1, docGia.getTenDocGia());
             stmt.setString(2, docGia.getGioiTinh());
             stmt.setString(3, docGia.getDiaChi());
-            stmt.setInt(4, docGia.getMaThe());
+            stmt.setObject(4, docGia.getMaThe() == 0 ? null : docGia.getMaThe()); // Nếu mã thẻ là 0 thì để null
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {

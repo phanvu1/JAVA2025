@@ -552,7 +552,7 @@ public class MainFrame extends JFrame {
         lblchung.setBackground(Color.DARK_GRAY);
         lblchung.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lblchung);
-        
+
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
@@ -1133,13 +1133,14 @@ public class MainFrame extends JFrame {
         btntimphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
         btntimphieunhap.setBounds(578, 10, 97, 46);
         panel_7.add(btntimphieunhap);
-        
+
         PanelChinh.add(pnNhomQuyen, "NhomQuyenPanel"); // Định danh rõ ràng
         pnNhomQuyen.setLayout(null);
 
         // Panel nhập thông tin Nhóm Quyền
         JPanel panelNhomQuyen = new JPanel();
-        panelNhomQuyen.setBorder(new TitledBorder(null, "Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelNhomQuyen
+                .setBorder(new TitledBorder(null, "Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelNhomQuyen.setBounds(22, 13, 434, 304);
         pnNhomQuyen.add(panelNhomQuyen);
         panelNhomQuyen.setLayout(null);
@@ -1187,8 +1188,8 @@ public class MainFrame extends JFrame {
         JButton btnTaiLaiNhomQuyen = new JButton("Tải Lại");
         btnTaiLaiNhomQuyen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//                    loadNhomQuyen();
-//                    loadChiTietNhomQuyen();
+                // loadNhomQuyen();
+                // loadChiTietNhomQuyen();
             }
         });
         btnTaiLaiNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -1210,7 +1211,8 @@ public class MainFrame extends JFrame {
 
         // Panel Chi Tiết Nhóm Quyền
         JPanel panelChiTietNhomQuyen = new JPanel();
-        panelChiTietNhomQuyen.setBorder(new TitledBorder(null, "Chi Tiết Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelChiTietNhomQuyen.setBorder(
+                new TitledBorder(null, "Chi Tiết Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelChiTietNhomQuyen.setBounds(22, 418, 422, 304);
         pnNhomQuyen.add(panelChiTietNhomQuyen);
         panelChiTietNhomQuyen.setLayout(null);
@@ -1313,15 +1315,16 @@ public class MainFrame extends JFrame {
                 String tenNhomQuyen = txtTimNhomQuyen.getText().trim();
                 dtmNhomQuyen.setRowCount(0);
                 // Giả sử bạn có danh sách NhomQuyenDTO
-//                for (NhomQuyenDTO nq : nhomQuyen) {
-//                    if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
-//                        dtmNhomQuyen.addRow(new Object[] {
-//                            nq.getId(),
-//                            nq.getTenNhomQuyen(),
-//                            nq.getMoTa()
-//                        });
-//                    }
-//                }
+                // for (NhomQuyenDTO nq : nhomQuyen) {
+                // if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase()))
+                // {
+                // dtmNhomQuyen.addRow(new Object[] {
+                // nq.getId(),
+                // nq.getTenNhomQuyen(),
+                // nq.getMoTa()
+                // });
+                // }
+                // }
             }
         });
         btnTimNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -3155,7 +3158,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
             }
         });
-        
+
         lblnhomquyen.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -3177,22 +3180,22 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                if (idnhomquyen!=1){
+                if (idnhomquyen != 1) {
                     JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
                 } else {
-                pnTrangChu.show(false);
-                pnSach.show(false);
-                pndocgia.show(false);
-                pntacgia.show(false);
-                pnnhaxuatban.show(false);
-                pnnhanvien.show(false);
-                pnPhieumuon.show(false);
-                pnPhieuNhap.show(false);
-                pnchung.show(false);
-                panelThongKe.show(false);
-                pnNhomQuyen.show();
+                    pnTrangChu.show(false);
+                    pnSach.show(false);
+                    pndocgia.show(false);
+                    pntacgia.show(false);
+                    pnnhaxuatban.show(false);
+                    pnnhanvien.show(false);
+                    pnPhieumuon.show(false);
+                    pnPhieuNhap.show(false);
+                    pnchung.show(false);
+                    panelThongKe.show(false);
+                    pnNhomQuyen.show();
                 }
-               
+
             }
         });
 
