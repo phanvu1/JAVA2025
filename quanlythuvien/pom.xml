@@ -35,6 +35,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <exec.mainClass>com.mycompany.quanlythuvien.Quanlythuvien</exec.mainClass>
+        <exec.mainClass>gui.MainFrame</exec.mainClass>
     </properties>
 </project>

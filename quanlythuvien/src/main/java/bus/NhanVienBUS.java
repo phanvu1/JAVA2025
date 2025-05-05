@@ -1,91 +1,48 @@
 package bus;
 
-import java.sql.Connection;
-import java.util.List;
-
-import dao.NhanVienDAO;
+import dao.*;
 import dto.NhanVienDTO;
+import java.sql.Connection;
+import java.util.ArrayList;
 
 public class NhanVienBUS {
     private NhanVienDAO nhanVienDAO;
+    private static NhanVienBUS instance; // Singleton instance
 
-    // Constructor: Nhận kết nối từ bên ngoài và khởi tạo DAO
     public NhanVienBUS(Connection connection) {
         this.nhanVienDAO = new NhanVienDAO(connection);
     }
+    
+    private NhanVienBUS() {
+        Connection conn = DBConnect.getConnection(); // Kết nối cơ sở dữ liệu
+        this.nhanVienDAO = new NhanVienDAO(conn);
+    }
+    
+    // Singleton Pattern: Lấy instance duy nhất
+    public static NhanVienBUS getInstance() {
+        if (instance == null) {
+            instance = new NhanVienBUS();
+        }
+        return instance;
+    }
 
-    // Lấy danh sách tất cả nhân viên
-    public List<NhanVienDTO> getAllNhanVien() {
+    public ArrayList<NhanVienDTO> getAllNhanVien() {
         return nhanVienDAO.getAllNhanVien();
     }
 
-    // Tìm nhân viên theo mã
-    public NhanVienDTO findNhanVienById(int maNV) {
-        if (maNV > 0) {
-            return nhanVienDAO.findNhanVienById(maNV);
-        }
-        System.err.println("Mã nhân viên không hợp lệ!");
-        return null;
-    }
-
-    // Tìm nhân viên theo tên
-    public List<NhanVienDTO> findNhanVienByName(String tenNV) {
-        if (tenNV != null && !tenNV.trim().isEmpty()) {
-            return nhanVienDAO.findNhanVienByName(tenNV);
-        }
-        System.err.println("Tên nhân viên không hợp lệ!");
-        return null;
-    }
-
-    // Thêm nhân viên mới
     public boolean addNhanVien(NhanVienDTO nhanVien) {
-        if (validateNhanVien(nhanVien)) {
-            return nhanVienDAO.saveNhanVien(nhanVien);
-        }
-        System.err.println("Dữ liệu nhân viên không hợp lệ!");
-        return false;
+        return nhanVienDAO.addNhanVien(nhanVien);
     }
 
-    // Cập nhật thông tin nhân viên
     public boolean updateNhanVien(NhanVienDTO nhanVien) {
-        if (validateNhanVien(nhanVien) && nhanVien.getMaNV() > 0) {
-            return nhanVienDAO.updateNhanVien(nhanVien);
-        }
-        System.err.println("Dữ liệu nhân viên không hợp lệ hoặc mã nhân viên không tồn tại!");
-        return false;
+        return nhanVienDAO.updateNhanVien(nhanVien);
     }
 
-    // Xóa nhân viên theo mã
-    public boolean deleteNhanVien(int maNV) {
-        if (maNV > 0) {
-            // Có thể thêm kiểm tra nghiệp vụ ở đây, ví dụ: kiểm tra xem nhân viên này có đang quản lý phiếu mượn nào không trước khi xóa
-            return nhanVienDAO.deleteNhanVien(maNV);
-        }
-        System.err.println("Mã nhân viên không hợp lệ!");
-        return false;
+    public boolean deleteNhanVien(int maNhanVien) {
+        return nhanVienDAO.deleteNhanVien(maNhanVien);
     }
-
-    // Kiểm tra tính hợp lệ của dữ liệu nhân viên
-    private boolean validateNhanVien(NhanVienDTO nhanVien) {
-        if (nhanVien == null) {
-            return false;
-        }
-        if (nhanVien.getTenNV() == null || nhanVien.getTenNV().trim().isEmpty()) {
-            return false;
-        }
-        if (nhanVien.getGioiTinh() == null || nhanVien.getGioiTinh().trim().isEmpty()) {
-            return false;
-        }
-        if (nhanVien.getDiaChi() == null || nhanVien.getDiaChi().trim().isEmpty()) {
-            return false;
-        }
-        if (nhanVien.getSDT() == null || nhanVien.getSDT().trim().isEmpty()) {
-            return false;
-        }
-        if (nhanVien.getNamSinh() <= 0) {
-            return false;
-        }
-        // Có thể thêm các kiểm tra định dạng khác cho số điện thoại, năm sinh nếu cần
-        return true;
+    
+    public NhanVienDTO findById(int maNhanVien){
+        return nhanVienDAO.findById(maNhanVien);
     }
 }

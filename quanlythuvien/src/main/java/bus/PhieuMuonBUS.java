@@ -1,67 +1,49 @@
 package bus;
 
-import dao.PhieuMuonDAO;
-import dao.ChiTietPhieuMuonDAO;
+import dao.*;
 import dto.PhieuMuonDTO;
-import dto.ChiTietPhieuMuonDTO;
+
+import java.sql.Connection;
 import java.util.ArrayList;
 
 public class PhieuMuonBUS {
     private PhieuMuonDAO phieuMuonDAO;
-    private ChiTietPhieuMuonDAO chiTietPhieuMuonDAO;
+    private static PhieuMuonBUS instance;
 
-    public PhieuMuonBUS() {
-        this.phieuMuonDAO = new PhieuMuonDAO();
-        this.chiTietPhieuMuonDAO = new ChiTietPhieuMuonDAO();
+    public PhieuMuonBUS(Connection connection) {
+        Connection conn = DBConnect.getConnection(); // Kết nối cơ sở dữ liệu
+        this.phieuMuonDAO = new PhieuMuonDAO(conn);
+    }
+    
+    // Singleton Pattern: Lấy instance duy nhất
+    public static PhieuMuonBUS getInstance() {
+        if (instance == null) {
+            instance = new PhieuMuonBUS();
+        }
+        return instance;
     }
 
-    // Lấy tất cả phiếu mượn
+    private PhieuMuonBUS() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     public ArrayList<PhieuMuonDTO> getAllPhieuMuon() {
-        return phieuMuonDAO.getAll();
+        return phieuMuonDAO.findAll();
     }
 
-    // Thêm phiếu mượn mới
+    public PhieuMuonDTO getPhieuMuonById(int maPhieuMuon) {
+        return phieuMuonDAO.findById(maPhieuMuon);
+    }
+
     public boolean addPhieuMuon(PhieuMuonDTO phieuMuon) {
         return phieuMuonDAO.insert(phieuMuon);
     }
 
-    // Cập nhật phiếu mượn
     public boolean updatePhieuMuon(PhieuMuonDTO phieuMuon) {
         return phieuMuonDAO.update(phieuMuon);
     }
 
-    // Xóa phiếu mượn
-    public boolean deletePhieuMuon(int maPM) {
-        return phieuMuonDAO.delete(maPM);
-    }
-
-    // Tìm kiếm phiếu mượn theo mã
-    public PhieuMuonDTO getPhieuMuonById(int maPM) {
-        return phieuMuonDAO.getById(maPM);
-    }
-
-    // Lấy chi tiết phiếu mượn
-    public ArrayList<ChiTietPhieuMuonDTO> getChiTietPhieuMuon(int maPM) {
-        return chiTietPhieuMuonDAO.getChiTietPhieuMuonByMaPhieuMuon(maPM);
-    }
-
-    // Thêm chi tiết phiếu mượn
-    public boolean addChiTietPhieuMuon(ChiTietPhieuMuonDTO chiTiet) {
-        return chiTietPhieuMuonDAO.saveChiTietPhieuMuon(chiTiet);
-    }
-
-    // Xóa chi tiết phiếu mượn
-    public boolean deleteChiTietPhieuMuon(int maPM, int maSach) {
-        return chiTietPhieuMuonDAO.deleteChiTietPhieuMuon(maPM, maSach);
-    }
-
-    // Singleton pattern
-    public static PhieuMuonBUS iBus = null;
-
-    public static PhieuMuonBUS gI() {
-        if (iBus == null) {
-            iBus = new PhieuMuonBUS();
-        }
-        return iBus;
+    public boolean deletePhieuMuon(int maPhieuMuon) {
+        return phieuMuonDAO.delete(maPhieuMuon);
     }
 }

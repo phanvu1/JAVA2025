@@ -1,45 +1,56 @@
 package dto;
 
-public class NhaXuatBanDTO{
-    private int maNXB;
-    private String tenNXB;
-    private String diaChi;
+public class NhaXuatBanDTO {
+    private int manxb;
+    private String tennxb;
+    private String diachi;
     private String sdt;
-    
+
     public NhaXuatBanDTO() {
     }
-    
-    public NhaXuatBanDTO (int maNXB, String tenNXB, String diaChi, String sdt){
-        this.maNXB = maNXB;
-        this.tenNXB = tenNXB;
-        this. diaChi = diaChi;
+
+    public NhaXuatBanDTO(int manxb, String tennxb, String diachi, String sdt) {
+        this.manxb = manxb;
+        this.tennxb = tennxb;
+        this.diachi = diachi;
         this.sdt = sdt;
     }
     
-    public NhaXuatBanDTO (String tenNXB, String diaChi, String sdt){
-        this.tenNXB = tenNXB;
-        this. diaChi = diaChi;
+    public NhaXuatBanDTO(String tennxb, String diachi, String sdt) {
+        this.tennxb = tennxb;
+        this.diachi = diachi;
         this.sdt = sdt;
     }
-    
-    //getter, setter
-    public int getMaNXB(){
-        return maNXB;
+
+    public int getManxb() {
+        return manxb;
     }
-    public void setMaNXB(int maNXB){}
-    
-    public String getTenNXB(){
-        return tenNXB;
+
+    public void setManxb(int manxb) {
+        this.manxb = manxb;
     }
-    public void setTenNXB(String tenNXB){}
-    
-    public String getDiaChi(){
-        return diaChi;
+
+    public String getTennxb() {
+        return tennxb;
     }
-    public void setDiaChi(String diaChi){}
-    
-    public String getSDT(){
+
+    public void setTennxb(String tennxb) {
+        this.tennxb = tennxb;
+    }
+
+    public String getDiachi() {
+        return diachi;
+    }
+
+    public void setDiachi(String diachi) {
+        this.diachi = diachi;
+    }
+
+    public String getSdt() {
         return sdt;
     }
-    public void setSDT(String sdt){}
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
 }
