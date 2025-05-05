@@ -8,8 +8,7 @@ public class ChiTietPhieuMuonDTO {
     private Date ngayTra;
     private String ghiChu;
 
-    public ChiTietPhieuMuonDTO() {
-    }
+    public ChiTietPhieuMuonDTO() {}
 
     public ChiTietPhieuMuonDTO(int maPhieuMuon, int maSach, Date ngayTra, String ghiChu) {
         this.maPhieuMuon = maPhieuMuon;

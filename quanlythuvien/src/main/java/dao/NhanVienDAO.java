@@ -1,10 +1,8 @@
 package dao;
 
+import dto.NhanVienDTO;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
-
-import dto.NhanVienDTO;
 
 public class NhanVienDAO {
     private Connection connection;
@@ -13,103 +11,99 @@ public class NhanVienDAO {
         this.connection = connection;
     }
 
-    // Thêm nhân viên mới
-    public boolean saveNhanVien(NhanVienDTO nhanVien) {
-        String sql = "INSERT INTO nhanvien (tennv, gioitinh, namsinh, diachi, sdt) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, nhanVien.getTenNV());
-            statement.setString(2, nhanVien.getGioiTinh());
-            statement.setInt(3, nhanVien.getNamSinh());
-            statement.setString(4, nhanVien.getDiaChi());
-            statement.setString(5, nhanVien.getSDT());
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    nhanVien.setMaNV(generatedKeys.getInt(1));
-                }
-                System.out.println("Lưu nhân viên thành công: " + nhanVien.getMaNV());
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Cập nhật thông tin nhân viên
-    public boolean updateNhanVien(NhanVienDTO nhanVien) {
-        String sql = "UPDATE nhanvien SET tennv = ?, gioitinh = ?, namsinh = ?, diachi = ?, sdt = ? WHERE manv = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, nhanVien.getTenNV());
-            statement.setString(2, nhanVien.getGioiTinh());
-            statement.setInt(3, nhanVien.getNamSinh());
-            statement.setString(4, nhanVien.getDiaChi());
-            statement.setString(5, nhanVien.getSDT());
-            statement.setInt(6, nhanVien.getMaNV());
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Cập nhật nhân viên thành công: " + nhanVien.getMaNV());
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Xóa nhân viên theo mã nhân viên
-    public boolean deleteNhanVien(int maNV) {
-        String sql = "DELETE FROM nhanvien WHERE manv = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, maNV);
-            int rowsDeleted = statement.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Xóa nhân viên thành công: " + maNV);
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Lấy danh sách tất cả nhân viên
-    public List<NhanVienDTO> getAllNhanVien() {
-        List<NhanVienDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM nhanvien";
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
+    public ArrayList<NhanVienDTO> getAllNhanVien() {
+        ArrayList<NhanVienDTO> list = new ArrayList<>();
+        String query = "SELECT * FROM nhanvien";
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
                 NhanVienDTO nhanVien = new NhanVienDTO(
-                        resultSet.getInt("manv"),
-                        resultSet.getString("tennv"),
-                        resultSet.getString("gioitinh"),
-                        resultSet.getInt("namsinh"),
-                        resultSet.getString("diachi"),
-                        resultSet.getString("sdt"));
-                result.add(nhanVien);
+                    rs.getInt("manv"),
+                    rs.getString("tennv"),
+                    rs.getInt("namsinh"),
+                    rs.getString("gioitinh"),
+                    rs.getString("sdt"),
+                    rs.getString("ngaybatdau"),
+                    rs.getDouble("luong"),
+                    rs.getString("diachi"),
+                    rs.getInt("mataikhoan")
+                );
+                list.add(nhanVien);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return result;
+        return list;
     }
 
-    // Tìm nhân viên theo mã nhân viên
-    public NhanVienDTO findNhanVienById(int maNV) {
-        String sql = "SELECT * FROM nhanvien WHERE manv = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, maNV);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
+public boolean addNhanVien(NhanVienDTO nhanVien) {
+    String query = "INSERT INTO nhanvien (tennv, namsinh, gioitinh, sdt, ngaybatdau, luong, diachi, mataikhoan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setString(1, nhanVien.getTenNhanVien());
+        ps.setInt(2, nhanVien.getNamSinh());
+        ps.setString(3, nhanVien.getGioiTinh());
+        ps.setString(4, nhanVien.getSoDienThoai());
+        ps.setObject(5, null); // Nếu không có giá trị cho ngaybatdau
+        ps.setDouble(6, nhanVien.getLuong());
+        ps.setString(7, nhanVien.getDiaChi());
+        ps.setObject(8, null); // Nếu không có giá trị cho mataikhoan
+
+        System.out.println("Query: " + ps.toString()); // In câu lệnh SQL
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        System.err.println("Lỗi SQL: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return false;
+}
+
+    public boolean updateNhanVien(NhanVienDTO nhanVien) {
+        String query = "UPDATE nhanvien SET tennv = ?, namsinh = ?, gioitinh = ?, sdt = ?, ngaybatdau = ?, luong = ?, diachi = ?, mataikhoan = ? WHERE manv = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, nhanVien.getTenNhanVien());
+            ps.setInt(2, nhanVien.getNamSinh());
+            ps.setString(3, nhanVien.getGioiTinh());
+            ps.setString(4, nhanVien.getSoDienThoai());
+            ps.setString(5, nhanVien.getNgayBatDau());
+            ps.setDouble(6, nhanVien.getLuong());
+            ps.setString(7, nhanVien.getDiaChi());
+            ps.setInt(8, nhanVien.getMaTaiKhoan());
+            ps.setInt(9, nhanVien.getMaNhanVien());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteNhanVien(int maNhanVien) {
+        String query = "DELETE FROM nhanvien WHERE manv = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, maNhanVien);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public NhanVienDTO findById(int maNhanVien) {
+        String query = "SELECT * FROM nhanvien WHERE manv = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, maNhanVien);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
                     return new NhanVienDTO(
-                            resultSet.getInt("manv"),
-                            resultSet.getString("tennv"),
-                            resultSet.getString("gioitinh"),
-                            resultSet.getInt("namsinh"),
-                            resultSet.getString("diachi"),
-                            resultSet.getString("sdt"));
+                        rs.getInt("manv"),
+                        rs.getString("tennv"),
+                        rs.getInt("namsinh"),
+                        rs.getString("gioitinh"),
+                        rs.getString("sdt"),
+                        rs.getString("ngaybatdau"),
+                        rs.getDouble("luong"),
+                        rs.getString("diachi"),
+                        rs.getInt("mataikhoan")
+                    );
                 }
             }
         } catch (SQLException e) {
@@ -117,28 +111,15 @@ public class NhanVienDAO {
         }
         return null;
     }
-
-    // Tìm nhân viên theo tên (phục vụ giao diện tìm kiếm)
-    public List<NhanVienDTO> findNhanVienByName(String tenNV) {
-        List<NhanVienDTO> result = new ArrayList<>();
-        String sql = "SELECT * FROM nhanvien WHERE tennv LIKE ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "%" + tenNV + "%");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    NhanVienDTO nhanVien = new NhanVienDTO(
-                            resultSet.getInt("manv"),
-                            resultSet.getString("tennv"),
-                            resultSet.getString("gioitinh"),
-                            resultSet.getInt("namsinh"),
-                            resultSet.getString("diachi"),
-                            resultSet.getString("sdt"));
-                    result.add(nhanVien);
-                }
+    
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Đóng kết nối cơ sở dữ liệu thành công.");
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return result;
     }
 }
