@@ -772,6 +772,35 @@ public class MainFrame extends JFrame {
         btnTimnxb.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnTimnxb.setBounds(770, 415, 108, 47);
         pnnhaxuatban.add(btnTimnxb);
+        btnTimnxb.addActionListener(e -> {
+            String keyword = txttimnxb.getText().trim();
+            if (keyword.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập từ khóa để tìm kiếm nhà xuất bản!");
+                return;
+            }
+            try {
+                int maNXB = Integer.parseInt(keyword);
+                dtmnhaxuatban.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+                NhaXuatBanDTO nxb = NhaXuatBanBUS.getInstance().findById(maNXB);
+                if (nxb != null && nxb.getManxb() == maNXB) {
+                    dtmnhaxuatban.addRow(new Object[] {
+                            nxb.getManxb(),
+                            nxb.getTennxb(),
+                            nxb.getDiachi(),
+                            nxb.getSdt()
+                    });
+                    return;
+                }
+
+                JOptionPane.showMessageDialog(contentPane, "Không tìm thấy nhà xuất bản với mã: " + maNXB);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Mã nhà xuất bản phải là số!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+            }
+        });
+
         PanelChinh.add(pnnhanvien, "name_890389477283600");
 
         JLabel lblNewLabel_15 = new JLabel("");
