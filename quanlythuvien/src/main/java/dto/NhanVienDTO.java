@@ -1,4 +1,5 @@
 package dto;
+import java.util.Date;
 
 public class NhanVienDTO {
     private int maNhanVien;
@@ -6,7 +7,7 @@ public class NhanVienDTO {
     private int namSinh;
     private String gioiTinh;
     private String soDienThoai;
-    private String ngayBatDau;
+    private Date ngayBatDau;
     private double luong;
     private String diaChi;
     private int maTaiKhoan;
@@ -15,7 +16,7 @@ public class NhanVienDTO {
     public NhanVienDTO() {}
 
     public NhanVienDTO(int maNhanVien, String tenNhanVien, int namSinh, String gioiTinh, String soDienThoai, 
-                       String ngayBatDau, double luong, String diaChi, int maTaiKhoan) {
+                       Date ngayBatDau, double luong, String diaChi, int maTaiKhoan) {
         this.maNhanVien = maNhanVien;
         this.tenNhanVien = tenNhanVien;
         this.namSinh = namSinh;
@@ -28,7 +29,7 @@ public class NhanVienDTO {
     }
     
         public NhanVienDTO(String tenNhanVien, int namSinh, String gioiTinh, String soDienThoai, 
-                       String ngayBatDau, double luong, String diaChi, int maTaiKhoan) {
+                       Date ngayBatDau, double luong, String diaChi, int maTaiKhoan) {
         this.tenNhanVien = tenNhanVien;
         this.namSinh = namSinh;
         this.gioiTinh = gioiTinh;
@@ -81,11 +82,11 @@ public class NhanVienDTO {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getNgayBatDau() {
+    public Date getNgayBatDau() {
         return ngayBatDau;
     }
 
-    public void setNgayBatDau(String ngayBatDau) {
+    public void setNgayBatDau(Date ngayBatDau) {
         this.ngayBatDau = ngayBatDau;
     }
 

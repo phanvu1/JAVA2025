@@ -1,6 +1,11 @@
 package gui;
 
+import bus.SachBUS;
+import dto.SachDTO;
+import static gui.MainFrame.txtMaSachctpn;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,6 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
 
 public class TableSach extends JFrame {
 
@@ -45,10 +52,16 @@ public class TableSach extends JFrame {
         contentPane.add(textField);
         textField.setColumns(10);
 
-        JButton btnNewButton = new JButton("Tìm");
-        btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 15));
-        btnNewButton.setBounds(669, 88, 118, 35);
-        contentPane.add(btnNewButton);
+        JButton btnTim = new JButton("Tìm");
+        btnTim.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnTim.setBounds(669, 88, 118, 35);
+        btnTim.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchSach();
+            }
+        });
+        contentPane.add(btnTim);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(46, 165, 750, 211);
@@ -69,8 +82,72 @@ public class TableSach extends JFrame {
         JButton btnLuu = new JButton("Lưu");
         btnLuu.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnLuu.setBounds(664, 389, 132, 33);
+        btnLuu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int i = table.getSelectedRow();
+                if (i >= 0) {
+                    String maSach = dtmsach.getValueAt(i, 0).toString();
+                    MainFrame.txtMaSachctpn.setText(maSach);
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Chưa chọn sách trong bảng");
+                }
+            }
+        });
         contentPane.add(btnLuu);
 
+        JButton btnDong = new JButton("Đóng");
+        btnDong.setFont(new Font("Tahoma", Font.BOLD, 15));
+        btnDong.setBounds(524, 389, 132, 33);
+        btnDong.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        contentPane.add(btnDong);
+
+        loadSach();
         setLocationRelativeTo(null);
+    }
+
+    private static ArrayList<SachDTO> sachList = new ArrayList<SachDTO>();
+
+    public void loadSach() {
+        sachList = null;
+        dtmsach.setRowCount(0);
+        sachList = SachBUS.gI().getAllSach();
+        for (SachDTO sach : sachList) {
+            dtmsach.addRow(new Object[]{
+                sach.getMaSach(),
+                sach.getTenSach(),
+                sach.getMaLoai(),
+                sach.getMaNXB(),
+                sach.getMaTacGia(),
+                sach.getNamXB(),
+                sach.getSoLuong(),
+                sach.getMaKeSach()
+            });
+        }
+    }
+
+    public void searchSach() {
+        String searchText = textField.getText().trim().toLowerCase();
+        dtmsach.setRowCount(0);
+        for (SachDTO sach : sachList) {
+            if (sach.getTenSach().toLowerCase().contains(searchText) ||
+                String.valueOf(sach.getMaSach()).contains(searchText)) {
+                dtmsach.addRow(new Object[]{
+                    sach.getMaSach(),
+                    sach.getTenSach(),
+                    sach.getMaLoai(),
+                    sach.getMaNXB(),
+                    sach.getMaTacGia(),
+                    sach.getNamXB(),
+                    sach.getSoLuong(),
+                    sach.getMaKeSach()
+                });
+            }
+        }
     }
 }

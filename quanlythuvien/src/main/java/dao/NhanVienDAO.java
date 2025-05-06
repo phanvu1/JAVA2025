@@ -23,7 +23,7 @@ public class NhanVienDAO {
                     rs.getInt("namsinh"),
                     rs.getString("gioitinh"),
                     rs.getString("sdt"),
-                    rs.getString("ngaybatdau"),
+                    rs.getDate("ngaybatdau"),
                     rs.getDouble("luong"),
                     rs.getString("diachi"),
                     rs.getInt("mataikhoan")
@@ -64,7 +64,7 @@ public boolean addNhanVien(NhanVienDTO nhanVien) {
             ps.setInt(2, nhanVien.getNamSinh());
             ps.setString(3, nhanVien.getGioiTinh());
             ps.setString(4, nhanVien.getSoDienThoai());
-            ps.setString(5, nhanVien.getNgayBatDau());
+            ps.setString(5, nhanVien.getNgayBatDau().toString());
             ps.setDouble(6, nhanVien.getLuong());
             ps.setString(7, nhanVien.getDiaChi());
             ps.setInt(8, nhanVien.getMaTaiKhoan());
@@ -99,7 +99,7 @@ public boolean addNhanVien(NhanVienDTO nhanVien) {
                         rs.getInt("namsinh"),
                         rs.getString("gioitinh"),
                         rs.getString("sdt"),
-                        rs.getString("ngaybatdau"),
+                        rs.getDate("ngaybatdau"),
                         rs.getDouble("luong"),
                         rs.getString("diachi"),
                         rs.getInt("mataikhoan")

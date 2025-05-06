@@ -370,7 +370,7 @@ public class MainFrame extends JFrame {
     private JLabel lblIdNhomQuyen;
     private JTextField txtIdNhomQuyen;
     private JLabel lblIdDanhMucChucNang;
-    private JTextField txtIdDanhMucChucNang;
+    public static JTextField txtIdDanhMucChucNang;
     private JLabel lblTenChucNang;
     private JTextField txtTenChucNang;
     private JButton btnThemNhomQuyen;
@@ -384,7 +384,7 @@ public class MainFrame extends JFrame {
     private JLabel lblTentaikhoan;
     private JLabel lblIdNhomQuyen_2;
     private JTextField txtTentaikhoan;
-    private JTextField txtIdNhomQuyen_2;
+    public static JTextField txtIdNhomQuyen_2;
     private JButton btnChonChucNang;
     private JButton btnChonNhomQuyen_2;
     private JButton btnthemtaikhoan;
@@ -469,11 +469,11 @@ public class MainFrame extends JFrame {
         PanelChinh.setBounds(187, 33, 1093, 735);
         contentPane.add(PanelChinh);
         PanelChinh.setLayout(new CardLayout(0, 0));
+        trangchu();
         pnsach();
         docgia();
         nhaxuatban();
         pntacgia();
-        trangchu();
         nhanvien();
         taikhoan();
         pnPhieumuon = new JPanel();
@@ -2611,6 +2611,19 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new TableSach().setVisible(true);
+            }
+        });
+        btnChonChucNang.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TableDanhMucChucNang().setVisible(true);
+            }
+        });
+        
+       btnChonNhomQuyen_2.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TableNhomQuyen().setVisible(true);
             }
         });
 
