@@ -75,8 +75,6 @@ import dto.NhaXuatBanDTO;
 import dto.NhanVienDTO;
 import dto.PhieuMuonDTO;
 
-
-
 import bus.PhieuNhapBUS;
 import bus.ChiTietPhieuNhapBUS;
 import bus.SachBUS;
@@ -95,7 +93,6 @@ import bus.NhaXuatBanBUS;
 import bus.NhanVienBUS;
 import bus.PhieuMuonBUS;
 import bus.PhieuMuonBUS;
-
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
@@ -289,7 +286,7 @@ public class MainFrame extends JFrame {
     private JDateChooser dateChooser_ngaytra;
     private JLabel lblthongke;
     private JTable tablephieunhap;
-    private JTable  tableNhomQuyen;
+    private JTable tableNhomQuyen;
     private DefaultTableModel dtmphieunhap;
     private DefaultTableModel dtmNhomQuyen;
     private DefaultTableModel dtmchitietphieunhap;
@@ -365,7 +362,7 @@ public class MainFrame extends JFrame {
     private JTextField txtTenNhomQuyen;
     private JTextField txtMoTa;
     private DefaultTableModel dtmChiTietNhomQuyen;
-    private  JLabel lblIdNhomQuyen;
+    private JLabel lblIdNhomQuyen;
     private JTextField txtIdNhomQuyen;
     private JLabel lblIdDanhMucChucNang;
     private JTextField txtIdDanhMucChucNang;
@@ -378,7 +375,6 @@ public class MainFrame extends JFrame {
     private JButton btnThemChiTietNhomQuyen;
     private JButton btnSuaChiTietNhomQuyen;
     private JButton btnXoaChiTietNhomQuyen;
-    
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -411,7 +407,6 @@ public class MainFrame extends JFrame {
         loadkesach();
         loadloaisach();
         loadthongkephieunhap();
-
 
         loaddocgia();
         loadtacgia();
@@ -586,8 +581,8 @@ public class MainFrame extends JFrame {
         lblchung.setBackground(Color.DARK_GRAY);
         lblchung.setBounds(0, 605, 187, 46);
         menuItemsPanel.add(lblchung);
-        
-         // Thêm mục Phân quyền
+
+        // Thêm mục Phân quyền
         lblphanquyen = new JLabel("  Tài Khoản");
         lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
         lblphanquyen.setOpaque(true);
@@ -596,7 +591,7 @@ public class MainFrame extends JFrame {
         lblphanquyen.setBackground(Color.DARK_GRAY);
         lblphanquyen.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lblphanquyen);
-        
+
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
@@ -1177,13 +1172,14 @@ public class MainFrame extends JFrame {
         btntimphieunhap.setFont(new Font("Tahoma", Font.BOLD, 15));
         btntimphieunhap.setBounds(578, 10, 97, 46);
         panel_7.add(btntimphieunhap);
-        
+
         PanelChinh.add(pnNhomQuyen, "NhomQuyenPanel"); // Định danh rõ ràng
         pnNhomQuyen.setLayout(null);
 
         // Panel nhập thông tin Nhóm Quyền
         JPanel panelNhomQuyen = new JPanel();
-        panelNhomQuyen.setBorder(new TitledBorder(null, "Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelNhomQuyen
+                .setBorder(new TitledBorder(null, "Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelNhomQuyen.setBounds(22, 13, 434, 304);
         pnNhomQuyen.add(panelNhomQuyen);
         panelNhomQuyen.setLayout(null);
@@ -1231,8 +1227,8 @@ public class MainFrame extends JFrame {
         JButton btnTaiLaiNhomQuyen = new JButton("Tải Lại");
         btnTaiLaiNhomQuyen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                    loadNhomQuyen();
-                    loadChiTietNhomQuyen();
+                loadNhomQuyen();
+                loadChiTietNhomQuyen();
             }
         });
         btnTaiLaiNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -1254,7 +1250,8 @@ public class MainFrame extends JFrame {
 
         // Panel Chi Tiết Nhóm Quyền
         JPanel panelChiTietNhomQuyen = new JPanel();
-        panelChiTietNhomQuyen.setBorder(new TitledBorder(null, "Chi Tiết Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelChiTietNhomQuyen.setBorder(
+                new TitledBorder(null, "Chi Tiết Nhóm Quyền", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelChiTietNhomQuyen.setBounds(22, 418, 422, 304);
         pnNhomQuyen.add(panelChiTietNhomQuyen);
         panelChiTietNhomQuyen.setLayout(null);
@@ -1357,15 +1354,16 @@ public class MainFrame extends JFrame {
                 String tenNhomQuyen = txtTimNhomQuyen.getText().trim();
                 dtmNhomQuyen.setRowCount(0);
                 // Giả sử bạn có danh sách NhomQuyenDTO
-//                for (NhomQuyenDTO nq : nhomQuyen) {
-//                    if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
-//                        dtmNhomQuyen.addRow(new Object[] {
-//                            nq.getId(),
-//                            nq.getTenNhomQuyen(),
-//                            nq.getMoTa()
-//                        });
-//                    }
-//                }
+                // for (NhomQuyenDTO nq : nhomQuyen) {
+                // if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase()))
+                // {
+                // dtmNhomQuyen.addRow(new Object[] {
+                // nq.getId(),
+                // nq.getTenNhomQuyen(),
+                // nq.getMoTa()
+                // });
+                // }
+                // }
             }
         });
         btnTimNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -2650,8 +2648,9 @@ public class MainFrame extends JFrame {
                                 });
                             }
                         }
-                        txtIdNhomQuyen.setText(idNhomQuyen+"");
-                        System.out.println("Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
+                        txtIdNhomQuyen.setText(idNhomQuyen + "");
+                        System.out.println(
+                                "Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
                     } catch (NumberFormatException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Mã nhóm quyền không hợp lệ!", "Lỗi",
@@ -2666,7 +2665,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         tableChiTietNhomQuyen.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -3309,7 +3308,7 @@ public class MainFrame extends JFrame {
                 pnNhomQuyen.show(false);
             }
         });
-        
+
         lblnhomquyen.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -3331,9 +3330,9 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-//                if (idnhomquyen!=1){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                } else {
+                // if (idnhomquyen!=1){
+                // JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                // } else {
                 loadNhomQuyen();
                 loadChiTietNhomQuyen();
                 pnTrangChu.show(false);
@@ -3347,8 +3346,8 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show();
-//                }
-               
+                // }
+
             }
         });
 
@@ -3687,97 +3686,101 @@ public class MainFrame extends JFrame {
                         txtgioitinhnv.setText(dtmnhanvien.getValueAt(i, 3).toString());
                         txtdiachinv.setText(dtmnhanvien.getValueAt(i, 4).toString());
                         txtsodienthoainv.setText(dtmnhanvien.getValueAt(i, 5).toString());
-                   } catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
-                        JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         });
 
         btnsuanv.addActionListener(e -> {
-    int i = tablenhanvien.getSelectedRow();
-    if (i >= 0) {
-        String tenNhanVien = txttennv.getText();
-        String namSinh = txtnamsinhnv.getText();
-        String gioiTinh = txtgioitinhnv.getText();
-        String diaChi = txtdiachinv.getText();
-        String soDienThoai = txtsodienthoainv.getText();
+            int i = tablenhanvien.getSelectedRow();
+            if (i >= 0) {
+                String tenNhanVien = txttennv.getText();
+                String namSinh = txtnamsinhnv.getText();
+                String gioiTinh = txtgioitinhnv.getText();
+                String diaChi = txtdiachinv.getText();
+                String soDienThoai = txtsodienthoainv.getText();
 
-        if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty() || soDienThoai.isEmpty()) {
-            JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
+                if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty()
+                        || soDienThoai.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
 
-        try {
-            int namSinhInt = Integer.parseInt(namSinh);
-            int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-            NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh, soDienThoai, null, 0.0, diaChi, 0);
-            boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
+                try {
+                    int namSinhInt = Integer.parseInt(namSinh);
+                    int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+                    NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh,
+                            soDienThoai, null, 0.0, diaChi, 0);
+                    boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
 
-            if (result) {
-                JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
-                loadnhanvien();
+                    if (result) {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
+                        loadnhanvien();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
+                }
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
+                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
-        }
-    } else {
-        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
-    }
-});
+        });
 
         btnthemnv.addActionListener(e -> {
-    String tenNhanVien = txttennv.getText();
-    String namSinh = txtnamsinhnv.getText();
-    String gioiTinh = txtgioitinhnv.getText();
-    String diaChi = txtdiachinv.getText();
-    String soDienThoai = txtsodienthoainv.getText();
+            String tenNhanVien = txttennv.getText();
+            String namSinh = txtnamsinhnv.getText();
+            String gioiTinh = txtgioitinhnv.getText();
+            String diaChi = txtdiachinv.getText();
+            String soDienThoai = txtsodienthoainv.getText();
 
-    if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty() || soDienThoai.isEmpty()) {
-        JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-        return;
-    }
-
-    try {
-        int namSinhInt = Integer.parseInt(namSinh);
-        NhanVienDTO nhanVienMoi = new NhanVienDTO(0, tenNhanVien, namSinhInt, gioiTinh, soDienThoai, null, 0.0, diaChi, 0);
-        boolean result = NhanVienBUS.getInstance().addNhanVien(nhanVienMoi);
-
-        if (result) {
-            JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thành công!");
-            loadnhanvien();
-        } else {
-            JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thất bại!");
-        }
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
-    }
-});
-
-       btnxoanv.addActionListener(e -> {
-    int i = tablenhanvien.getSelectedRow();
-    if (i >= 0) {
-        int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            boolean result = NhanVienBUS.getInstance().deleteNhanVien(maNhanVien);
-
-            if (result) {
-                JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thành công!");
-                loadnhanvien();
-            } else {
-                JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thất bại!");
+            if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty()
+                    || soDienThoai.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                return;
             }
-        }
-    } else {
-        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
-    }
-});
+
+            try {
+                int namSinhInt = Integer.parseInt(namSinh);
+                NhanVienDTO nhanVienMoi = new NhanVienDTO(0, tenNhanVien, namSinhInt, gioiTinh, soDienThoai, null, 0.0,
+                        diaChi, 0);
+                boolean result = NhanVienBUS.getInstance().addNhanVien(nhanVienMoi);
+
+                if (result) {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thành công!");
+                    loadnhanvien();
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thất bại!");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
+            }
+        });
+
+        btnxoanv.addActionListener(e -> {
+            int i = tablenhanvien.getSelectedRow();
+            if (i >= 0) {
+                int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    boolean result = NhanVienBUS.getInstance().deleteNhanVien(maNhanVien);
+
+                    if (result) {
+                        JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thành công!");
+                        loadnhanvien();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thất bại!");
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+            }
+        });
 
         txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -3829,7 +3832,7 @@ public class MainFrame extends JFrame {
                     txtsdtnxb.setText(dtmnhaxuatban.getValueAt(i, 3).toString());
                 }
             }
- 
+
             @Override
             public void mouseClicked(MouseEvent arg0) {
                 int selectedRow = tablenhaxuatban.getSelectedRow();
@@ -3841,85 +3844,83 @@ public class MainFrame extends JFrame {
             }
         });
 
-       btnThemnxb.addActionListener(e -> {
-    String tennxb = txtTennhaxuatban.getText();
-    String diachi = txtdiachinxb.getText();
-    String sdt = txtsdtnxb.getText();
+        btnThemnxb.addActionListener(e -> {
+            String tennxb = txtTennhaxuatban.getText();
+            String diachi = txtdiachinxb.getText();
+            String sdt = txtsdtnxb.getText();
 
-    if (tennxb.isEmpty() || diachi.isEmpty() || sdt.isEmpty()) {
-        JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-        return;
-    }
+            if (tennxb.isEmpty() || diachi.isEmpty() || sdt.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                return;
+            }
 
-    try {
-        NhaXuatBanDTO nxbMoi = new NhaXuatBanDTO(0, tennxb, diachi, sdt);
-        boolean result = NhaXuatBanBUS.getInstance().addNhaXuatBan(nxbMoi);
+            try {
+                NhaXuatBanDTO nxbMoi = new NhaXuatBanDTO(0, tennxb, diachi, sdt);
+                boolean result = NhaXuatBanBUS.getInstance().addNhaXuatBan(nxbMoi);
 
-        if (result) {
-            JOptionPane.showMessageDialog(contentPane, "Thêm nhà xuất bản thành công!");
-            loadnxb();
-        } else {
-            JOptionPane.showMessageDialog(contentPane, "Thêm nhà xuất bản thất bại!");
-        }
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
-    }
-});
+                if (result) {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm nhà xuất bản thành công!");
+                    loadnxb();
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm nhà xuất bản thất bại!");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+            }
+        });
 
-        
         btnsuanxb.addActionListener(e -> {
-    int i = tablenhaxuatban.getSelectedRow();
-    if (i >= 0) {
-        String tennxb = txtTennhaxuatban.getText();
-        String diachi = txtdiachinxb.getText();
-        String sdt = txtsdtnxb.getText();
+            int i = tablenhaxuatban.getSelectedRow();
+            if (i >= 0) {
+                String tennxb = txtTennhaxuatban.getText();
+                String diachi = txtdiachinxb.getText();
+                String sdt = txtsdtnxb.getText();
 
-        if (tennxb.isEmpty() || diachi.isEmpty() || sdt.isEmpty()) {
-            JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
+                if (tennxb.isEmpty() || diachi.isEmpty() || sdt.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
 
-        try {
-            int manxb = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
-            NhaXuatBanDTO nxbSua = new NhaXuatBanDTO(manxb, tennxb, diachi, sdt);
-            boolean result = NhaXuatBanBUS.getInstance().updateNhaXuatBan(nxbSua);
+                try {
+                    int manxb = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
+                    NhaXuatBanDTO nxbSua = new NhaXuatBanDTO(manxb, tennxb, diachi, sdt);
+                    boolean result = NhaXuatBanBUS.getInstance().updateNhaXuatBan(nxbSua);
 
-            if (result) {
-                JOptionPane.showMessageDialog(contentPane, "Sửa nhà xuất bản thành công!");
-                loadnxb();
+                    if (result) {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa nhà xuất bản thành công!");
+                        loadnxb();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa nhà xuất bản thất bại!");
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+                }
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Sửa nhà xuất bản thất bại!");
+                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
-        }
-    } else {
-        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
-    }
-});
-        
+        });
+
         btnxoanxb.addActionListener(e -> {
-    int i = tablenhaxuatban.getSelectedRow();
-    if (i >= 0) {
-        int maNXB = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
-        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
+            int i = tablenhaxuatban.getSelectedRow();
+            if (i >= 0) {
+                int maNXB = Integer.parseInt(dtmnhaxuatban.getValueAt(i, 0).toString());
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            boolean result = NhaXuatBanBUS.getInstance().deleteNhaXuatBan(maNXB);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    boolean result = NhaXuatBanBUS.getInstance().deleteNhaXuatBan(maNXB);
 
-            if (result) {
-                JOptionPane.showMessageDialog(contentPane, "Xoá nhà xuất bản thành công!");
-                loadnxb();
+                    if (result) {
+                        JOptionPane.showMessageDialog(contentPane, "Xoá nhà xuất bản thành công!");
+                        loadnxb();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Xoá nhà xuất bản thất bại!");
+                    }
+                }
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Xoá nhà xuất bản thất bại!");
+                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
             }
-        }
-    } else {
-        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
-    }
-});
-        
-        
+        });
+
         btnThemTacgia.addActionListener(e -> {
             String tenTacGia = txtTentacgia.getText();
             String namSinh = txtnamsinhtacgia.getText();
@@ -4184,23 +4185,23 @@ public class MainFrame extends JFrame {
                         return;
                     }
 
-                    SachDTO sach = new SachDTO(masach, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
+                    SachDTO sachSua = new SachDTO(masach, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
                             namxb, soluong, Integer.parseInt(make), hinhanh);
-                    boolean result = SachBUS.gI().updateSach(sach);
+                    boolean result = SachBUS.gI().updateSach(sachSua);
 
                     if (result) {
-                        JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
+                        JOptionPane.showMessageDialog(contentPane, "Sửa sách thành công!");
                         loadsach();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Sửa sách thất bại!");
+                        JOptionPane.showMessageDialog(contentPane, "Sửa sách thất bại!");
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Năm xuất bản và số lượng phải là số!");
+                    JOptionPane.showMessageDialog(contentPane, "Năm xuất bản và số lượng phải là số!");
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage());
+                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách trong bảng để sửa!");
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một sách trong bảng để sửa!");
             }
         });
 
@@ -4216,17 +4217,18 @@ public class MainFrame extends JFrame {
                     try {
                         boolean result = SachBUS.gI().deleteSach(masach);
                         if (result) {
-                            JOptionPane.showMessageDialog(null, "Xoá sách thành công!");
-                            loadsach();
+                            JOptionPane.showMessageDialog(contentPane, "Xóa sách thành công!");
+                            loadsach(); // Tải lại danh sách sách
                         } else {
-                            JOptionPane.showMessageDialog(null, "Xoá sách thất bại!");
+                            JOptionPane.showMessageDialog(contentPane, "Xóa sách thất bại!");
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage(), "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách trong bảng để xoá!");
+                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn sách nào trong bảng!");
             }
         });
 
@@ -4253,30 +4255,32 @@ public class MainFrame extends JFrame {
         });
 
         btnxoaphieumuon.addActionListener(new ActionListener() {
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-        int i = tablemuon.getSelectedRow();
-        if (i >= 0) {
-            int maPhieuMuon = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
-            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá phiếu mượn này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    boolean result = PhieuMuonBUS.getInstance().deletePhieuMuon(maPhieuMuon);
-                    if (result) {
-                        JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thành công!");
-                        loadphieumuon(); // Tải lại danh sách phiếu mượn
-                    } else {
-                        JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thất bại!");
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = tablemuon.getSelectedRow();
+                if (i >= 0) {
+                    int maPhieuMuon = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá phiếu mượn này?", "Xác nhận",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            boolean result = PhieuMuonBUS.getInstance().deletePhieuMuon(maPhieuMuon);
+                            if (result) {
+                                JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thành công!");
+                                loadphieumuon(); // Tải lại danh sách phiếu mượn
+                            } else {
+                                JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thất bại!");
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + e.getMessage(), "Lỗi",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn phiếu mượn nào trong bảng!");
                 }
             }
-        } else {
-            JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn phiếu mượn nào trong bảng!");
-        }
-    }
-});
+        });
         btnthemctpm.addActionListener(new ActionListener() {
             private String ngaymuon2;
 
@@ -4346,7 +4350,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         btnThemNhomQuyen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -4371,7 +4375,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         btnSuaNhomQuyen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -4399,10 +4403,12 @@ public class MainFrame extends JFrame {
                             txtTenNhomQuyen.requestFocusInWindow();
                             JOptionPane.showMessageDialog(contentPane, "Đã sửa nhóm quyền có mã " + idNhomQuyen);
                         } else {
-                            JOptionPane.showMessageDialog(contentPane, "Sửa nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(contentPane, "Sửa nhóm quyền thất bại!", "Lỗi",
+                                    JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào table");
@@ -4418,7 +4424,8 @@ public class MainFrame extends JFrame {
                 if (i >= 0) {
                     try {
                         int idNhomQuyen = Integer.parseInt(dtmNhomQuyen.getValueAt(i, 0).toString());
-                        if (JOptionPane.showConfirmDialog(contentPane, "Bạn chắc chắn xóa nhóm quyền có mã " + idNhomQuyen + "?", "",
+                        if (JOptionPane.showConfirmDialog(contentPane,
+                                "Bạn chắc chắn xóa nhóm quyền có mã " + idNhomQuyen + "?", "",
                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                             // Delete associated ChiTietNhomQuyen entries first
                             boolean detailSuccess = ChiTietNhomQuyenBUS.gI().deleteByIdNhomQuyen(idNhomQuyen);
@@ -4431,18 +4438,19 @@ public class MainFrame extends JFrame {
                                 txtMoTa.setText("");
                                 JOptionPane.showMessageDialog(contentPane, "Đã xóa nhóm quyền có mã " + idNhomQuyen);
                             } else {
-                                JOptionPane.showMessageDialog(contentPane, "Xóa nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(contentPane, "Xóa nhóm quyền thất bại!", "Lỗi",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không hợp lệ!", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn cột nào");
                 }
             }
         });
-        
 
         btnThemChiTietNhomQuyen.addActionListener(new ActionListener() {
             @Override
@@ -4487,17 +4495,17 @@ public class MainFrame extends JFrame {
                                 });
                             }
                         }
-                        JOptionPane.showMessageDialog(contentPane, 
+                        JOptionPane.showMessageDialog(contentPane,
                                 "Đã thêm chi tiết nhóm quyền cho mã nhóm quyền " + idNhomQuyen);
                         txtIdDanhMucChucNang.setText("");
                         txtTenChucNang.setText("");
                         txtIdDanhMucChucNang.requestFocusInWindow();
                     } else {
-                        JOptionPane.showMessageDialog(contentPane, 
+                        JOptionPane.showMessageDialog(contentPane,
                                 "Thêm chi tiết nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(contentPane, 
+                    JOptionPane.showMessageDialog(contentPane,
                             "Dữ liệu nhập không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -4551,8 +4559,8 @@ public class MainFrame extends JFrame {
                                 }
                             }
                             JOptionPane.showMessageDialog(contentPane,
-                                    "Đã sửa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
-                                    " và mã danh mục chức năng " + idDanhMucChucNang);
+                                    "Đã sửa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen +
+                                            " và mã danh mục chức năng " + idDanhMucChucNang);
                             txtIdDanhMucChucNang.setText("");
                             txtTenChucNang.setText("");
                             txtIdDanhMucChucNang.requestFocusInWindow();
@@ -4578,16 +4586,15 @@ public class MainFrame extends JFrame {
                     try {
                         int idNhomQuyen = Integer.parseInt(txtIdNhomQuyen.getText());
                         int idDanhMucChucNang = Integer.parseInt(dtmChiTietNhomQuyen.getValueAt(i, 1).toString());
-                        int confirm = JOptionPane.showConfirmDialog(null, 
-                                "Bạn có muốn xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
-                                " và mã danh mục chức năng " + idDanhMucChucNang + "?", 
+                        int confirm = JOptionPane.showConfirmDialog(null,
+                                "Bạn có muốn xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen +
+                                        " và mã danh mục chức năng " + idDanhMucChucNang + "?",
                                 "", JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {
                             boolean success = ChiTietNhomQuyenBUS.gI().delete(idNhomQuyen, idDanhMucChucNang);
                             if (success) {
                                 // Remove from in-memory list
-                                dsChiTietNhomQuyen.removeIf(ct -> 
-                                        ct.getIdnhomquyen() == idNhomQuyen && 
+                                dsChiTietNhomQuyen.removeIf(ct -> ct.getIdnhomquyen() == idNhomQuyen &&
                                         ct.getIddanhmucchucnang() == idDanhMucChucNang);
                                 dtmChiTietNhomQuyen.setRowCount(0);
                                 for (ChiTietNhomQuyenDTO ct : dsChiTietNhomQuyen) {
@@ -4600,8 +4607,8 @@ public class MainFrame extends JFrame {
                                     }
                                 }
                                 JOptionPane.showMessageDialog(contentPane,
-                                        "Đã xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen + 
-                                        " và mã danh mục chức năng " + idDanhMucChucNang);
+                                        "Đã xóa chi tiết nhóm quyền có mã nhóm quyền " + idNhomQuyen +
+                                                " và mã danh mục chức năng " + idDanhMucChucNang);
                                 txtIdDanhMucChucNang.setText("");
                                 txtTenChucNang.setText("");
                                 txtIdDanhMucChucNang.requestFocusInWindow();
@@ -4881,37 +4888,37 @@ public class MainFrame extends JFrame {
     }
 
     public void loadnxb() {
-    System.out.println("Đã gọi loadNhaXuatBan");
-    dtmnhaxuatban.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-    cmbmanhaxuatban.removeAllItems(); // Xóa tất cả mục trong combobox
+        System.out.println("Đã gọi loadNhaXuatBan");
+        dtmnhaxuatban.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        cmbmanhaxuatban.removeAllItems(); // Xóa tất cả mục trong combobox
 
-    try {
-        ArrayList<NhaXuatBanDTO> listNhaXuatBan; // Lấy danh sách từ BUS
-        listNhaXuatBan = NhaXuatBanBUS.getInstance().getAllNhaXuatBan();
+        try {
+            ArrayList<NhaXuatBanDTO> listNhaXuatBan; // Lấy danh sách từ BUS
+            listNhaXuatBan = NhaXuatBanBUS.getInstance().getAllNhaXuatBan();
 
-        if (listNhaXuatBan == null || listNhaXuatBan.isEmpty()) {
-            System.out.println("Không có dữ liệu nhà xuất bản!");
-            JOptionPane.showMessageDialog(null, "Không có nhà xuất bản nào để hiển thị!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
+            if (listNhaXuatBan == null || listNhaXuatBan.isEmpty()) {
+                System.out.println("Không có dữ liệu nhà xuất bản!");
+                JOptionPane.showMessageDialog(null, "Không có nhà xuất bản nào để hiển thị!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            for (NhaXuatBanDTO nxb : listNhaXuatBan) {
+                dtmnhaxuatban.addRow(new Object[] {
+                        nxb.getManxb(),
+                        nxb.getTennxb(),
+                        nxb.getDiachi(),
+                        nxb.getSdt()
+                });
+                cmbmanhaxuatban.addItem(nxb.getManxb() + " - " + nxb.getTennxb());
+            }
+            System.out.println("Số hàng trong bảng: " + dtmnhaxuatban.getRowCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu nhà xuất bản!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-
-        for (NhaXuatBanDTO nxb : listNhaXuatBan) {
-            dtmnhaxuatban.addRow(new Object[] {
-                nxb.getManxb(),
-                nxb.getTennxb(),
-                nxb.getDiachi(),
-                nxb.getSdt()
-            });
-            cmbmanhaxuatban.addItem(nxb.getManxb() + " - " + nxb.getTennxb());
-        }
-        System.out.println("Số hàng trong bảng: " + dtmnhaxuatban.getRowCount());
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu nhà xuất bản!", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-}
 
-    
     public static ArrayList<NhaCungCapDTO> ncclist = new ArrayList<NhaCungCapDTO>();
 
     public void loadnhacungcap() {
@@ -4949,35 +4956,36 @@ public class MainFrame extends JFrame {
     }
 
     public void loadnhanvien() {
-    System.out.println("Đã gọi loadnhanvien");
-    dtmnhanvien.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        System.out.println("Đã gọi loadnhanvien");
+        dtmnhanvien.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
 
-    try {
-        ArrayList<NhanVienDTO> listNhanVien = NhanVienBUS.getInstance().getAllNhanVien(); // Lấy danh sách nhân viên từ BUS
+        try {
+            ArrayList<NhanVienDTO> listNhanVien = NhanVienBUS.getInstance().getAllNhanVien(); // Lấy danh sách nhân viên
+                                                                                              // từ BUS
 
-        if (listNhanVien == null || listNhanVien.isEmpty()) {
-            System.out.println("Không có dữ liệu nhân viên!");
-            JOptionPane.showMessageDialog(null, "Không có nhân viên nào để hiển thị!", "Thông báo",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
+            if (listNhanVien == null || listNhanVien.isEmpty()) {
+                System.out.println("Không có dữ liệu nhân viên!");
+                JOptionPane.showMessageDialog(null, "Không có nhân viên nào để hiển thị!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            for (NhanVienDTO nhanVien : listNhanVien) {
+                dtmnhanvien.addRow(new Object[] {
+                        nhanVien.getMaNhanVien(),
+                        nhanVien.getTenNhanVien(),
+                        nhanVien.getNamSinh(),
+                        nhanVien.getGioiTinh(),
+                        nhanVien.getDiaChi(),
+                        nhanVien.getSoDienThoai()
+                });
+            }
+            System.out.println("Số hàng trong bảng: " + dtmnhanvien.getRowCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu nhân viên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-
-        for (NhanVienDTO nhanVien : listNhanVien) {
-            dtmnhanvien.addRow(new Object[] {
-                    nhanVien.getMaNhanVien(),
-                    nhanVien.getTenNhanVien(),
-                    nhanVien.getNamSinh(),
-                    nhanVien.getGioiTinh(),
-                    nhanVien.getDiaChi(),
-                    nhanVien.getSoDienThoai()
-            });
-        }
-        System.out.println("Số hàng trong bảng: " + dtmnhanvien.getRowCount());
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu nhân viên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-}
 
     public void loadtacgia() {
         System.out.println("Đã gọi loadtacgia");
@@ -5076,29 +5084,31 @@ public class MainFrame extends JFrame {
     }
 
     public void loadphieumuon() {
-    dtmmuon.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-    try {
-        ArrayList<PhieuMuonDTO> listPhieuMuon = PhieuMuonBUS.getInstance().getAllPhieuMuon(); // Lấy danh sách phiếu mượn từ BUS
+        dtmmuon.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        try {
+            ArrayList<PhieuMuonDTO> listPhieuMuon = PhieuMuonBUS.getInstance().getAllPhieuMuon(); // Lấy danh sách phiếu
+                                                                                                  // mượn từ BUS
 
-        if (listPhieuMuon == null || listPhieuMuon.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Không có phiếu mượn nào để hiển thị!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            if (listPhieuMuon == null || listPhieuMuon.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Không có phiếu mượn nào để hiển thị!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        for (PhieuMuonDTO pm : listPhieuMuon) {
-            dtmmuon.addRow(new Object[] {
-                pm.getMaPhieuMuon(),
-                pm.getMaNV(),
-                pm.getMaDocGia(),
-                pm.getNgayMuon(),
-                pm.getTinhTrang()
-            });
+            for (PhieuMuonDTO pm : listPhieuMuon) {
+                dtmmuon.addRow(new Object[] {
+                        pm.getMaPhieuMuon(),
+                        pm.getMaNV(),
+                        pm.getMaDocGia(),
+                        pm.getNgayMuon(),
+                        pm.getTinhTrang()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu mượn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu mượn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-}
 
     public void loadctphieumuon() {
         dtmctpm.setRowCount(0);
@@ -5136,7 +5146,7 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng: " + dtmphieunhap.getRowCount());
     }
-    
+
     public static ArrayList<NhomQuyenDTO> dsNhomQuyen = new ArrayList<NhomQuyenDTO>();
 
     public void loadNhomQuyen() {
@@ -5165,7 +5175,9 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng nhóm quyền: " + dtmNhomQuyen.getRowCount());
     }
+
     public static ArrayList<ChiTietNhomQuyenDTO> dsChiTietNhomQuyen = new ArrayList<ChiTietNhomQuyenDTO>();
+
     public void loadChiTietNhomQuyen() {
         dsChiTietNhomQuyen = null;
         System.out.println("Đã gọi loadChiTietNhomQuyen");
@@ -5194,8 +5206,6 @@ public class MainFrame extends JFrame {
 
         System.out.println("Số hàng trong bảng chi tiết nhóm quyền: " + dtmChiTietNhomQuyen.getRowCount());
     }
-
-    
 
     public static ArrayList<ThongKePhieuNhapDTO> tkpn = new ArrayList<ThongKePhieuNhapDTO>();
 
