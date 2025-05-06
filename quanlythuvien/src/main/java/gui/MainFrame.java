@@ -678,6 +678,41 @@ public class MainFrame extends JFrame {
         btnTm_1.setBounds(554, 380, 112, 51);
         pnSach.add(btnTm_1);
 
+        btnTm_1.addActionListener(e -> {
+            String keyword = txttimsach.getText().trim();
+            if (keyword.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập từ khóa để tìm kiếm sách!");
+                return;
+            }
+            try {
+                int maSach = Integer.parseInt(keyword);
+                dtmsach.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+                for (SachDTO sach : SachBUS.gI().getAllSach()) {
+                    if (sach.getMaSach() == maSach) {
+                        dtmsach.addRow(new Object[] {
+                                sach.getMaSach(),
+                                sach.getTenSach(),
+                                sach.getMaTacGia(),
+                                sach.getMaNXB(),
+                                sach.getMaLoai(),
+                                sach.getNamXB(),
+                                sach.getSoLuong(),
+                                sach.getMaKeSach(),
+                                sach.getHinhAnh()
+                        });
+                        return;
+                    }
+                }
+
+                JOptionPane.showMessageDialog(contentPane, "Không tìm thấy sách với mã: " + maSach);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Mã sách phải là số!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+            }
+        });
+
         PanelChinh.add(pndocgia, "name_890203323464100");
         PanelChinh.add(pntacgia, "name_890226525489300");
 
@@ -697,6 +732,39 @@ public class MainFrame extends JFrame {
         btnTm_2.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnTm_2.setBounds(617, 371, 126, 54);
         pntacgia.add(btnTm_2);
+
+        btnTm_2.addActionListener(e -> {
+            String keyword = txttimtacgia.getText().trim();
+            if (keyword.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập từ khóa để tìm kiếm tác giả!");
+                return;
+            }
+            // Thực hiện logic tìm kiếm theo mã tác giả tại đây, với cầu trúc tương tự như
+            // trên
+            try {
+                int maTacGia = Integer.parseInt(keyword);
+                dtmtacgia.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+                for (TacGiaDTO tacgia : TacGiaBUS.gI().getAllTacGia()) {
+                    if (tacgia.getMaTacGia() == maTacGia) {
+                        dtmtacgia.addRow(new Object[] {
+                                tacgia.getMaTacGia(),
+                                tacgia.getTenTacGia(),
+                                tacgia.getNamSinh(),
+                                tacgia.getQueQuan()
+                        });
+                        return;
+                    }
+                }
+
+                JOptionPane.showMessageDialog(contentPane, "Không tìm thấy tác giả với mã: " + maTacGia);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Mã tác giả phải là số!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+            }
+        });
+
         PanelChinh.add(pnnhaxuatban, "name_890210577532500");
 
         JButton btnTimnxb = new JButton("Tìm");
@@ -1868,7 +1936,7 @@ public class MainFrame extends JFrame {
         btnreloadnxb = new JButton("Tải Lại");
         btnreloadnxb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Bỏ loadnxb()
+                loadnxb();
             }
         });
         btnreloadnxb.setIcon(new ImageIcon("img\\update.png"));
@@ -1978,6 +2046,7 @@ public class MainFrame extends JFrame {
                 loaddocgia();
             }
         });
+
         btnTiLi.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnTiLi.setBounds(693, 190, 119, 49);
         panelthongtindocgia.add(btnTiLi);
@@ -1989,14 +2058,42 @@ public class MainFrame extends JFrame {
         txtTimkiemdocgia.setColumns(10);
 
         btnTimkiemdocgia = new JButton("Tìm");
-        btnTimkiemdocgia.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (!isNumber(txtTimkiemdocgia.getText())) {
-                    JOptionPane.showMessageDialog(null, "tìm kiếm mã đọc giả phải là số");
-                    return;
+        btnTimkiemdocgia.addActionListener(e -> {
+            String keyword = txtTimkiemdocgia.getText().trim();
+
+            if (keyword.isEmpty()) {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập mã đọc giả để tìm kiếm!");
+                return;
+            }
+
+            if (!isNumber(keyword)) {
+                JOptionPane.showMessageDialog(contentPane, "Mã đọc giả phải là số!");
+                return;
+            }
+
+            try {
+                int maDocGia = Integer.parseInt(keyword);
+                DocGiaDTO docGia = DocGiaBUS.gI().timDocGiaTheoMa(maDocGia);
+
+                dtmdocgia.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+                if (docGia != null) {
+                    // Thêm kết quả tìm kiếm vào bảng
+                    dtmdocgia.addRow(new Object[] {
+                            docGia.getMaDocGia(),
+                            docGia.getTenDocGia(),
+                            docGia.getGioiTinh(),
+                            docGia.getDiaChi(),
+                            docGia.getMaThe()
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Không tìm thấy độc giả với mã: " + maDocGia);
                 }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
             }
         });
+
         btnTimkiemdocgia.setIcon(new ImageIcon("img\\Search.png"));
         btnTimkiemdocgia.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnTimkiemdocgia.setBounds(765, 316, 120, 53);
@@ -2126,6 +2223,7 @@ public class MainFrame extends JFrame {
                 loadtacgia();
             }
         });
+
         btnreloadtacgia.setIcon(new ImageIcon("img\\update.png"));
         btnreloadtacgia.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnreloadtacgia.setBounds(819, 262, 126, 47);
@@ -4204,9 +4302,12 @@ public class MainFrame extends JFrame {
 
                     if (result) {
                         JOptionPane.showMessageDialog(contentPane, "Xoá tác giả thành công!");
+                        // Ensure the table is refreshed properly
+                        dtmtacgia.removeRow(i);
                         loadtacgia();
                     } else {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá tác giả thất bại!");
+                        JOptionPane.showMessageDialog(contentPane,
+                                "Xoá tác giả thất bại! Vui lòng kiểm tra lại dữ liệu.");
                     }
                 }
             } else {
