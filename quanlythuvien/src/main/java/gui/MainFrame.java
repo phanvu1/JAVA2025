@@ -4227,17 +4227,18 @@ public class MainFrame extends JFrame {
                     return;
                 }
 
+                // Tạo đối tượng độc giả mới
                 DocGiaDTO docGiaMoi = new DocGiaDTO(0, tenDocGia, gioiTinh, diaChi, Integer.parseInt(maThe));
                 boolean result = DocGiaBUS.gI().addDocGia(docGiaMoi);
 
                 if (result) {
                     JOptionPane.showMessageDialog(contentPane, "Thêm độc giả thành công!");
-                    loaddocgia();
+                    loaddocgia(); // Tải lại dữ liệu bảng
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Thêm độc giả thất bại!");
                 }
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Mã thẻ phải là số!");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
             }
@@ -4284,27 +4285,28 @@ public class MainFrame extends JFrame {
         btnxoadocgia.addActionListener(e -> {
             int selectedRow = tabledocgia.getSelectedRow();
             if (selectedRow >= 0) {
-                int columnIndexMaDocGia = tabledocgia.getColumnModel().getColumnIndex("Mã Đọc Giả");
-                int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, columnIndexMaDocGia).toString());
+                try {
+                    // Lấy chỉ số cột "Mã Đọc Giả" dựa trên tên cột
+                    int columnIndexMaDocGia = tabledocgia.getColumnModel().getColumnIndex("Mã Đọc Giả");
+                    int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, columnIndexMaDocGia).toString());
 
-                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá độc giả này?", "Xác nhận",
-                        JOptionPane.YES_NO_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá độc giả này?", "Xác nhận",
+                            JOptionPane.YES_NO_OPTION);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    try {
+                    if (confirm == JOptionPane.YES_OPTION) {
                         boolean result = DocGiaBUS.gI().deleteDocGia(maDocGia);
 
                         if (result) {
                             JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thành công!");
-                            loaddocgia();
+                            loaddocgia(); // Tải lại dữ liệu bảng
                         } else {
                             JOptionPane.showMessageDialog(contentPane, "Xoá độc giả thất bại!");
                         }
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
                     }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Mã độc giả không hợp lệ!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
                 }
             } else {
                 JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một độc giả trong bảng để xoá!");
