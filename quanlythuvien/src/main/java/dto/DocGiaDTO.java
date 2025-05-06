@@ -6,7 +6,6 @@ public class DocGiaDTO {
     private String gioiTinh;
     private String diaChi;
     private int maThe;
-    private String soDienThoai;
 
     // Constructor mặc định
     public DocGiaDTO() {
@@ -29,13 +28,15 @@ public class DocGiaDTO {
         this.maThe = maThe;
     }
 
-    public DocGiaDTO(int i, String tenDocGia, String gioiTinh, String soDienThoai, String diaChi) {
-        this.maDocGia = i;
-        this.tenDocGia = tenDocGia;
-        this.gioiTinh = gioiTinh;
-        this.diaChi = diaChi;
-        this.soDienThoai = soDienThoai;
-        this.maThe = 0; // Mặc định không có mã thẻ
+    // Constructor thêm từ 1 DocGiaDTO khác
+    public DocGiaDTO(DocGiaDTO docGia) {
+        if (docGia != null) {
+            this.maDocGia = docGia.maDocGia;
+            this.tenDocGia = docGia.tenDocGia;
+            this.gioiTinh = docGia.gioiTinh;
+            this.diaChi = docGia.diaChi;
+            this.maThe = docGia.maThe;
+        }
     }
 
     // Getter và Setter
@@ -79,11 +80,4 @@ public class DocGiaDTO {
         this.maThe = maThe;
     }
 
-    public String getSoDienThoai() {
-        return soDienThoai;
-    }
-
-    public void setSoDienThoai(String soDienThoai) {
-        this.soDienThoai = soDienThoai;
-    }
 }

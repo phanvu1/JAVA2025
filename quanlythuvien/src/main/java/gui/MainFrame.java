@@ -2014,8 +2014,8 @@ public class MainFrame extends JFrame {
         dtmdocgia.addColumn("Mã Đọc Giả");
         dtmdocgia.addColumn("Họ Và Tên");
         dtmdocgia.addColumn("Giới Tính");
-        dtmdocgia.addColumn("Số Điện Thạoi");
         dtmdocgia.addColumn("Địa Chỉ");
+        dtmdocgia.addColumn("Mã thẻ thư viện");
         tabledocgia = new MyTable(dtmdocgia);
         scrollPane_1.setViewportView(tabledocgia);
 
@@ -4219,15 +4219,15 @@ public class MainFrame extends JFrame {
             try {
                 String tenDocGia = txtTendocgia.getText().trim();
                 String gioiTinh = txtgioitinhdocgia.getText().trim();
-                String soDienThoai = txtsdtdocgia.getText().trim();
+                String maThe = txtsdtdocgia.getText().trim();
                 String diaChi = txtdiachidocgia.getText().trim();
 
-                if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
+                if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || maThe.isEmpty() || diaChi.isEmpty()) {
                     JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
                     return;
                 }
 
-                DocGiaDTO docGiaMoi = new DocGiaDTO(0, tenDocGia, gioiTinh, soDienThoai, diaChi);
+                DocGiaDTO docGiaMoi = new DocGiaDTO(0, tenDocGia, gioiTinh, diaChi, Integer.parseInt(maThe));
                 boolean result = DocGiaBUS.gI().addDocGia(docGiaMoi);
 
                 if (result) {
@@ -4251,15 +4251,15 @@ public class MainFrame extends JFrame {
                     int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, 0).toString());
                     String tenDocGia = txtTendocgia.getText().trim();
                     String gioiTinh = txtgioitinhdocgia.getText().trim();
-                    String soDienThoai = txtsdtdocgia.getText().trim();
+                    String maThe = txtsdtdocgia.getText().trim();
                     String diaChi = txtdiachidocgia.getText().trim();
 
-                    if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty()) {
+                    if (tenDocGia.isEmpty() || gioiTinh.isEmpty() || maThe.isEmpty() || diaChi.isEmpty()) {
                         JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
                         return;
                     }
 
-                    DocGiaDTO docGiaSua = new DocGiaDTO(maDocGia, tenDocGia, gioiTinh, soDienThoai, diaChi);
+                    DocGiaDTO docGiaSua = new DocGiaDTO(maDocGia, tenDocGia, gioiTinh, diaChi, Integer.parseInt(maThe));
                     boolean result = DocGiaBUS.gI().updateDocGia(docGiaSua);
 
                     if (result) {
@@ -4401,7 +4401,8 @@ public class MainFrame extends JFrame {
                     }
 
                     SachDTO sachSua = new SachDTO(masach, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
-                            Integer.parseInt(matg), namxb, soluong, Integer.parseInt(make), hinhanh);
+                            Integer.parseInt(matg),
+                            namxb, soluong, Integer.parseInt(make), hinhanh);
                     boolean result = SachBUS.gI().updateSach(sachSua);
 
                     if (result) {
