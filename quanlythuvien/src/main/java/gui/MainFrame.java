@@ -108,6 +108,7 @@ import export.ImportEx;
 
 import java.util.logging.SimpleFormatter;
 import gui.LoginForm;
+import java.util.List;
 
 public class MainFrame extends JFrame {
     public static String Ma;
@@ -211,14 +212,21 @@ public class MainFrame extends JFrame {
     private JLabel lblaCh_1;
     private JLabel lbltennv_3;
     private JLabel lbltennv_4;
+    private JLabel lblngaybatdau;
+    private JLabel lblluong;
+    private JLabel lblmataikhoan;
     private JTextField txttennv;
     private JTextField txtnamsinhnv;
     private JTextField txtdiachinv;
     private JTextField txtsodienthoainv;
     private JTextField txtgioitinhnv;
+    private JTextField txtngaybatdaunv;
+    private JTextField txtluongnv;
+    private JTextField txtmataikhoannv;
     private JButton btnthemnv;
     private JButton btnsuanv;
     private JButton btnxoanv;
+//    private JButton btntimkiemnv;
     private JButton btnreloadnv;
     private JLabel lbltimkiem;
     private JTextField txtTimKiemnv;
@@ -431,11 +439,13 @@ public class MainFrame extends JFrame {
         loadthongkephieunhap();
 
         loaddocgia();
+        loadDanhSachDocGia();
         loadtacgia();
         loadsach();
 
         loadnxb();
         loadnhanvien();
+        loadDanhSachNhanVien();
         loadphieumuon();
         loadtaikhoan();
 
@@ -747,7 +757,7 @@ public class MainFrame extends JFrame {
 
         txtmapm = new JTextField();
         txtmapm.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        txtmapm.setEditable(false);
+//        txtmapm.setEditable(false);
         txtmapm.setBounds(111, 14, 236, 36);
         panel_3.add(txtmapm);
         txtmapm.setColumns(10);
@@ -1683,12 +1693,12 @@ public class MainFrame extends JFrame {
 
         lblnamsinhnv = new JLabel("Năm Sinh");
         lblnamsinhnv.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblnamsinhnv.setBounds(12, 83, 138, 39);
+        lblnamsinhnv.setBounds(12, 63, 138, 39);
         panel_2.add(lblnamsinhnv);
 
         lblaCh_1 = new JLabel("Địa Chỉ");
         lblaCh_1.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblaCh_1.setBounds(12, 158, 138, 39);
+        lblaCh_1.setBounds(12, 113, 138, 39);
         panel_2.add(lblaCh_1);
 
         lbltennv_3 = new JLabel("Giới Tính");
@@ -1698,8 +1708,23 @@ public class MainFrame extends JFrame {
 
         lbltennv_4 = new JLabel("Số Điện Thoại");
         lbltennv_4.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lbltennv_4.setBounds(472, 83, 138, 39);
+        lbltennv_4.setBounds(472, 63, 138, 39);
         panel_2.add(lbltennv_4);
+        
+        lblngaybatdau = new JLabel("Ngày Bắt Đầu");
+        lblngaybatdau.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblngaybatdau.setBounds(472, 113, 138, 39); 
+        panel_2.add(lblngaybatdau);
+        
+        lblluong = new JLabel("Lương");
+        lblluong.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblluong.setBounds(12, 163, 138, 39);
+        panel_2.add(lblluong);
+        
+        lblmataikhoan = new JLabel("Mã Tài Khoản");
+        lblmataikhoan.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblmataikhoan.setBounds(472, 163, 138, 39); 
+        panel_2.add(lblmataikhoan);
 
         txttennv = new JTextField();
         txttennv.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -1710,19 +1735,19 @@ public class MainFrame extends JFrame {
         txtnamsinhnv = new JTextField();
         txtnamsinhnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtnamsinhnv.setColumns(10);
-        txtnamsinhnv.setBounds(162, 83, 199, 39);
+        txtnamsinhnv.setBounds(162, 63, 199, 39);
         panel_2.add(txtnamsinhnv);
 
         txtdiachinv = new JTextField();
         txtdiachinv.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtdiachinv.setColumns(10);
-        txtdiachinv.setBounds(162, 158, 199, 39);
+        txtdiachinv.setBounds(162, 113, 199, 39);
         panel_2.add(txtdiachinv);
 
         txtsodienthoainv = new JTextField();
         txtsodienthoainv.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtsodienthoainv.setColumns(10);
-        txtsodienthoainv.setBounds(608, 83, 199, 39);
+        txtsodienthoainv.setBounds(608, 63, 199, 39);
         panel_2.add(txtsodienthoainv);
 
         txtgioitinhnv = new JTextField();
@@ -1730,6 +1755,23 @@ public class MainFrame extends JFrame {
         txtgioitinhnv.setColumns(10);
         txtgioitinhnv.setBounds(608, 13, 199, 39);
         panel_2.add(txtgioitinhnv);
+        
+        txtluongnv = new JTextField();
+        txtluongnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtluongnv.setColumns(10);
+        txtluongnv.setBounds(162, 163, 199, 39);
+        panel_2.add(txtluongnv);
+        
+        txtngaybatdaunv = new JTextField();
+        txtngaybatdaunv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtngaybatdaunv.setBounds(608, 113, 199, 39);
+        panel_2.add(txtngaybatdaunv);
+        
+        txtmataikhoannv = new JTextField();
+        txtmataikhoannv.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtmataikhoannv.setColumns(10);
+        txtmataikhoannv.setBounds(608, 163, 199, 39);
+        panel_2.add(txtmataikhoannv);
 
         btnthemnv = new JButton("Thêm");
         btnthemnv.setIcon(new ImageIcon("img\\Add.png"));
@@ -1748,6 +1790,11 @@ public class MainFrame extends JFrame {
         btnxoanv.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnxoanv.setBounds(467, 245, 126, 53);
         panel_2.add(btnxoanv);
+        
+//        btntimkiemnv.setIcon(new ImageIcon("img\\Search.png"));
+//        btntimkiemnv.setFont(new Font("Tahoma", Font.BOLD, 14));
+//        btntimkiemnv.setBounds(765, 316, 120, 53);
+//        panel_2.add(btntimkiemnv);
 
         btnreloadnv = new JButton("Tải Lại");
         btnreloadnv.setIcon(new ImageIcon("img\\update.png"));
@@ -1778,6 +1825,9 @@ public class MainFrame extends JFrame {
         dtmnhanvien.addColumn("Giới Tính");
         dtmnhanvien.addColumn("Địa Chi");
         dtmnhanvien.addColumn("SĐT");
+        dtmnhanvien.addColumn("Ngày Bắt Đầu");
+        dtmnhanvien.addColumn("Lương");
+        dtmnhanvien.addColumn("Mã Tài Khoản");
 
         tablenhanvien = new MyTable(dtmnhanvien);
         scrollPane_4.setViewportView(tablenhanvien);
@@ -3893,111 +3943,220 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mouseClicked(MouseEvent arg0) {
-                int i = tablenhanvien.getSelectedRow();
-                if (i >= 0) {
-                    try {
-                        txttennv.setText(dtmnhanvien.getValueAt(i, 1).toString());
-                        txtnamsinhnv.setText(dtmnhanvien.getValueAt(i, 2).toString());
-                        txtgioitinhnv.setText(dtmnhanvien.getValueAt(i, 3).toString());
-                        txtdiachinv.setText(dtmnhanvien.getValueAt(i, 4).toString());
-                        txtsodienthoainv.setText(dtmnhanvien.getValueAt(i, 5).toString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
+public void mouseClicked(MouseEvent arg0) {
+    int i = tablenhanvien.getSelectedRow();
+    if (i >= 0) {
+        try {
+            txttennv.setText(dtmnhanvien.getValueAt(i, 1).toString());
+            txtnamsinhnv.setText(dtmnhanvien.getValueAt(i, 2).toString());
+            txtgioitinhnv.setText(dtmnhanvien.getValueAt(i, 3).toString());
+            txtdiachinv.setText(dtmnhanvien.getValueAt(i, 4).toString());
+            txtsodienthoainv.setText(dtmnhanvien.getValueAt(i, 5).toString());
 
-        btnsuanv.addActionListener(e -> {
-            int i = tablenhanvien.getSelectedRow();
-            if (i >= 0) {
-                String tenNhanVien = txttennv.getText();
-                String namSinh = txtnamsinhnv.getText();
-                String gioiTinh = txtgioitinhnv.getText();
-                String diaChi = txtdiachinv.getText();
-                String soDienThoai = txtsodienthoainv.getText();
-
-                if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty()
-                        || soDienThoai.isEmpty()) {
-                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-                    return;
-                }
-
-                try {
-                    int namSinhInt = Integer.parseInt(namSinh);
-                    int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-                    NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh,
-                            soDienThoai, null, 0.0, diaChi, 0);
-                    boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
-
-                    if (result) {
-                        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
-                        loadnhanvien();
-                    } else {
-                        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
-                }
+            // Lấy giá trị ngày bắt đầu từ bảng và gán vào JTextField
+            String ngayBatDauStr = dtmnhanvien.getValueAt(i, 6) != null ? dtmnhanvien.getValueAt(i, 6).toString() : null;
+            if (ngayBatDauStr != null && !ngayBatDauStr.isEmpty()) {
+                txtngaybatdaunv.setText(ngayBatDauStr); // Gán chuỗi ngày vào JTextField
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+                txtngaybatdaunv.setText(""); // Xóa giá trị nếu null
             }
+
+            txtluongnv.setText(dtmnhanvien.getValueAt(i, 7) != null ? dtmnhanvien.getValueAt(i, 7).toString() : "");
+            txtmataikhoannv.setText(dtmnhanvien.getValueAt(i, 8) != null ? dtmnhanvien.getValueAt(i, 8).toString() : "");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
         });
 
-        btnthemnv.addActionListener(e -> {
+ btnsuanv.addActionListener(e -> {
+    int i = tablenhanvien.getSelectedRow(); // Lấy hàng được chọn trong bảng
+    if (i >= 0) {
+        try {
+            // Lấy dữ liệu từ các ô nhập liệu
             String tenNhanVien = txttennv.getText();
             String namSinh = txtnamsinhnv.getText();
             String gioiTinh = txtgioitinhnv.getText();
             String diaChi = txtdiachinv.getText();
             String soDienThoai = txtsodienthoainv.getText();
+            String ngayBatDau = txtngaybatdaunv.getText();
+            String luong = txtluongnv.getText();
+            String maTaiKhoan = txtmataikhoannv.getText();
 
+            // Kiểm tra các trường không được để trống
             if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty()
-                    || soDienThoai.isEmpty()) {
+                    || soDienThoai.isEmpty() || ngayBatDau.isEmpty() || luong.isEmpty() || maTaiKhoan.isEmpty()) {
                 JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
                 return;
             }
 
-            try {
-                int namSinhInt = Integer.parseInt(namSinh);
-                NhanVienDTO nhanVienMoi = new NhanVienDTO(0, tenNhanVien, namSinhInt, gioiTinh, soDienThoai, null, 0.0,
-                        diaChi, 0);
-                boolean result = NhanVienBUS.getInstance().addNhanVien(nhanVienMoi);
+// Chuyển đổi dữ liệu cần thiết
+    int namSinhInt = Integer.parseInt(namSinh);
+    double luongDouble = Double.parseDouble(luong);
+    int maTaiKhoanInt = Integer.parseInt(maTaiKhoan);
+    int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
 
-                if (result) {
-                    JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thành công!");
-                    loadnhanvien();
-                } else {
-                    JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thất bại!");
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(contentPane, "Năm sinh phải là số!");
-            }
-        });
+    // Chuyển đổi ngày từ chuỗi sang Date
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date ngayBatDauDate = sdf.parse(ngayBatDau);
+
+    // Tạo đối tượng NhanVienDTO để cập nhật
+    NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh, soDienThoai,
+            ngayBatDauDate, luongDouble, diaChi, maTaiKhoanInt);
+
+    // Gọi phương thức cập nhật từ BUS
+    boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
+
+    // Hiển thị thông báo kết quả
+    if (result) {
+        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
+        loadnhanvien();
+    } else {
+        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
+    }
+} catch (NumberFormatException ex) {
+    JOptionPane.showMessageDialog(contentPane, "Năm sinh, lương và mã tài khoản phải là số!");
+} catch (ParseException ex) {
+    JOptionPane.showMessageDialog(contentPane, "Ngày bắt đầu không hợp lệ! Định dạng phải là yyyy-MM-dd.");
+}
+    } else {
+        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+    }
+});
+
+ 
+btnthemnv.addActionListener(e -> {
+    String tenNhanVien = txttennv.getText().trim();
+    String namSinh = txtnamsinhnv.getText().trim();
+    String gioiTinh = txtgioitinhnv.getText().trim();
+    String diaChi = txtdiachinv.getText().trim();
+    String soDienThoai = txtsodienthoainv.getText().trim();
+    String ngayBatDauStr = txtngaybatdaunv.getText().trim(); // Lấy giá trị từ JTextField
+    String luongStr = txtluongnv.getText().trim();
+    
+    // In ra console để kiểm tra các giá trị nhập vào
+    System.out.println("Tên nhân viên: " + tenNhanVien);
+    System.out.println("Năm sinh: " + namSinh);
+    System.out.println("Giới tính: " + gioiTinh);
+    System.out.println("Địa chỉ: " + diaChi);
+    System.out.println("Số điện thoại: " + soDienThoai);
+    System.out.println("Ngày bắt đầu: " + ngayBatDauStr);
+    System.out.println("Lương: " + luongStr);
+
+    // Kiểm tra các trường nhập liệu
+    if (tenNhanVien.isEmpty() || namSinh.isEmpty() || gioiTinh.isEmpty() || diaChi.isEmpty()
+            || soDienThoai.isEmpty() || ngayBatDauStr.isEmpty() || luongStr.isEmpty()) {
+        JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+        return;
+    }
+
+    try {
+        // Chuyển đổi dữ liệu
+        int namSinhInt = Integer.parseInt(namSinh);
+        double luong = Double.parseDouble(luongStr);
+
+        // Kiểm tra định dạng ngày bắt đầu
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false); // Kiểm tra nghiêm ngặt
+        Date ngayBatDau = sdf.parse(ngayBatDauStr);
+        
+        String maTaiKhoanStr = txtmataikhoannv.getText().trim();
+        Integer maTaiKhoan = null;
+
+        if (!maTaiKhoanStr.isEmpty()) {
+              maTaiKhoan = Integer.parseInt(maTaiKhoanStr); // Chuyển đổi sang Integer
+}
+
+        // Tạo đối tượng nhân viên mới
+        NhanVienDTO nhanVienMoi = new NhanVienDTO(0, tenNhanVien, namSinhInt, gioiTinh, soDienThoai, ngayBatDau, luong,
+                diaChi, maTaiKhoan);
+
+        // Gọi BUS để thêm nhân viên
+        boolean result = NhanVienBUS.getInstance().addNhanVien(nhanVienMoi);
+
+        if (result) {
+            JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thành công!");
+            loadnhanvien(); // Tải lại danh sách nhân viên
+        } else {
+            JOptionPane.showMessageDialog(contentPane, "Thêm nhân viên thất bại!");
+        }
+    } catch (ParseException ex) {
+        JOptionPane.showMessageDialog(contentPane, "Ngày bắt đầu không hợp lệ! Vui lòng nhập theo định dạng yyyy-MM-dd.");
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(contentPane, "Năm sinh và lương phải là số!");
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+    }
+});
 
         btnxoanv.addActionListener(e -> {
-            int i = tablenhanvien.getSelectedRow();
-            if (i >= 0) {
-                int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
-                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
+            
+    int i = tablenhanvien.getSelectedRow();
+    
+    if (i >= 0) {
+        int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá?", "", JOptionPane.YES_NO_OPTION);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    boolean result = NhanVienBUS.getInstance().deleteNhanVien(maNhanVien);
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean result = NhanVienBUS.getInstance().deleteNhanVien(maNhanVien);
 
-                    if (result) {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thành công!");
-                        loadnhanvien();
-                    } else {
-                        JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thất bại!");
-                    }
-                }
+            if (result) {
+                JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thành công!");
+                loadnhanvien();
+                clearNhanVienFields(); // Xóa dữ liệu trong các trường nhập liệu
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+                JOptionPane.showMessageDialog(contentPane, "Xoá nhân viên thất bại!");
             }
-        });
+        }
+    } else {
+        JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
+    }
+});
 
+//        btntimkiemnv.addActionListener(e -> {
+//    String idText = txtTimKiemnv.getText().trim(); // Lấy ID từ ô nhập liệu
+//    if (idText.isEmpty()) {
+//        JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập ID để tìm kiếm!");
+//        return;
+//    }
+//
+//    try {
+//        int id = Integer.parseInt(idText); // Chuyển ID sang số nguyên
+//        dtmnhanvien.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+//
+//        // Duyệt danh sách nhân viên để tìm kiếm
+//        List<NhanVienDTO> danhSachNhanVien = NhanVienBUS.getInstance().getAllNhanVien();
+//        boolean found = false;
+//
+//        for (NhanVienDTO nv : danhSachNhanVien) {
+//            if (nv.getMaNhanVien() == id) { // So sánh ID
+//                dtmnhanvien.addRow(new Object[] {
+//                    nv.getMaNhanVien(),
+//                    nv.getTenNhanVien(),
+//                    nv.getNamSinh(),
+//                    nv.getGioiTinh(),
+//                    nv.getDiaChi(),
+//                    nv.getSoDienThoai(),
+//                    nv.getNgayBatDau(),
+//                    nv.getLuong(),
+//                    nv.getMaTaiKhoan()
+//                });
+//                found = true;
+//                break;
+//            }
+//        }
+//
+//        if (!found) {
+//            JOptionPane.showMessageDialog(contentPane, "Không tìm thấy nhân viên với ID: " + id);
+//        }
+//    } catch (NumberFormatException ex) {
+//        JOptionPane.showMessageDialog(contentPane, "ID phải là số!");
+//    }
+//});
+        
         txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent arg0) {
@@ -4447,6 +4606,37 @@ public class MainFrame extends JFrame {
                 JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn sách nào trong bảng!");
             }
         });
+        
+       btnthemphieumuon.addActionListener(e -> {
+    try {
+        // Lấy dữ liệu từ giao diện
+        String maNhanVien = cmbnhanvienpm.getSelectedItem().toString().split(" - ")[0];
+        String maDocGia = cmbmadocgiaphieumuon.getSelectedItem().toString().split(" - ")[0];
+        Date ngayMuon = dateChooser.getDate(); // Lấy ngày mượn từ DateChooser
+        String tinhTrang = rdmuon.isSelected() ? "Đang Mượn" : rdtra.isSelected() ? "Đã Trả" : "";
+
+        // Kiểm tra dữ liệu đầu vào
+        if (maNhanVien.isEmpty() || maDocGia.isEmpty() || ngayMuon == null || tinhTrang.isEmpty()) {
+            JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        // Tạo đối tượng phiếu mượn mới
+        PhieuMuonDTO phieuMuonMoi = new PhieuMuonDTO(0, Integer.parseInt(maNhanVien), Integer.parseInt(maDocGia), ngayMuon, tinhTrang);
+
+        // Thêm phiếu mượn vào cơ sở dữ liệu
+        boolean result = PhieuMuonBUS.getInstance().addPhieuMuon(phieuMuonMoi);
+
+        if (result) {
+            JOptionPane.showMessageDialog(contentPane, "Thêm phiếu mượn thành công!");
+            loadphieumuon(); // Tải lại danh sách phiếu mượn
+        } else {
+            JOptionPane.showMessageDialog(contentPane, "Thêm phiếu mượn thất bại!");
+        }
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
+    }
+});
 
         btnsuaphieumuon.addActionListener(new ActionListener() {
             @Override
@@ -5315,37 +5505,53 @@ public class MainFrame extends JFrame {
         System.out.println("Số hàng trong bảng: " + dtmke.getRowCount());
     }
 
-    public void loadnhanvien() {
-        System.out.println("Đã gọi loadnhanvien");
-        dtmnhanvien.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+    private void loadnhanvien() {
+    try {
+        dtmnhanvien.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+        List<NhanVienDTO> danhSachNhanVien = NhanVienBUS.getInstance().getAllNhanVien();
+        
 
-        try {
-            ArrayList<NhanVienDTO> listNhanVien = NhanVienBUS.getInstance().getAllNhanVien(); // Lấy danh sách nhân viên
-                                                                                              // từ BUS
-
-            if (listNhanVien == null || listNhanVien.isEmpty()) {
-                System.out.println("Không có dữ liệu nhân viên!");
-                JOptionPane.showMessageDialog(null, "Không có nhân viên nào để hiển thị!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            for (NhanVienDTO nhanVien : listNhanVien) {
-                dtmnhanvien.addRow(new Object[] {
-                        nhanVien.getMaNhanVien(),
-                        nhanVien.getTenNhanVien(),
-                        nhanVien.getNamSinh(),
-                        nhanVien.getGioiTinh(),
-                        nhanVien.getDiaChi(),
-                        nhanVien.getSoDienThoai()
-                });
-            }
-            System.out.println("Số hàng trong bảng: " + dtmnhanvien.getRowCount());
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu nhân viên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        for (NhanVienDTO nv : danhSachNhanVien) {
+            dtmnhanvien.addRow(new Object[] {
+                nv.getMaNhanVien(),
+                nv.getTenNhanVien(),
+                nv.getNamSinh(),
+                nv.getGioiTinh(),
+                nv.getDiaChi(),
+                nv.getSoDienThoai(),
+                nv.getNgayBatDau(),
+                nv.getLuong(),
+                nv.getMaTaiKhoan()
+            });
         }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(contentPane, "Lỗi khi tải dữ liệu nhân viên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
+}
+    
+    private void loadDanhSachNhanVien() {
+    try {
+        List<NhanVienDTO> danhSachNhanVien = NhanVienBUS.getInstance().getAllNhanVien();
+        cmbnhanvienpm.removeAllItems(); // Xóa các mục cũ
+        for (NhanVienDTO nv : danhSachNhanVien) {
+            cmbnhanvienpm.addItem(nv.getMaNhanVien() + " - " + nv.getTenNhanVien());
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(contentPane, "Lỗi khi tải danh sách nhân viên: " + e.getMessage());
+    }
+}
+    
+    private void clearNhanVienFields() {
+    txttennv.setText("");
+    txtnamsinhnv.setText("");
+    txtgioitinhnv.setText("");
+    txtdiachinv.setText("");
+    txtsodienthoainv.setText("");
+    txtngaybatdaunv.setText("");
+    txtluongnv.setText("");
+    txtmataikhoannv.setText("");
+}
 
     public void loadtacgia() {
         System.out.println("Đã gọi loadtacgia");
@@ -5407,6 +5613,18 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu độc giả!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void loadDanhSachDocGia() {
+    try {
+        List<DocGiaDTO> danhSachDocGia = DocGiaBUS.gI().getAllDocGia();
+        cmbmadocgiaphieumuon.removeAllItems(); // Xóa các mục cũ
+        for (DocGiaDTO dg : danhSachDocGia) {
+            cmbmadocgiaphieumuon.addItem(dg.getMaDocGia() + " - " + dg.getTenDocGia());
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(contentPane, "Lỗi khi tải danh sách độc giả: " + e.getMessage());
+    }
+}
 
     public void loadsach() {
         System.out.println("Đã gọi loadsach");
