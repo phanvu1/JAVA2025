@@ -614,8 +614,6 @@ public class MainFrame extends JFrame {
         lbltaikhoan.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lbltaikhoan);
 
-        PanelChinh.add(pnTaiKhoan, "panel_taikhoan");
-
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
@@ -636,6 +634,7 @@ public class MainFrame extends JFrame {
 
         // Phần còn lại giữ nguyên
         PanelChinh.add(pnTrangChu, "name_890335498390600");
+        PanelChinh.add(pnTaiKhoan, "panel_taikhoan");
 
         JLabel lblNewLabel_17 = new JLabel("");
         lblNewLabel_17.setIcon(new ImageIcon("img\\iconsgu 3.png"));
