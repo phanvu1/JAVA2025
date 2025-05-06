@@ -397,7 +397,6 @@ public class MainFrame extends JFrame {
     private DefaultTableModel dtmtaikhoan;
     private JTable tabletaikhoan;
 
-
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -604,8 +603,8 @@ public class MainFrame extends JFrame {
         lblchung.setBackground(Color.DARK_GRAY);
         lblchung.setBounds(0, 605, 187, 46);
         menuItemsPanel.add(lblchung);
-        
-         // Thêm mục Phân quyền
+
+        // Thêm mục Phân quyền
         lbltaikhoan = new JLabel("  Tài Khoản");
         lbltaikhoan.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
         lbltaikhoan.setOpaque(true);
@@ -614,9 +613,9 @@ public class MainFrame extends JFrame {
         lbltaikhoan.setBackground(Color.DARK_GRAY);
         lbltaikhoan.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lbltaikhoan);
-        
+
         PanelChinh.add(pnTaiKhoan, "panel_taikhoan");
-        
+
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
         lblnhomquyen.setOpaque(true);
@@ -1381,9 +1380,9 @@ public class MainFrame extends JFrame {
                 for (NhomQuyenDTO nq : dsNhomQuyen) {
                     if (nq.getTennhomquyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
                         dtmNhomQuyen.addRow(new Object[] {
-                            nq.getIdnhomquyen(),
-                            nq.getTennhomquyen(),
-                            nq.getMota()
+                                nq.getIdnhomquyen(),
+                                nq.getTennhomquyen(),
+                                nq.getMota()
                         });
                     }
                 }
@@ -2326,7 +2325,7 @@ public class MainFrame extends JFrame {
         lblNewLabel.setBounds(75, 41, 945, 185);
         pnTrangChu.add(lblNewLabel);
     }
-    
+
     private void taikhoan() {
         pnTaiKhoan = new JPanel();
         pnTaiKhoan.setLayout(null);
@@ -2838,7 +2837,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         tabletaikhoan.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -3526,12 +3525,11 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnNhomQuyen.show();
                 pnTaiKhoan.show(false);
-//                }
-               
+                // }
 
             }
         });
-        
+
         lbltaikhoan.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -4654,7 +4652,9 @@ public class MainFrame extends JFrame {
                                 txtMoTa.setText("");
                                 JOptionPane.showMessageDialog(contentPane, "Đã xóa nhóm quyền có mã " + idNhomQuyen);
                             } else {
-                                JOptionPane.showMessageDialog(contentPane, "Hãy kiểm tra có tài khoản nào đang dùng nhóm quyền này không!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(contentPane,
+                                        "Hãy kiểm tra có tài khoản nào đang dùng nhóm quyền này không!", "Lỗi",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     } catch (NumberFormatException ex) {
@@ -4841,7 +4841,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         btnthemtaikhoan.addActionListener(e -> {
             try {
                 String tenTaiKhoan = txtTentaikhoan.getText().trim();
@@ -4906,7 +4906,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-         btnsuataikhoan.addActionListener(e -> {
+        btnsuataikhoan.addActionListener(e -> {
             int selectedRow = tabletaikhoan.getSelectedRow();
             if (selectedRow >= 0) {
                 try {
@@ -4931,7 +4931,8 @@ public class MainFrame extends JFrame {
                         return;
                     }
 
-                    System.out.println("Sửa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: " + tenTaiKhoanOriginal + ", idNhomQuyen: " + idNhomQuyen);
+                    System.out.println("Sửa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: "
+                            + tenTaiKhoanOriginal + ", idNhomQuyen: " + idNhomQuyen);
 
                     TaiKhoanDTO taiKhoanSua = new TaiKhoanDTO(idTaiKhoan, tenTaiKhoanOriginal, null, idNhomQuyen);
                     boolean result = TaiKhoanBUS.gI().updateTaiKhoan(taiKhoanSua);
@@ -4958,13 +4959,15 @@ public class MainFrame extends JFrame {
             int selectedRow = tabletaikhoan.getSelectedRow();
             if (selectedRow >= 0) {
                 int idTaiKhoan = Integer.parseInt(dtmtaikhoan.getValueAt(selectedRow, 0).toString());
-                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn đặt lại mã nhóm quyền của tài khoản này về 0?", "Xác nhận",
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "Bạn có muốn đặt lại mã nhóm quyền của tài khoản này về 0?", "Xác nhận",
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
                         String tenTaiKhoan = dtmtaikhoan.getValueAt(selectedRow, 1).toString();
-                        System.out.println("Xóa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: " + tenTaiKhoan);
+                        System.out
+                                .println("Xóa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: " + tenTaiKhoan);
 
                         TaiKhoanDTO taiKhoanSua = new TaiKhoanDTO(idTaiKhoan, tenTaiKhoan, null, 0);
                         boolean result = TaiKhoanBUS.gI().updateTaiKhoan(taiKhoanSua);
@@ -5350,6 +5353,7 @@ public class MainFrame extends JFrame {
     public void loadtacgia() {
         System.out.println("Đã gọi loadtacgia");
         dtmtacgia.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
+        cmbmatg.removeAllItems(); // Xóa tất cả mục trong combobox
 
         try {
             ArrayList<TacGiaDTO> listTacGia = TacGiaBUS.gI().getAllTacGia(); // Lấy danh sách tác giả từ BUS
@@ -5368,6 +5372,8 @@ public class MainFrame extends JFrame {
                         tacGia.getNamSinh(),
                         tacGia.getQueQuan()
                 });
+
+                cmbmatg.addItem(tacGia.getMaTacGia() + " - " + tacGia.getTenTacGia()); // Thêm vào combobox
             }
             System.out.println("Số hàng trong bảng: " + dtmtacgia.getRowCount());
         } catch (Exception e) {
@@ -5535,7 +5541,9 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng nhóm quyền: " + dtmNhomQuyen.getRowCount());
     }
+
     public static ArrayList<TaiKhoanDTO> dsTaiKhoan = new ArrayList<TaiKhoanDTO>();
+
     public void loadtaikhoan() {
         dsTaiKhoan = null;
         System.out.println("Đã gọi loadtaikhoan");
@@ -5560,8 +5568,9 @@ public class MainFrame extends JFrame {
                     tk.getIdnhomquyen()
             });
         }
-    System.out.println("Số hàng trong bảng tài khoản: " + dtmtaikhoan.getRowCount());
+        System.out.println("Số hàng trong bảng tài khoản: " + dtmtaikhoan.getRowCount());
     }
+
     public static ArrayList<ChiTietNhomQuyenDTO> dsChiTietNhomQuyen = new ArrayList<ChiTietNhomQuyenDTO>();
 
     public void loadChiTietNhomQuyen() {
