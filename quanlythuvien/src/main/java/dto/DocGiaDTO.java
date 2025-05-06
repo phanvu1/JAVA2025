@@ -29,7 +29,7 @@ public class DocGiaDTO {
     }
 
     // Constructor thêm từ 1 DocGiaDTO khác
-    public DocGiaDTO(DocGiaDTO docGia) {
+    public void setFromDocGiaDTO(DocGiaDTO docGia) {
         if (docGia != null) {
             this.maDocGia = docGia.maDocGia;
             this.tenDocGia = docGia.tenDocGia;

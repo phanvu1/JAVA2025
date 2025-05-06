@@ -1924,7 +1924,7 @@ public class MainFrame extends JFrame {
         lblgioitinhdocgia.setBounds(453, 119, 91, 36);
         panelthongtindocgia.add(lblgioitinhdocgia);
 
-        lblSdtdocgia = new JLabel("Số điện thoại");
+        lblSdtdocgia = new JLabel("Mã thẻ Thư Viện");
         lblSdtdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblSdtdocgia.setBounds(453, 13, 109, 36);
         panelthongtindocgia.add(lblSdtdocgia);
