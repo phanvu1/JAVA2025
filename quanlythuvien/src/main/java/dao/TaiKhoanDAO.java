@@ -14,7 +14,6 @@ public class TaiKhoanDAO {
         }
     }
 
-    // Kiểm tra tài khoản
     public int checkTaiKhoan(String username, String password) {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -35,7 +34,7 @@ public class TaiKhoanDAO {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi SQL trong checkTaiKhoan: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Lỗi kiểm tra tài khoản: " + e.getMessage(), e);
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -47,7 +46,6 @@ public class TaiKhoanDAO {
         return idnhomquyen;
     }
 
-    // Lấy tất cả tài khoản
     public ArrayList<TaiKhoanDTO> getAll() {
         ArrayList<TaiKhoanDTO> taikhoanList = new ArrayList<>();
         PreparedStatement stmt = null;
@@ -69,8 +67,7 @@ public class TaiKhoanDAO {
             System.out.println("getAll trả về " + taikhoanList.size() + " tài khoản");
         } catch (SQLException e) {
             System.err.println("Lỗi SQL trong getAll: " + e.getMessage());
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new RuntimeException("Lỗi lấy danh sách tài khoản: " + e.getMessage(), e);
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -82,7 +79,6 @@ public class TaiKhoanDAO {
         return taikhoanList;
     }
 
-    // Lấy tài khoản theo mã
     public TaiKhoanDTO getById(int mataikhoan) {
         TaiKhoanDTO taikhoan = null;
         PreparedStatement stmt = null;
@@ -102,7 +98,7 @@ public class TaiKhoanDAO {
                 taikhoan.setIdnhomquyen(rs.getInt("idnhomquyen"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Lỗi lấy tài khoản theo mã: " + e.getMessage(), e);
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -114,7 +110,6 @@ public class TaiKhoanDAO {
         return taikhoan;
     }
 
-    // Thêm tài khoản mới
     public boolean insert(TaiKhoanDTO taikhoan) {
         PreparedStatement stmt = null;
         boolean result = false;
@@ -129,7 +124,7 @@ public class TaiKhoanDAO {
             int rows = stmt.executeUpdate();
             result = rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Lỗi thêm tài khoản: " + e.getMessage(), e);
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -140,23 +135,22 @@ public class TaiKhoanDAO {
         return result;
     }
 
-    // Cập nhật tài khoản
     public boolean update(TaiKhoanDTO taikhoan) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "UPDATE taikhoan SET username = ?, password = ?, idnhomquyen = ? WHERE mataikhoan = ?";
+            String sql = "UPDATE taikhoan SET idnhomquyen = ? WHERE mataikhoan = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, taikhoan.getUsername());
-            stmt.setString(2, taikhoan.getPassword());
-            stmt.setInt(3, taikhoan.getIdnhomquyen() != null ? taikhoan.getIdnhomquyen() : 0);
-            stmt.setInt(4, taikhoan.getMataikhoan());
+            stmt.setInt(1, taikhoan.getIdnhomquyen() != null ? taikhoan.getIdnhomquyen() : 0);
+            stmt.setInt(2, taikhoan.getMataikhoan());
 
             int rows = stmt.executeUpdate();
             result = rows > 0;
+            System.out.println("Cập nhật tài khoản: mataikhoan=" + taikhoan.getMataikhoan() + ", idnhomquyen=" + taikhoan.getIdnhomquyen() + ", rows affected=" + rows);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Lỗi SQL trong update: " + e.getMessage());
+            throw new RuntimeException("Lỗi cập nhật tài khoản: " + e.getMessage(), e);
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -167,7 +161,6 @@ public class TaiKhoanDAO {
         return result;
     }
 
-    // Xóa tài khoản
     public boolean delete(int mataikhoan) {
         PreparedStatement stmt = null;
         boolean result = false;
@@ -180,7 +173,7 @@ public class TaiKhoanDAO {
             int rows = stmt.executeUpdate();
             result = rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Lỗi xóa tài khoản: " + e.getMessage(), e);
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -191,7 +184,33 @@ public class TaiKhoanDAO {
         return result;
     }
 
-    // Đóng kết nối
+    public boolean checkIdNhomQuyenExists(int idNhomQuyen) {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean exists = false;
+
+        try {
+            String sql = "SELECT COUNT(*) FROM nhomquyen WHERE idnhomquyen = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, idNhomQuyen);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi kiểm tra idnhomquyen: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return exists;
+    }
+
     public void close() {
         if (conn != null) {
             try {

@@ -57,6 +57,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.JPasswordField;
 
 import dto.PhieuNhapDTO;
 import dto.ChiTietPhieuNhapDTO;
@@ -74,6 +76,7 @@ import dto.ChiTietNhomQuyenDTO;
 import dto.NhaXuatBanDTO;
 import dto.NhanVienDTO;
 import dto.PhieuMuonDTO;
+import dto.TaiKhoanDTO;
 
 import bus.PhieuNhapBUS;
 import bus.ChiTietPhieuNhapBUS;
@@ -93,6 +96,7 @@ import bus.NhaXuatBanBUS;
 import bus.NhanVienBUS;
 import bus.PhieuMuonBUS;
 import bus.PhieuMuonBUS;
+import bus.TaiKhoanBUS;
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
@@ -433,6 +437,7 @@ public class MainFrame extends JFrame {
         loadnxb();
         loadnhanvien();
         loadphieumuon();
+        loadtaikhoan();
 
     }
 
@@ -474,7 +479,6 @@ public class MainFrame extends JFrame {
         taikhoan();
         pnPhieumuon = new JPanel();
         pnPhieuNhap = new JPanel();
-        pnTaiKhoan = new JPanel();
         pnNhomQuyen = new JPanel();
 
         // Tạo menuleft
@@ -610,6 +614,8 @@ public class MainFrame extends JFrame {
         lbltaikhoan.setBackground(Color.DARK_GRAY);
         lbltaikhoan.setBounds(0, 723, 187, 46);
         menuItemsPanel.add(lbltaikhoan);
+        
+        PanelChinh.add(pnTaiKhoan, "panel_taikhoan");
         
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
@@ -2339,7 +2345,7 @@ public class MainFrame extends JFrame {
         lblIdNhomQuyen_2 = new JLabel("Mã Nhóm Quyền");
         lblIdNhomQuyen_2.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblIdNhomQuyen_2.setBounds(453, 13, 120, 36);
-        lblIdNhomQuyen_2.add(lblIdNhomQuyen_2);
+        panelthongtintaikhoan.add(lblIdNhomQuyen_2);
 
         txtTentaikhoan = new JTextField();
         txtTentaikhoan.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -2356,7 +2362,7 @@ public class MainFrame extends JFrame {
         btnChonNhomQuyen_2 = new JButton("...");
         btnChonNhomQuyen_2.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnChonNhomQuyen_2.setBounds(777, 13, 36, 36);
-        btnChonNhomQuyen_2.add(btnChonNhomQuyen_2);
+        panelthongtintaikhoan.add(btnChonNhomQuyen_2);
 
         btnthemtaikhoan = new JButton("Thêm");
         btnthemtaikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -2376,16 +2382,16 @@ public class MainFrame extends JFrame {
         btnxoataikhoan.setBounds(496, 190, 119, 49);
         panelthongtintaikhoan.add(btnxoataikhoan);
 
-        JButton btnTaiLai = new JButton("Tải Lại");
-        btnTaiLai.setIcon(new ImageIcon("img\\update.png"));
-        btnTaiLai.addActionListener(new ActionListener() {
+        JButton btnTaiLaitaikhoan = new JButton("Tải Lại");
+        btnTaiLaitaikhoan.setIcon(new ImageIcon("img\\update.png"));
+        btnTaiLaitaikhoan.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                //loadtaikhoan();
+                loadtaikhoan();
             }
         });
-        btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 14));
-        btnTaiLai.setBounds(693, 190, 119, 49);
-        panelthongtintaikhoan.add(btnTaiLai);
+        btnTaiLaitaikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnTaiLaitaikhoan.setBounds(693, 190, 119, 49);
+        panelthongtintaikhoan.add(btnTaiLaitaikhoan);
 
         txtTimkiemtaikhoan = new JTextField();
         txtTimkiemtaikhoan.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -2396,11 +2402,29 @@ public class MainFrame extends JFrame {
         btnTimkiemtaikhoan = new JButton("Tìm");
         btnTimkiemtaikhoan.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (!isNumber(txtTimkiemtaikhoan.getText())) {
-                    JOptionPane.showMessageDialog(null, "Tìm kiếm mã tài khoản phải là số");
+                String tenTaiKhoan = txtTimkiemtaikhoan.getText().trim();
+                if (tenTaiKhoan.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập tên tài khoản để tìm kiếm!");
                     return;
                 }
-                // Logic tìm kiếm sẽ được thêm sau khi có TaiKhoanBUS
+
+                dtmtaikhoan.setRowCount(0);
+                ArrayList<TaiKhoanDTO> danhSachTaiKhoan = TaiKhoanBUS.gI().getAllTaiKhoan();
+                boolean found = false;
+                for (TaiKhoanDTO tk : danhSachTaiKhoan) {
+                    if (tk.getUsername().equals(tenTaiKhoan)) {
+                        dtmtaikhoan.addRow(new Object[] {
+                                tk.getMataikhoan(),
+                                tk.getUsername(),
+                                tk.getIdnhomquyen()
+                        });
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản với tên: " + tenTaiKhoan);
+                }
             }
         });
         btnTimkiemtaikhoan.setIcon(new ImageIcon("img\\Search.png"));
@@ -2811,6 +2835,44 @@ public class MainFrame extends JFrame {
                     txtIdNhomQuyen.setText("");
                     txtIdDanhMucChucNang.setText("");
                     txtTenChucNang.setText("");
+                }
+            }
+        });
+        
+        tabletaikhoan.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int i = tabletaikhoan.getSelectedRow();
+                if (i >= 0) {
+                    try {
+                        txtTentaikhoan.setText(dtmtaikhoan.getValueAt(i, 1).toString()); // Cột "Tên Tài Khoản"
+                        txtIdNhomQuyen_2.setText(dtmtaikhoan.getValueAt(i, 2).toString()); // Cột "Mã Nhóm Quyền"
+                    } catch (NumberFormatException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Dữ liệu không hợp lệ!", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    System.out.println("Không có hàng nào được chọn hoặc bảng rỗng!");
+                    // Reset các trường nhập liệu
+                    txtTentaikhoan.setText("");
+                    txtIdNhomQuyen_2.setText("");
                 }
             }
         });
@@ -4779,7 +4841,152 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        
+        btnthemtaikhoan.addActionListener(e -> {
+            try {
+                String tenTaiKhoan = txtTentaikhoan.getText().trim();
+                String idNhomQuyenStr = txtIdNhomQuyen_2.getText().trim();
 
+                if (tenTaiKhoan.isEmpty() || idNhomQuyenStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
+
+                if (!isNumber(idNhomQuyenStr)) {
+                    JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền phải là số!");
+                    return;
+                }
+
+                int idNhomQuyen = Integer.parseInt(idNhomQuyenStr);
+
+                // Dialog nhập mật khẩu
+                JPanel passwordPanel = new JPanel(new GridLayout(2, 2));
+                JPasswordField passwordField = new JPasswordField(20);
+                JPasswordField confirmPasswordField = new JPasswordField(20);
+                passwordPanel.add(new JLabel("Mật khẩu:"));
+                passwordPanel.add(passwordField);
+                passwordPanel.add(new JLabel("Xác nhận mật khẩu:"));
+                passwordPanel.add(confirmPasswordField);
+
+                int dialogResult = JOptionPane.showConfirmDialog(contentPane, passwordPanel, "Nhập mật khẩu",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                if (dialogResult != JOptionPane.OK_OPTION) {
+                    return; // Người dùng hủy
+                }
+
+                String matKhau = new String(passwordField.getPassword()).trim();
+                String confirmMatKhau = new String(confirmPasswordField.getPassword()).trim();
+
+                if (matKhau.isEmpty() || confirmMatKhau.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Mật khẩu và xác nhận không được để trống!");
+                    return;
+                }
+
+                if (!matKhau.equals(confirmMatKhau)) {
+                    JOptionPane.showMessageDialog(contentPane, "Mật khẩu và xác nhận không khớp!");
+                    return;
+                }
+
+                TaiKhoanDTO taiKhoanMoi = new TaiKhoanDTO(0, tenTaiKhoan, matKhau, idNhomQuyen);
+                boolean result = TaiKhoanBUS.gI().addTaiKhoan(taiKhoanMoi);
+
+                if (result) {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thành công!");
+                    loadtaikhoan();
+                    txtTentaikhoan.setText("");
+                    txtIdNhomQuyen_2.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thất bại!");
+                }
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
+            }
+        });
+
+         btnsuataikhoan.addActionListener(e -> {
+            int selectedRow = tabletaikhoan.getSelectedRow();
+            if (selectedRow >= 0) {
+                try {
+                    int idTaiKhoan = Integer.parseInt(dtmtaikhoan.getValueAt(selectedRow, 0).toString());
+                    String tenTaiKhoanOriginal = dtmtaikhoan.getValueAt(selectedRow, 1).toString();
+                    String idNhomQuyenStr = txtIdNhomQuyen_2.getText().trim();
+
+                    if (idNhomQuyenStr.isEmpty()) {
+                        JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập mã nhóm quyền!");
+                        return;
+                    }
+
+                    if (!isNumber(idNhomQuyenStr)) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền phải là số!");
+                        return;
+                    }
+
+                    int idNhomQuyen = Integer.parseInt(idNhomQuyenStr);
+
+                    if (!TaiKhoanBUS.gI().checkIdNhomQuyenExists(idNhomQuyen)) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã nhóm quyền không tồn tại!");
+                        return;
+                    }
+
+                    System.out.println("Sửa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: " + tenTaiKhoanOriginal + ", idNhomQuyen: " + idNhomQuyen);
+
+                    TaiKhoanDTO taiKhoanSua = new TaiKhoanDTO(idTaiKhoan, tenTaiKhoanOriginal, null, idNhomQuyen);
+                    boolean result = TaiKhoanBUS.gI().updateTaiKhoan(taiKhoanSua);
+
+                    if (result) {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa tài khoản thành công!");
+                        loadtaikhoan();
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Sửa tài khoản thất bại!");
+                        System.out.println("Sửa thất bại - Kiểm tra log TaiKhoanBUS hoặc cơ sở dữ liệu.");
+                    }
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một tài khoản trong bảng để sửa!");
+            }
+        });
+
+        btnxoataikhoan.addActionListener(e -> {
+            int selectedRow = tabletaikhoan.getSelectedRow();
+            if (selectedRow >= 0) {
+                int idTaiKhoan = Integer.parseInt(dtmtaikhoan.getValueAt(selectedRow, 0).toString());
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn đặt lại mã nhóm quyền của tài khoản này về 0?", "Xác nhận",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        String tenTaiKhoan = dtmtaikhoan.getValueAt(selectedRow, 1).toString();
+                        System.out.println("Xóa tài khoản - idTaiKhoan: " + idTaiKhoan + ", tenTaiKhoan: " + tenTaiKhoan);
+
+                        TaiKhoanDTO taiKhoanSua = new TaiKhoanDTO(idTaiKhoan, tenTaiKhoan, null, 0);
+                        boolean result = TaiKhoanBUS.gI().updateTaiKhoan(taiKhoanSua);
+
+                        if (result) {
+                            JOptionPane.showMessageDialog(contentPane, "Đặt lại mã nhóm quyền thành công!");
+                            loadtaikhoan();
+                        } else {
+                            JOptionPane.showMessageDialog(contentPane, "Đặt lại mã nhóm quyền thất bại!");
+                            System.out.println("Xóa thất bại - Kiểm tra log TaiKhoanBUS hoặc cơ sở dữ liệu.");
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Dữ liệu không hợp lệ: " + ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi không xác định: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(contentPane, "Vui lòng chọn một tài khoản trong bảng để đặt lại!");
+            }
+        });
         btnthemphieunhap.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -5328,7 +5535,33 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Số hàng trong bảng nhóm quyền: " + dtmNhomQuyen.getRowCount());
     }
+    public static ArrayList<TaiKhoanDTO> dsTaiKhoan = new ArrayList<TaiKhoanDTO>();
+    public void loadtaikhoan() {
+        dsTaiKhoan = null;
+        System.out.println("Đã gọi loadtaikhoan");
+        dtmtaikhoan.setRowCount(0); // Xóa tất cả dòng hiện tại trong bảng
 
+        dsTaiKhoan = TaiKhoanBUS.gI().getAllTaiKhoan(); // Lấy danh sách tài khoản
+
+        if (dsTaiKhoan == null || dsTaiKhoan.isEmpty()) {
+            System.out.println("Không có dữ liệu tài khoản!");
+            JOptionPane.showMessageDialog(null, "Không có tài khoản nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            // Reset các trường nhập liệu
+            txtTentaikhoan.setText("");
+            txtIdNhomQuyen_2.setText("");
+            return;
+        }
+
+        for (TaiKhoanDTO tk : dsTaiKhoan) {
+            dtmtaikhoan.addRow(new Object[] {
+                    tk.getMataikhoan(),
+                    tk.getUsername(),
+                    tk.getIdnhomquyen()
+            });
+        }
+    System.out.println("Số hàng trong bảng tài khoản: " + dtmtaikhoan.getRowCount());
+    }
     public static ArrayList<ChiTietNhomQuyenDTO> dsChiTietNhomQuyen = new ArrayList<ChiTietNhomQuyenDTO>();
 
     public void loadChiTietNhomQuyen() {
