@@ -24,18 +24,17 @@ public class SachDAO {
         }
     }
 
-    // Thêm sách mới
     public boolean insert(SachDTO sach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "INSERT INTO sach (tensach, maloai, manxb, namxb, soluong, makesach, hinhanh) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO sach (tensach, maloai, manxb, matacgia, namxb, soluong, makesach, hinhanh) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, sach.getTenSach());
             stmt.setInt(2, sach.getMaLoai());
             stmt.setInt(3, sach.getMaNXB());
-            stmt.setInt(4, sach.getMaTacGia());
+            stmt.setInt(4, sach.getMaTacGia()); // Thêm giá trị cho cột Mã Tác Giả
             stmt.setInt(5, sach.getNamXB());
             stmt.setInt(6, sach.getSoLuong());
             stmt.setInt(7, sach.getMaKeSach());
@@ -64,23 +63,22 @@ public class SachDAO {
         return result;
     }
 
-    // Cập nhật thông tin sách
     public boolean update(SachDTO sach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "UPDATE sach SET tensach = ?, maloai = ?, manxb = ?, namxb = ?, soluong = ?, makesach = ?, hinhanh = ? WHERE masach = ?";
+            String sql = "UPDATE sach SET tensach = ?, maloai = ?, manxb = ?, matacgia = ?, namxb = ?, soluong = ?, makesach = ?, hinhanh = ? WHERE masach = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, sach.getMaSach());
-            stmt.setString(2, sach.getTenSach());
-            stmt.setInt(3, sach.getMaLoai());
-            stmt.setInt(4, sach.getMaNXB());
-            stmt.setInt(5, sach.getMaTacGia());
-            stmt.setInt(6, sach.getNamXB());
-            stmt.setInt(7, sach.getSoLuong());
-            stmt.setInt(8, sach.getMaKeSach());
-            stmt.setString(9, sach.getHinhAnh());
+            stmt.setString(1, sach.getTenSach());
+            stmt.setInt(2, sach.getMaLoai());
+            stmt.setInt(3, sach.getMaNXB());
+            stmt.setInt(4, sach.getMaTacGia()); // Thêm giá trị cho cột Mã Tác Giả
+            stmt.setInt(5, sach.getNamXB());
+            stmt.setInt(6, sach.getSoLuong());
+            stmt.setInt(7, sach.getMaKeSach());
+            stmt.setString(8, sach.getHinhAnh());
+            stmt.setInt(9, sach.getMaSach());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -147,7 +145,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
-                sach.setMaTacGia(rs.getInt("matg"));
+                sach.setMaTacGia(rs.getInt("matacgia")); // Lấy giá trị Mã Tác Giả
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
@@ -190,7 +188,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
-                sach.setMaTacGia(rs.getInt("matg"));
+                sach.setMaTacGia(rs.getInt("matacgia")); // Lấy giá trị Mã Tác Giả
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
@@ -230,7 +228,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
-                sach.setMaTacGia(rs.getInt("matg"));
+                sach.setMaTacGia(rs.getInt("matacgia")); // Lấy giá trị Mã Tác Giả
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
