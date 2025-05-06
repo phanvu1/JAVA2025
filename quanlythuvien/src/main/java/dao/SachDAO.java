@@ -1,8 +1,13 @@
 package dao;
 
-import dto.SachDTO;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import dto.SachDTO;
 
 /**
  *
@@ -30,10 +35,11 @@ public class SachDAO {
             stmt.setString(1, sach.getTenSach());
             stmt.setInt(2, sach.getMaLoai());
             stmt.setInt(3, sach.getMaNXB());
-            stmt.setInt(4, sach.getNamXB());
-            stmt.setInt(5, sach.getSoLuong());
-            stmt.setInt(6, sach.getMaKeSach());
-            stmt.setString(7, sach.getHinhAnh());
+            stmt.setInt(4, sach.getMaTacGia());
+            stmt.setInt(5, sach.getNamXB());
+            stmt.setInt(6, sach.getSoLuong());
+            stmt.setInt(7, sach.getMaKeSach());
+            stmt.setString(8, sach.getHinhAnh());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -49,7 +55,8 @@ public class SachDAO {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -65,14 +72,15 @@ public class SachDAO {
         try {
             String sql = "UPDATE sach SET tensach = ?, maloai = ?, manxb = ?, namxb = ?, soluong = ?, makesach = ?, hinhanh = ? WHERE masach = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, sach.getTenSach());
-            stmt.setInt(2, sach.getMaLoai());
-            stmt.setInt(3, sach.getMaNXB());
-            stmt.setInt(4, sach.getNamXB());
-            stmt.setInt(5, sach.getSoLuong());
-            stmt.setInt(6, sach.getMaKeSach());
-            stmt.setString(7, sach.getHinhAnh());
-            stmt.setInt(8, sach.getMaSach());
+            stmt.setInt(1, sach.getMaSach());
+            stmt.setString(2, sach.getTenSach());
+            stmt.setInt(3, sach.getMaLoai());
+            stmt.setInt(4, sach.getMaNXB());
+            stmt.setInt(5, sach.getMaTacGia());
+            stmt.setInt(6, sach.getNamXB());
+            stmt.setInt(7, sach.getSoLuong());
+            stmt.setInt(8, sach.getMaKeSach());
+            stmt.setString(9, sach.getHinhAnh());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -84,7 +92,8 @@ public class SachDAO {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -112,7 +121,8 @@ public class SachDAO {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -137,6 +147,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
+                sach.setMaTacGia(rs.getInt("matg"));
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
@@ -150,8 +161,10 @@ public class SachDAO {
             return new ArrayList<>(); // Trả về danh sách rỗng để tránh null
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -177,6 +190,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
+                sach.setMaTacGia(rs.getInt("matg"));
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
@@ -187,8 +201,10 @@ public class SachDAO {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -214,6 +230,7 @@ public class SachDAO {
                 sach.setTenSach(rs.getString("tensach"));
                 sach.setMaLoai(rs.getInt("maloai"));
                 sach.setMaNXB(rs.getInt("manxb"));
+                sach.setMaTacGia(rs.getInt("matg"));
                 sach.setNamXB(rs.getInt("namxb"));
                 sach.setSoLuong(rs.getInt("soluong"));
                 sach.setMaKeSach(rs.getInt("makesach"));
@@ -227,15 +244,17 @@ public class SachDAO {
             return new ArrayList<>(); // Trả về danh sách rỗng để tránh null
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return sachList;
     }
-    
+
     public int soluongsach() {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -256,8 +275,10 @@ public class SachDAO {
             return 0; // Trả về 0 nếu có lỗi
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

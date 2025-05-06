@@ -4363,7 +4363,8 @@ public class MainFrame extends JFrame {
                     return;
                 }
 
-                SachDTO sach = new SachDTO(0, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb), namxb,
+                SachDTO sach = new SachDTO(0, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
+                        Integer.parseInt(matg), namxb,
                         soluong, Integer.parseInt(make), hinhanh);
                 boolean result = SachBUS.gI().addSach(sach);
 
@@ -4400,7 +4401,7 @@ public class MainFrame extends JFrame {
                     }
 
                     SachDTO sachSua = new SachDTO(masach, tensach, Integer.parseInt(maloai), Integer.parseInt(manxb),
-                            namxb, soluong, Integer.parseInt(make), hinhanh);
+                            Integer.parseInt(matg), namxb, soluong, Integer.parseInt(make), hinhanh);
                     boolean result = SachBUS.gI().updateSach(sachSua);
 
                     if (result) {
@@ -5437,6 +5438,7 @@ public class MainFrame extends JFrame {
                         sach.getMaLoai(),
                         sach.getMaNXB(),
                         sach.getNamXB(),
+                        sach.getMaTacGia(),
                         sach.getSoLuong(),
                         sach.getMaKeSach(),
                         sach.getHinhAnh()

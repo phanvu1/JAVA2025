@@ -1,8 +1,9 @@
 package bus;
 
+import java.util.ArrayList;
+
 import dao.SachDAO;
 import dto.SachDTO;
-import java.util.ArrayList;
 
 public class SachBUS {
     private SachDAO sachDAO;
@@ -103,7 +104,7 @@ public class SachBUS {
 
     // Singleton pattern
     private static SachBUS instance;
-    
+
     public static SachBUS gI() {
         if (instance == null) {
             instance = new SachBUS();
