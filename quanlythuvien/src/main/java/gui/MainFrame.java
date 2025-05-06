@@ -132,7 +132,7 @@ public class MainFrame extends JFrame {
     private JPanel pntacgia;
     private JPanel pnTrangChu;
     private JPanel pnnhanvien;
-    private JLabel lblphanquyen;
+    private JLabel lbltaikhoan;
     private JLabel lblTenSach;
     private JLabel lblMaLoai;
     private JLabel lblNewLabel_2;
@@ -155,6 +155,7 @@ public class MainFrame extends JFrame {
     private JLabel lblnhaxuatban;
     private JLabel lblnhanvien;
     private JPanel panelthongtindocgia;
+    private JPanel panelthongtintaikhoan;
     private JLabel lblTendocgia;
     private JLabel lbldiachidocgia;
     private JLabel lblgioitinhdocgia;
@@ -378,6 +379,22 @@ public class MainFrame extends JFrame {
     private JButton btnThemChiTietNhomQuyen;
     private JButton btnSuaChiTietNhomQuyen;
     private JButton btnXoaChiTietNhomQuyen;
+    private JLabel lblTimKiemnhomquyen;
+    private JLabel lblTentaikhoan;
+    private JLabel lblIdNhomQuyen_2;
+    private JTextField txtTentaikhoan;
+    private JTextField txtIdNhomQuyen_2;
+    private JButton btnChonChucNang;
+    private JButton btnChonNhomQuyen_2;
+    private JButton btnthemtaikhoan;
+    private JButton btnsuataikhoan;
+    private JButton btnxoataikhoan;
+    private JTextField txtTimkiemtaikhoan;
+    private JButton btnTimkiemtaikhoan;
+    private JLabel lblTimKiemTaiKhoan;
+    private JScrollPane scrollPane_10;
+    private DefaultTableModel dtmtaikhoan;
+    private JTable tabletaikhoan;
     
 
     public static void main(String[] args) {
@@ -458,6 +475,7 @@ public class MainFrame extends JFrame {
         pntacgia();
         trangchu();
         nhanvien();
+        taikhoan();
         pnPhieumuon = new JPanel();
         pnPhieuNhap = new JPanel();
         pnTaiKhoan = new JPanel();
@@ -588,14 +606,14 @@ public class MainFrame extends JFrame {
         menuItemsPanel.add(lblchung);
         
          // Thêm mục Phân quyền
-        lblphanquyen = new JLabel("  Tài Khoản");
-        lblphanquyen.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
-        lblphanquyen.setOpaque(true);
-        lblphanquyen.setForeground(Color.WHITE);
-        lblphanquyen.setFont(new Font("Tahoma", Font.BOLD, 18));
-        lblphanquyen.setBackground(Color.DARK_GRAY);
-        lblphanquyen.setBounds(0, 723, 187, 46);
-        menuItemsPanel.add(lblphanquyen);
+        lbltaikhoan = new JLabel("  Tài Khoản");
+        lbltaikhoan.setIcon(new ImageIcon("img\\authorization.png")); // Placeholder, thay bằng ảnh thực tế
+        lbltaikhoan.setOpaque(true);
+        lbltaikhoan.setForeground(Color.WHITE);
+        lbltaikhoan.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lbltaikhoan.setBackground(Color.DARK_GRAY);
+        lbltaikhoan.setBounds(0, 723, 187, 46);
+        menuItemsPanel.add(lbltaikhoan);
         
         lblnhomquyen = new JLabel("  Nhóm Quyền");
         lblnhomquyen.setIcon(new ImageIcon("img\\authorization2.png")); // Thay bằng đường dẫn tới biểu tượng thực tế
@@ -1285,7 +1303,7 @@ public class MainFrame extends JFrame {
         panelChiTietNhomQuyen.add(txtIdDanhMucChucNang);
         txtIdDanhMucChucNang.setColumns(10);
 
-        JButton btnChonChucNang = new JButton("...");
+        btnChonChucNang = new JButton("...");
         btnChonChucNang.setBounds(278, 65, 48, 25);
         panelChiTietNhomQuyen.add(btnChonChucNang);
 
@@ -1337,11 +1355,11 @@ public class MainFrame extends JFrame {
         pnNhomQuyen.add(panelTimKiem);
         panelTimKiem.setLayout(null);
 
-        JLabel lblTimKiem = new JLabel("Tìm Kiếm");
-        lblTimKiem.setToolTipText("Tìm Kiếm Theo Tên Nhóm Quyền");
-        lblTimKiem.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblTimKiem.setBounds(12, 17, 127, 33);
-        panelTimKiem.add(lblTimKiem);
+        lblTimKiemnhomquyen = new JLabel("Tìm Kiếm");
+        lblTimKiemnhomquyen.setToolTipText("Tìm Kiếm Theo Tên Nhóm Quyền");
+        lblTimKiemnhomquyen.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTimKiemnhomquyen.setBounds(12, 17, 127, 33);
+        panelTimKiem.add(lblTimKiemnhomquyen);
 
         JTextField txtTimNhomQuyen = new JTextField();
         txtTimNhomQuyen.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -1356,35 +1374,21 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String tenNhomQuyen = txtTimNhomQuyen.getText().trim();
                 dtmNhomQuyen.setRowCount(0);
-                // Giả sử bạn có danh sách NhomQuyenDTO
-//                for (NhomQuyenDTO nq : nhomQuyen) {
-//                    if (nq.getTenNhomQuyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
-//                        dtmNhomQuyen.addRow(new Object[] {
-//                            nq.getId(),
-//                            nq.getTenNhomQuyen(),
-//                            nq.getMoTa()
-//                        });
-//                    }
-//                }
+                for (NhomQuyenDTO nq : dsNhomQuyen) {
+                    if (nq.getTennhomquyen().toLowerCase().contains(tenNhomQuyen.toLowerCase())) {
+                        dtmNhomQuyen.addRow(new Object[] {
+                            nq.getIdnhomquyen(),
+                            nq.getTennhomquyen(),
+                            nq.getMota()
+                        });
+                    }
+                }
             }
         });
         btnTimNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
         btnTimNhomQuyen.setBounds(578, 10, 97, 46);
         panelTimKiem.add(btnTimNhomQuyen);
 
-        // Nút Xuất Excel
-        JButton btnXuatExcelNhomQuyen = new JButton("Xuất");
-        btnXuatExcelNhomQuyen.setIcon(new ImageIcon("img\\Export Excel.png"));
-        btnXuatExcelNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
-        btnXuatExcelNhomQuyen.setBounds(796, 10, 116, 46);
-        panelTimKiem.add(btnXuatExcelNhomQuyen);
-
-        // Nút Nhập Excel
-        JButton btnNhapExcelNhomQuyen = new JButton("Nhập");
-        btnNhapExcelNhomQuyen.setIcon(new ImageIcon("img\\Xls Import.png"));
-        btnNhapExcelNhomQuyen.setFont(new Font("Tahoma", Font.BOLD, 15));
-        btnNhapExcelNhomQuyen.setBounds(924, 10, 116, 46);
-        panelTimKiem.add(btnNhapExcelNhomQuyen);
         pnchung();
         pnthongke();
     }
@@ -2318,6 +2322,109 @@ public class MainFrame extends JFrame {
         lblNewLabel.setBounds(75, 41, 945, 185);
         pnTrangChu.add(lblNewLabel);
     }
+    
+    private void taikhoan() {
+        pnTaiKhoan = new JPanel();
+        pnTaiKhoan.setLayout(null);
+
+        panelthongtintaikhoan = new JPanel();
+        panelthongtintaikhoan.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelthongtintaikhoan.setBounds(130, 39, 837, 252);
+        pnTaiKhoan.add(panelthongtintaikhoan);
+        panelthongtintaikhoan.setLayout(null);
+
+        lblTentaikhoan = new JLabel("Tên Tài Khoản");
+        lblTentaikhoan.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTentaikhoan.setBounds(91, 13, 120, 36);
+        panelthongtintaikhoan.add(lblTentaikhoan);
+
+        lblIdNhomQuyen_2 = new JLabel("Mã Nhóm Quyền");
+        lblIdNhomQuyen_2.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblIdNhomQuyen_2.setBounds(453, 13, 120, 36);
+        lblIdNhomQuyen_2.add(lblIdNhomQuyen_2);
+
+        txtTentaikhoan = new JTextField();
+        txtTentaikhoan.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTentaikhoan.setBounds(211, 13, 208, 36);
+        panelthongtintaikhoan.add(txtTentaikhoan);
+        txtTentaikhoan.setColumns(10);
+
+        txtIdNhomQuyen_2 = new JTextField();
+        txtIdNhomQuyen_2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtIdNhomQuyen_2.setBounds(569, 13, 208, 36);
+        panelthongtintaikhoan.add(txtIdNhomQuyen_2);
+        txtIdNhomQuyen_2.setColumns(10);
+
+        btnChonNhomQuyen_2 = new JButton("...");
+        btnChonNhomQuyen_2.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnChonNhomQuyen_2.setBounds(777, 13, 36, 36);
+        btnChonNhomQuyen_2.add(btnChonNhomQuyen_2);
+
+        btnthemtaikhoan = new JButton("Thêm");
+        btnthemtaikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnthemtaikhoan.setIcon(new ImageIcon("img\\Add.png"));
+        btnthemtaikhoan.setBounds(84, 190, 119, 49);
+        panelthongtintaikhoan.add(btnthemtaikhoan);
+
+        btnsuataikhoan = new JButton("Sửa");
+        btnsuataikhoan.setIcon(new ImageIcon("img\\Edit.png"));
+        btnsuataikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnsuataikhoan.setBounds(274, 190, 119, 49);
+        panelthongtintaikhoan.add(btnsuataikhoan);
+
+        btnxoataikhoan = new JButton("Xóa");
+        btnxoataikhoan.setIcon(new ImageIcon("img\\Delete.png"));
+        btnxoataikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnxoataikhoan.setBounds(496, 190, 119, 49);
+        panelthongtintaikhoan.add(btnxoataikhoan);
+
+        JButton btnTaiLai = new JButton("Tải Lại");
+        btnTaiLai.setIcon(new ImageIcon("img\\update.png"));
+        btnTaiLai.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                //loadtaikhoan();
+            }
+        });
+        btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnTaiLai.setBounds(693, 190, 119, 49);
+        panelthongtintaikhoan.add(btnTaiLai);
+
+        txtTimkiemtaikhoan = new JTextField();
+        txtTimkiemtaikhoan.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        txtTimkiemtaikhoan.setBounds(251, 322, 442, 42);
+        pnTaiKhoan.add(txtTimkiemtaikhoan);
+        txtTimkiemtaikhoan.setColumns(10);
+
+        btnTimkiemtaikhoan = new JButton("Tìm");
+        btnTimkiemtaikhoan.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (!isNumber(txtTimkiemtaikhoan.getText())) {
+                    JOptionPane.showMessageDialog(null, "Tìm kiếm mã tài khoản phải là số");
+                    return;
+                }
+                // Logic tìm kiếm sẽ được thêm sau khi có TaiKhoanBUS
+            }
+        });
+        btnTimkiemtaikhoan.setIcon(new ImageIcon("img\\Search.png"));
+        btnTimkiemtaikhoan.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnTimkiemtaikhoan.setBounds(765, 316, 120, 53);
+        pnTaiKhoan.add(btnTimkiemtaikhoan);
+
+        lblTimKiemTaiKhoan = new JLabel("Tìm Kiếm");
+        lblTimKiemTaiKhoan.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblTimKiemTaiKhoan.setBounds(98, 322, 91, 36);
+        pnTaiKhoan.add(lblTimKiemTaiKhoan);
+
+        scrollPane_10 = new JScrollPane();
+        scrollPane_10.setBounds(47, 404, 1005, 308);
+        pnTaiKhoan.add(scrollPane_10);
+        dtmtaikhoan = new DefaultTableModel();
+        dtmtaikhoan.addColumn("Mã Tài Khoản");
+        dtmtaikhoan.addColumn("Tên Tài Khoản");
+        dtmtaikhoan.addColumn("Mã Nhóm Quyền");
+        tabletaikhoan = new MyTable(dtmtaikhoan);
+        scrollPane_10.setViewportView(tabletaikhoan);
+    }
 
     public void addEvent() {
         btnlocthongke.addActionListener(new ActionListener() {
@@ -2951,6 +3058,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
         exit.addMouseListener(new MouseAdapter() {
@@ -2998,6 +3106,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
 
@@ -3039,6 +3148,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
 
         });
@@ -3080,6 +3190,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
         lblTrangchu.addMouseListener(new MouseListener() {
@@ -3120,6 +3231,7 @@ public class MainFrame extends JFrame {
                 pnPhieuNhap.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
 
@@ -3161,6 +3273,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
         lbltacgia.addMouseListener(new MouseListener() {
@@ -3203,6 +3316,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show(false);
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
         lblthongke.addMouseListener(new MouseListener() {
@@ -3237,6 +3351,7 @@ public class MainFrame extends JFrame {
                 panelThongKe.show();
                 pnPhieuNhap.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
 
@@ -3272,6 +3387,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
 
@@ -3307,6 +3423,7 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show(false);
+                pnTaiKhoan.show(false);
             }
         });
         
@@ -3347,11 +3464,47 @@ public class MainFrame extends JFrame {
                 pnchung.show(false);
                 panelThongKe.show(false);
                 pnNhomQuyen.show();
+                pnTaiKhoan.show(false);
 //                }
                
             }
         });
+        
+        lbltaikhoan.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lbltaikhoan.setBackground(new Color(64, 64, 64));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lbltaikhoan.setBackground(Color.blue);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pnTrangChu.show(false);
+                pnSach.show(false);
+                pndocgia.show(false);
+                pntacgia.show(false);
+                pnnhaxuatban.show(false);
+                pnnhanvien.show(false);
+                pnPhieumuon.show(false);
+                pnchung.show(false);
+                panelThongKe.show(false);
+                pnPhieuNhap.show(false);
+                pnNhomQuyen.show(false);
+                pnTaiKhoan.show();
+            }
+        });
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseMoved(MouseEvent arg0) {
@@ -4431,7 +4584,7 @@ public class MainFrame extends JFrame {
                                 txtMoTa.setText("");
                                 JOptionPane.showMessageDialog(contentPane, "Đã xóa nhóm quyền có mã " + idNhomQuyen);
                             } else {
-                                JOptionPane.showMessageDialog(contentPane, "Xóa nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(contentPane, "Hãy kiểm tra có tài khoản nào đang dùng nhóm quyền này không!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     } catch (NumberFormatException ex) {

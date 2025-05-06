@@ -33,17 +33,7 @@ public class ChiTietNhomQuyenBUS {
     }
 
     public boolean deleteByIdNhomQuyen(int idnhomquyen) {
-        try {
-            boolean success = dao.deleteByIdNhomQuyen(idnhomquyen);
-            if (!success) {
-                JOptionPane.showMessageDialog(null, "Xóa chi tiết nhóm quyền thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-            return success;
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi xóa chi tiết nhóm quyền: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+            return dao.deleteByIdNhomQuyen(idnhomquyen);
     }
     
     public boolean update(ChiTietNhomQuyenDTO ct) {
