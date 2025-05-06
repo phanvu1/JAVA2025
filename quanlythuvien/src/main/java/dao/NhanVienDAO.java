@@ -37,24 +37,22 @@ public class NhanVienDAO {
     }
 
 public boolean addNhanVien(NhanVienDTO nhanVien) {
-    String query = "INSERT INTO nhanvien (tennv, namsinh, gioitinh, sdt, ngaybatdau, luong, diachi, mataikhoan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement ps = connection.prepareStatement(query)) {
+    String sql = "INSERT INTO nhanvien (tennv, namsinh, gioitinh, diachi, sdt, ngaybatdau, luong, mataikhoan) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setString(1, nhanVien.getTenNhanVien());
         ps.setInt(2, nhanVien.getNamSinh());
         ps.setString(3, nhanVien.getGioiTinh());
-        ps.setString(4, nhanVien.getSoDienThoai());
-        ps.setObject(5, null); // Nếu không có giá trị cho ngaybatdau
-        ps.setDouble(6, nhanVien.getLuong());
-        ps.setString(7, nhanVien.getDiaChi());
-        ps.setObject(8, null); // Nếu không có giá trị cho mataikhoan
-
-        System.out.println("Query: " + ps.toString()); // In câu lệnh SQL
+        ps.setString(4, nhanVien.getDiaChi());
+        ps.setString(5, nhanVien.getSoDienThoai());
+        ps.setDate(6, nhanVien.getNgayBatDau() != null ? new java.sql.Date(nhanVien.getNgayBatDau().getTime()) : null);
+        ps.setDouble(7, nhanVien.getLuong());
+        ps.setInt(8, nhanVien.getMaTaiKhoan());
         return ps.executeUpdate() > 0;
     } catch (SQLException e) {
-        System.err.println("Lỗi SQL: " + e.getMessage());
         e.printStackTrace();
+        return false;
     }
-    return false;
 }
 
     public boolean updateNhanVien(NhanVienDTO nhanVien) {
@@ -65,6 +63,7 @@ public boolean addNhanVien(NhanVienDTO nhanVien) {
             ps.setString(3, nhanVien.getGioiTinh());
             ps.setString(4, nhanVien.getSoDienThoai());
             ps.setString(5, nhanVien.getNgayBatDau().toString());
+
             ps.setDouble(6, nhanVien.getLuong());
             ps.setString(7, nhanVien.getDiaChi());
             ps.setInt(8, nhanVien.getMaTaiKhoan());

@@ -1,6 +1,8 @@
 package dto;
 import java.util.Date;
 
+import java.util.Date;
+
 public class NhanVienDTO {
     private int maNhanVien;
     private String tenNhanVien;
@@ -10,7 +12,7 @@ public class NhanVienDTO {
     private Date ngayBatDau;
     private double luong;
     private String diaChi;
-    private int maTaiKhoan;
+    private Integer maTaiKhoan;
 
     // Constructors
     public NhanVienDTO() {}
@@ -106,7 +108,7 @@ public class NhanVienDTO {
         this.diaChi = diaChi;
     }
 
-    public int getMaTaiKhoan() {
+    public Integer getMaTaiKhoan() {
         return maTaiKhoan;
     }
 
