@@ -4248,7 +4248,9 @@ public class MainFrame extends JFrame {
             int selectedRow = tabledocgia.getSelectedRow();
             if (selectedRow >= 0) {
                 try {
-                    int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, 0).toString());
+                    int columnIndexMaDocGia = tabledocgia.getColumnModel().getColumnIndex("Mã Đọc Giả");
+                    int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, columnIndexMaDocGia).toString());
+
                     String tenDocGia = txtTendocgia.getText().trim();
                     String gioiTinh = txtgioitinhdocgia.getText().trim();
                     String maThe = txtsdtdocgia.getText().trim();
@@ -4282,7 +4284,9 @@ public class MainFrame extends JFrame {
         btnxoadocgia.addActionListener(e -> {
             int selectedRow = tabledocgia.getSelectedRow();
             if (selectedRow >= 0) {
-                int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, 0).toString());
+                int columnIndexMaDocGia = tabledocgia.getColumnModel().getColumnIndex("Mã Đọc Giả");
+                int maDocGia = Integer.parseInt(dtmdocgia.getValueAt(selectedRow, columnIndexMaDocGia).toString());
+
                 int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá độc giả này?", "Xác nhận",
                         JOptionPane.YES_NO_OPTION);
 
