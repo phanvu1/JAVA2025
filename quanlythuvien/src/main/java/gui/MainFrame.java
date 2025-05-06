@@ -1924,7 +1924,7 @@ public class MainFrame extends JFrame {
         lblgioitinhdocgia.setBounds(453, 119, 91, 36);
         panelthongtindocgia.add(lblgioitinhdocgia);
 
-        lblSdtdocgia = new JLabel("Mã thẻ Thư Viện");
+        lblSdtdocgia = new JLabel("Mã Thẻ Thư Viện");
         lblSdtdocgia.setFont(new Font("Tahoma", Font.BOLD, 15));
         lblSdtdocgia.setBounds(453, 13, 109, 36);
         panelthongtindocgia.add(lblSdtdocgia);
@@ -2984,10 +2984,10 @@ public class MainFrame extends JFrame {
                 int i = tabledocgia.getSelectedRow();
                 if (i >= 0) {
                     try {
-                        txtTendocgia.setText(dtmdocgia.getValueAt(i, 1).toString());
-                        txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString());
-                        txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 3).toString());
-                        txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 4).toString());
+                        txtTendocgia.setText(dtmdocgia.getValueAt(i, 1).toString()); // Họ Và Tên
+                        txtgioitinhdocgia.setText(dtmdocgia.getValueAt(i, 2).toString()); // Giới Tính
+                        txtdiachidocgia.setText(dtmdocgia.getValueAt(i, 3).toString()); // Địa Chỉ
+                        txtsdtdocgia.setText(dtmdocgia.getValueAt(i, 4).toString()); // Mã thẻ thư viện
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng!", "Lỗi",
@@ -2997,8 +2997,8 @@ public class MainFrame extends JFrame {
                     // Clear the text fields if no row is selected
                     txtTendocgia.setText("");
                     txtgioitinhdocgia.setText("");
-                    txtsdtdocgia.setText("");
                     txtdiachidocgia.setText("");
+                    txtsdtdocgia.setText("");
                 }
             }
         });
