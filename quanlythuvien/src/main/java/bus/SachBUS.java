@@ -17,10 +17,7 @@ public class SachBUS {
 
     // Lấy tất cả sách (có thể từ cache)
     public ArrayList<SachDTO> getAllSach() {
-        if (sachList == null || sachList.isEmpty()) {
-            sachList = sachDAO.getAll();
-        }
-        return sachList;
+        return sachDAO.getAll();
     }
 
     // Lấy tổng số lượng sách trong hệ thống

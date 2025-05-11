@@ -56,24 +56,25 @@ public boolean addNhanVien(NhanVienDTO nhanVien) {
 }
 
     public boolean updateNhanVien(NhanVienDTO nhanVien) {
-        String query = "UPDATE nhanvien SET tennv = ?, namsinh = ?, gioitinh = ?, sdt = ?, ngaybatdau = ?, luong = ?, diachi = ?, mataikhoan = ? WHERE manv = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, nhanVien.getTenNhanVien());
-            ps.setInt(2, nhanVien.getNamSinh());
-            ps.setString(3, nhanVien.getGioiTinh());
-            ps.setString(4, nhanVien.getSoDienThoai());
-            ps.setString(5, nhanVien.getNgayBatDau().toString());
-
-            ps.setDouble(6, nhanVien.getLuong());
-            ps.setString(7, nhanVien.getDiaChi());
-            ps.setInt(8, nhanVien.getMaTaiKhoan());
-            ps.setInt(9, nhanVien.getMaNhanVien());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    String query = "UPDATE nhanvien SET tennv = ?, namsinh = ?, gioitinh = ?, sdt = ?, ngaybatdau = ?, luong = ?, diachi = ?, mataikhoan = ? WHERE manv = ?";
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setString(1, nhanVien.getTenNhanVien());
+        ps.setInt(2, nhanVien.getNamSinh());
+        ps.setString(3, nhanVien.getGioiTinh());
+        ps.setString(4, nhanVien.getSoDienThoai());
+        // Chuyển java.util.Date thành java.sql.Date
+        ps.setDate(5, nhanVien.getNgayBatDau() != null ? new java.sql.Date(nhanVien.getNgayBatDau().getTime()) : null);
+        ps.setDouble(6, nhanVien.getLuong());
+        ps.setString(7, nhanVien.getDiaChi());
+        ps.setInt(8, nhanVien.getMaTaiKhoan());
+        ps.setInt(9, nhanVien.getMaNhanVien());
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+//        JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật nhân viên: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         return false;
     }
+}
 
     public boolean deleteNhanVien(int maNhanVien) {
         String query = "DELETE FROM nhanvien WHERE manv = ?";

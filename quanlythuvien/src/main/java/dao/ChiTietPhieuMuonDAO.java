@@ -4,10 +4,6 @@ import dto.ChiTietPhieuMuonDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
-/**
- *
- * @author [Your Name]
- */
 public class ChiTietPhieuMuonDAO {
     private Connection conn;
 
@@ -18,63 +14,29 @@ public class ChiTietPhieuMuonDAO {
         }
     }
 
-    // Thêm chi tiết phiếu mượn
-    public boolean saveChiTietPhieuMuon(ChiTietPhieuMuonDTO chiTiet) {
-        PreparedStatement stmt = null;
-        boolean result = false;
-
-        try {
-            String sql = "INSERT INTO chitietphieumuon (maphieumuon, masach, ngaytra, ghichu) VALUES (?, ?, ?, ?)";
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, chiTiet.getMaPhieuMuon());
-            stmt.setInt(2, chiTiet.getMaSach());
-            if (chiTiet.getNgayTra() != null) {
-                stmt.setDate(3, new java.sql.Date(chiTiet.getNgayTra().getTime()));
-            } else {
-                stmt.setNull(3, java.sql.Types.DATE);
-            }
-            stmt.setString(4, chiTiet.getGhiChu());
-
-            int rows = stmt.executeUpdate();
-            result = rows > 0;
-        } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong saveChiTietPhieuMuon: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    // Lấy chi tiết phiếu mượn theo mã phiếu mượn
-    public ArrayList<ChiTietPhieuMuonDTO> getChiTietPhieuMuonByMaPhieuMuon(int maPhieuMuon) {
-        ArrayList<ChiTietPhieuMuonDTO> result = new ArrayList<>();
+    public ArrayList<ChiTietPhieuMuonDTO> getAll() {
+        ArrayList<ChiTietPhieuMuonDTO> chitietphieumuonlist = new ArrayList<>();
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT maphieumuon, masach, ngaytra, ghichu FROM chitietphieumuon WHERE maphieumuon = ?";
+            String sql = "SELECT * FROM chitietphieumuon";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, maPhieuMuon);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                ChiTietPhieuMuonDTO chiTiet = new ChiTietPhieuMuonDTO(
-                        rs.getInt("maphieumuon"),
-                        rs.getInt("masach"),
-                        rs.getDate("ngaytra"),
-                        rs.getString("ghichu"));
-                result.add(chiTiet);
+                ChiTietPhieuMuonDTO chitietphieumuon = new ChiTietPhieuMuonDTO();
+                chitietphieumuon.setMaPhieuMuon(rs.getInt("maphieumuon"));
+                chitietphieumuon.setMaSach(rs.getInt("masach"));
+                chitietphieumuon.setNgayTra(rs.getDate("ngaytra"));
+                chitietphieumuon.setGhiChu(rs.getString("ghichu"));
+                chitietphieumuonlist.add(chitietphieumuon);
             }
-            System.out.println("getChiTietPhieuMuonByMaPhieuMuon trả về " + result.size() + " chi tiết phiếu mượn");
+            System.out.println("getAll trả về " + chitietphieumuonlist.size() + " chi tiết phiếu mượn");
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong getChiTietPhieuMuonByMaPhieuMuon: " + e.getMessage());
+            System.err.println("Lỗi SQL trong getAll: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Trả về ArrayList rỗng để tránh null
+            return new ArrayList<>(); // Trả về danh sách rỗng để tránh null
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -83,31 +45,60 @@ public class ChiTietPhieuMuonDAO {
                 e.printStackTrace();
             }
         }
-        return result;
+        return chitietphieumuonlist;
     }
 
-    // Cập nhật chi tiết phiếu mượn
-    public boolean updateChiTietPhieuMuon(ChiTietPhieuMuonDTO chiTiet) {
+    public ChiTietPhieuMuonDTO getById(int maPhieuMuon, int maSach) {
+        ChiTietPhieuMuonDTO chitietphieumuon = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM chitietphieumuon WHERE maphieumuon = ? AND masach = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maPhieuMuon);
+            stmt.setInt(2, maSach);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                chitietphieumuon = new ChiTietPhieuMuonDTO();
+                chitietphieumuon.setMaPhieuMuon(rs.getInt("maphieumuon"));
+                chitietphieumuon.setMaSach(rs.getInt("masach"));
+                chitietphieumuon.setNgayTra(rs.getDate("ngaytra"));
+                chitietphieumuon.setGhiChu(rs.getString("ghichu"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return chitietphieumuon;
+    }
+
+    public boolean insert(ChiTietPhieuMuonDTO chitietphieumuon) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "UPDATE chitietphieumuon SET masach = ?, ngaytra = ?, ghichu = ? WHERE maphieumuon = ? AND masach = ?";
+            String sql = "INSERT INTO chitietphieumuon (maphieumuon, masach, ngaytra, ghichu) VALUES (?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, chiTiet.getMaSach());
-            if (chiTiet.getNgayTra() != null) {
-                stmt.setDate(2, new java.sql.Date(chiTiet.getNgayTra().getTime()));
+            stmt.setInt(1, chitietphieumuon.getMaPhieuMuon());
+            stmt.setInt(2, chitietphieumuon.getMaSach());
+            if (chitietphieumuon.getNgayTra() != null) {
+                stmt.setDate(3, new java.sql.Date(chitietphieumuon.getNgayTra().getTime()));
             } else {
-                stmt.setNull(2, java.sql.Types.DATE);
+                stmt.setNull(3, java.sql.Types.DATE);
             }
-            stmt.setString(3, chiTiet.getGhiChu());
-            stmt.setInt(4, chiTiet.getMaPhieuMuon());
-            stmt.setInt(5, chiTiet.getMaSach());
+            stmt.setString(4, chitietphieumuon.getGhiChu());
 
             int rows = stmt.executeUpdate();
             result = rows > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong updateChiTietPhieuMuon: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -119,8 +110,37 @@ public class ChiTietPhieuMuonDAO {
         return result;
     }
 
-    // Xóa chi tiết phiếu mượn
-    public boolean deleteChiTietPhieuMuon(int maPhieuMuon, int maSach) {
+    public boolean update(ChiTietPhieuMuonDTO chitietphieumuon) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "UPDATE chitietphieumuon SET ngaytra = ?, ghichu = ? WHERE maphieumuon = ? AND masach = ?";
+            stmt = conn.prepareStatement(sql);
+            if (chitietphieumuon.getNgayTra() != null) {
+                stmt.setDate(1, new java.sql.Date(chitietphieumuon.getNgayTra().getTime()));
+            } else {
+                stmt.setNull(1, java.sql.Types.DATE);
+            }
+            stmt.setString(2, chitietphieumuon.getGhiChu());
+            stmt.setInt(3, chitietphieumuon.getMaPhieuMuon());
+            stmt.setInt(4, chitietphieumuon.getMaSach());
+
+            int rows = stmt.executeUpdate();
+            result = rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean delete(int maPhieuMuon, int maSach) {
         PreparedStatement stmt = null;
         boolean result = false;
 
@@ -133,7 +153,6 @@ public class ChiTietPhieuMuonDAO {
             int rows = stmt.executeUpdate();
             result = rows > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL trong deleteChiTietPhieuMuon: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -145,7 +164,30 @@ public class ChiTietPhieuMuonDAO {
         return result;
     }
 
-    // Lấy số lượng sách đang mượn (đếm số bản ghi có ngaytra IS NULL)
+    public boolean deleteByMaPN(int maPhieuMuon) {
+        PreparedStatement stmt = null;
+        boolean result = false;
+
+        try {
+            String sql = "DELETE FROM chitietphieumuon WHERE maphieumuon = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, maPhieuMuon);
+
+            int rows = stmt.executeUpdate();
+            result = rows >= 0; // Xóa thành công hoặc không có bản ghi nào cũng được coi là thành công
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL trong deleteByMaPN: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     public int getSoLuongSachDangMuon() {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -174,7 +216,6 @@ public class ChiTietPhieuMuonDAO {
         return soLuongSach;
     }
 
-    // Đóng kết nối
     public void close() {
         if (conn != null) {
             try {

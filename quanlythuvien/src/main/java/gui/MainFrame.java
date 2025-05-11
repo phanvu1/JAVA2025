@@ -59,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JPasswordField;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import dto.PhieuNhapDTO;
 import dto.ChiTietPhieuNhapDTO;
@@ -69,6 +70,7 @@ import dto.NhaCungCapDTO;
 import dto.KeSachDTO;
 import dto.LoaiSachDTO;
 import dto.ThongKePhieuNhapDTO;
+import dto.ChiTietPhieuMuonDTO;
 
 import dto.NhomQuyenDTO;
 import dto.ChiTietNhomQuyenDTO;
@@ -97,11 +99,13 @@ import bus.NhanVienBUS;
 import bus.PhieuMuonBUS;
 import bus.PhieuMuonBUS;
 import bus.TaiKhoanBUS;
+import bus.ChiTietPhieuMuonBUS;
 
 import dao.DocGiaDAO;
 import dao.SachDAO;
 import dao.TacGiaDAO;
 import dto.NhaXuatBanDTO;
+import dao.ChiTietPhieuMuonDAO;
 
 import export.ExportEx;
 import export.ImportEx;
@@ -447,7 +451,7 @@ public class MainFrame extends JFrame {
         loadDanhSachNhanVien();
         loadphieumuon();
         loadtaikhoan();
-
+        loadctphieumuon();
     }
 
     public void thanhtitle() {
@@ -919,7 +923,7 @@ public class MainFrame extends JFrame {
         dtmmuon.addColumn("Ngày Mượn");
         dtmmuon.addColumn("Tình Trạng");
 
-        tablemuon = new JTable(dtmmuon);
+        tablemuon = new MyTable(dtmmuon);
         scrollPane_5.setViewportView(tablemuon);
 
         lbltimkiempm = new JLabel("Tìm Kiếm");
@@ -938,12 +942,11 @@ public class MainFrame extends JFrame {
         pnPhieumuon.add(scrollPane_6);
 
         dtmctpm = new DefaultTableModel();
-        dtmctpm.addColumn("Mã CTPM");
         dtmctpm.addColumn("Mã PM");
         dtmctpm.addColumn("Mã Sách");
         dtmctpm.addColumn("Ngày Trả");
         dtmctpm.addColumn("Ghi Chú");
-        tablectpm = new JTable(dtmctpm);
+        tablectpm = new MyTable(dtmctpm);
         scrollPane_6.setViewportView(tablectpm);
 
         JPanel panel = new JPanel();
@@ -966,6 +969,12 @@ public class MainFrame extends JFrame {
         JButton btnNewButton_5 = new JButton("...");
         btnNewButton_5.setBounds(263, 26, 54, 25);
         panel.add(btnNewButton_5);
+        btnNewButton_5.addActionListener(new ActionListener(){
+           @Override
+            public void actionPerformed(ActionEvent e) {
+                new TableSach().setVisible(true);
+            } 
+        });
 
         JLabel lblNewLabel_8_1 = new JLabel("Ngày Trả");
         lblNewLabel_8_1.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -980,7 +989,7 @@ public class MainFrame extends JFrame {
         txtghichuctpm = new JTextField();
         txtghichuctpm.setFont(new Font("Tahoma", Font.BOLD, 15));
         txtghichuctpm.setColumns(10);
-        txtghichuctpm.setEditable(false);
+        txtghichuctpm.setEditable(true);
         txtghichuctpm.setBounds(96, 148, 142, 35);
         panel.add(txtghichuctpm);
 
@@ -1009,6 +1018,7 @@ public class MainFrame extends JFrame {
         bnttailaictpm = new JButton("Tải Lại");
         bnttailaictpm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                loadctphieumuon();
             }
         });
         bnttailaictpm.setIcon(new ImageIcon("img\\update.png"));
@@ -1031,7 +1041,7 @@ public class MainFrame extends JFrame {
         btnthemphieuphat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if (Ma == null || Ma.isEmpty() || Ma.equals("")) {
+                if (txtmapm.getText().equals("")) {
                     JOptionPane.showMessageDialog(null, "Bạn chưa chọn mã phiếu mượn");
                     return;
                 }
@@ -1631,8 +1641,7 @@ public class MainFrame extends JFrame {
     private void pnthongke() {
         panelThongKe = new JPanel();
         DefaultPieDataset p = new DefaultPieDataset();
-        // Bỏ phần tính toán dùng SachBus và chitietpmbus
-        int sachdamuon = ChiTietPhieuMuonBUS.getInstance().getSoLuongSachDangMuon();
+        int sachdamuon = ChiTietPhieuMuonBUS.gI().getSoLuongSachDangMuon();
         int tongsach = sachdamuon + SachBUS.gI().getTongSoLuongSach();
         float phantramsachdamuon = (float) (sachdamuon * 1.0 / tongsach * 100);
         p.setValue("Sách Đã Mượn", phantramsachdamuon); // Giá trị giả lập
@@ -2478,6 +2487,8 @@ public class MainFrame extends JFrame {
         dtmsach.addColumn("Ảnh");
 
         tablesach = new MyTable(dtmsach);
+        
+        tablesach.getColumnModel().getColumn(8).setCellRenderer(new ImageCellRenderer());
         scrollPane.setViewportView(tablesach);
         JPopupMenu popupMenu = new JPopupMenu();
         mntmNewMenuItem = new JMenuItem("Thông tin chi tiết");
@@ -2485,6 +2496,36 @@ public class MainFrame extends JFrame {
         popupMenu.add(mntmNewMenuItem);
 
         addPopup(tablesach, popupMenu);
+    }
+    private class ImageCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                     boolean isSelected, boolean hasFocus,
+                                                     int row, int column) {
+            // Lấy component mặc định
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value,
+                                                                     isSelected, hasFocus,
+                                                                     row, column);
+
+            if (value != null) {
+                try {
+                    // Tạo ImageIcon từ đường dẫn ảnh
+                    ImageIcon icon = new ImageIcon(value.toString());
+                    // Thay đổi kích thước ảnh
+                    Image scaledImage = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                    label.setIcon(new ImageIcon(scaledImage));
+                    label.setText(""); // Ẩn text, chỉ hiện ảnh
+                } catch (Exception e) {
+                    label.setIcon(null);
+                    label.setText("Invalid Image"); // Hiển thị thông báo lỗi
+                }
+            } else {
+                label.setIcon(null);
+                label.setText("No Image"); // Hiển thị khi không có ảnh
+            }
+            label.setHorizontalAlignment(JLabel.CENTER); // Căn giữa
+            return label;
+        }
     }
 
     private void trangchu() {
@@ -2693,7 +2734,7 @@ public class MainFrame extends JFrame {
         btnloadlaitrang.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // Bỏ loadsach()
+                loadsach();
             }
         });
 
@@ -2725,14 +2766,28 @@ public class MainFrame extends JFrame {
             public void mouseClicked(MouseEvent arg0) {
                 int i = tablectpm.getSelectedRow();
                 if (i >= 0) {
-                    Date date2;
                     try {
-                        date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(i, 3).toString());
-                        dateChooser_ngaytra.setDate(date2);
-                        txtmasachmuon.setText(dtmctpm.getValueAt(i, 2).toString());
-                        txtghichuctpm.setText(dtmctpm.getValueAt(i, 4).toString());
+                        // Lấy giá trị từ bảng với kiểm tra null
+                        Object ngayTraObj = dtmctpm.getValueAt(i, 2);
+                        String ngayTraStr = (ngayTraObj != null) ? ngayTraObj.toString() : "";
+                        String maSach = (dtmctpm.getValueAt(i, 1) != null) ? dtmctpm.getValueAt(i, 1).toString() : "";
+                        String ghiChu = (dtmctpm.getValueAt(i, 3) != null) ? dtmctpm.getValueAt(i, 3).toString() : "";
+
+                        // Cập nhật ngày trả
+                        if (!ngayTraStr.isEmpty()) {
+                            Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(ngayTraStr);
+                            dateChooser_ngaytra.setDate(date2);
+                        } else {
+                            dateChooser_ngaytra.setDate(null);
+                        }
+
+                        // Cập nhật các trường nhập liệu
+                        txtmasachmuon.setText(maSach);
+                        txtghichuctpm.setText(ghiChu);
                     } catch (ParseException e) {
                         e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Lỗi khi parse ngày: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        dateChooser_ngaytra.setDate(null); // Đặt lại nếu parse thất bại
                     }
                 }
             }
@@ -2802,6 +2857,7 @@ public class MainFrame extends JFrame {
                 new TableNhomQuyen().setVisible(true);
             }
         });
+       
 
         // tablethongkenhaphang.addMouseListener(new MouseListener(){
         // @Override
@@ -3123,18 +3179,29 @@ public class MainFrame extends JFrame {
                         e.printStackTrace();
                     }
                     txtmapm.setText(dtmmuon.getValueAt(i, 0).toString());
-                    Ma = (dtmmuon.getValueAt(i, 0).toString());
-                    String tinhtrang = dtmmuon.getValueAt(i, 4).toString();
+                    int mapm = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+                    Phat.textField.setText(dtmmuon.getValueAt(i, 0).toString());
+                   String tinhtrang = dtmmuon.getValueAt(i, 4).toString();
                     if (tinhtrang.equals("Đang Mượn")) {
                         rdmuon.setSelected(true);
                     } else {
                         rdtra.setSelected(true);
                     }
-                    String ngay = dtmmuon.getValueAt(i, 3).toString();
-                    cmbnhanvienpm.setSelectedIndex(0);
-                    cmbmadocgiaphieumuon.setSelectedIndex(0);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     dtmctpm.setRowCount(0);
+                            for (ChiTietPhieuMuonDTO ct : ctpm) {
+                            if (ct.getMaPhieuMuon()== mapm) {
+                                dtmctpm.addRow(new Object[] {
+                                        ct.getMaPhieuMuon(),
+                                        ct.getMaSach(),
+                                        ct.getNgayTra(),
+                                        ct.getGhiChu()
+                                });
+                            }
+                        }
+                    String ngay = dtmmuon.getValueAt(i, 3).toString();
+                    selectComboBox(cmbnhanvienpm, Integer.parseInt(dtmmuon.getValueAt(i, 1).toString()));
+                    selectComboBox(cmbmadocgiaphieumuon, Integer.parseInt(dtmmuon.getValueAt(i, 2).toString()));
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     Date date2;
                     try {
                         date2 = new SimpleDateFormat("yyyy-MM-dd").parse((String) dtmctpm.getValueAt(0, 3).toString());
@@ -3427,7 +3494,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 2)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(true);
@@ -3510,7 +3580,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 1)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(true);
                 pndocgia.show(false);
@@ -3551,7 +3624,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 3)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 // lblTitle.setText("Tác Giả");
                 pnTrangChu.show(false);
                 pnSach.show(false);
@@ -3625,6 +3701,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 5)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3661,6 +3741,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 6)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3700,6 +3784,10 @@ public class MainFrame extends JFrame {
                 // if (idnhomquyen!=1){
                 // JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
                 // } else {
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 10)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 loadNhomQuyen();
                 loadChiTietNhomQuyen();
                 pnTrangChu.show(false);
@@ -3740,6 +3828,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 9)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3816,14 +3908,16 @@ public class MainFrame extends JFrame {
                 if (selectedRow >= 0) {
                     try {
                         txttensach.setText(dtmsach.getValueAt(selectedRow, 1).toString());
-                        cmbmaloai.setSelectedItem(dtmsach.getValueAt(selectedRow, 2).toString());
-                        cmbmanhaxuatban.setSelectedItem(dtmsach.getValueAt(selectedRow, 3).toString());
-                        cmbmatg.setSelectedItem(dtmsach.getValueAt(selectedRow, 4).toString());
-                        cmbmakesach.setSelectedItem(dtmsach.getValueAt(selectedRow, 7).toString());
+                        selectComboBox(cmbmaloai, Integer.parseInt(dtmsach.getValueAt(selectedRow, 4).toString()));
+                        selectComboBox(cmbmanhaxuatban, Integer.parseInt(dtmsach.getValueAt(selectedRow, 3).toString()));
+                        selectComboBox(cmbmatg,Integer.parseInt(dtmsach.getValueAt(selectedRow, 2).toString()));
+                        selectComboBox(cmbmakesach, Integer.parseInt(dtmsach.getValueAt(selectedRow, 7).toString()));
                         txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5).toString());
                         txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6).toString());
-                        hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
-                        lblhinhanhpre.setIcon(getAnhSP(hinhanh));
+                        if (dtmsach.getValueAt(selectedRow, 8) != null){
+                            hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
+                            lblhinhanhpre.setIcon(getAnh(hinhanh));
+                        }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng: " + ex.getMessage(), "Lỗi",
                                 JOptionPane.ERROR_MESSAGE);
@@ -4109,7 +4203,7 @@ public void mouseClicked(MouseEvent arg0) {
 }
         });
 
- btnsuanv.addActionListener(e -> {
+btnsuanv.addActionListener(e -> {
     int i = tablenhanvien.getSelectedRow(); // Lấy hàng được chọn trong bảng
     if (i >= 0) {
         try {
@@ -4130,35 +4224,38 @@ public void mouseClicked(MouseEvent arg0) {
                 return;
             }
 
-// Chuyển đổi dữ liệu cần thiết
-    int namSinhInt = Integer.parseInt(namSinh);
-    double luongDouble = Double.parseDouble(luong);
-    int maTaiKhoanInt = Integer.parseInt(maTaiKhoan);
-    int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
+            // Chuyển đổi dữ liệu cần thiết
+            int namSinhInt = Integer.parseInt(namSinh);
+            double luongDouble = Double.parseDouble(luong);
+            int maTaiKhoanInt = Integer.parseInt(maTaiKhoan);
+            int maNhanVien = Integer.parseInt(dtmnhanvien.getValueAt(i, 0).toString());
 
-    // Chuyển đổi ngày từ chuỗi sang Date
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    Date ngayBatDauDate = sdf.parse(ngayBatDau);
 
-    // Tạo đối tượng NhanVienDTO để cập nhật
-    NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh, soDienThoai,
-            ngayBatDauDate, luongDouble, diaChi, maTaiKhoanInt);
+            // Chuyển đổi ngày từ chuỗi sang java.sql.Date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Điều chỉnh theo định dạng người dùng nhập
+            sdf.setLenient(false); // Không cho phép parse ngày không hợp lệ
+            java.util.Date utilDate = sdf.parse(ngayBatDau);
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-    // Gọi phương thức cập nhật từ BUS
-    boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
+            // Tạo đối tượng NhanVienDTO để cập nhật
+            NhanVienDTO nhanVienSua = new NhanVienDTO(maNhanVien, tenNhanVien, namSinhInt, gioiTinh, soDienThoai,
+                    sqlDate, luongDouble, diaChi, maTaiKhoanInt);
 
-    // Hiển thị thông báo kết quả
-    if (result) {
-        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
-        loadnhanvien();
-    } else {
-        JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
-    }
-} catch (NumberFormatException ex) {
-    JOptionPane.showMessageDialog(contentPane, "Năm sinh, lương và mã tài khoản phải là số!");
-} catch (ParseException ex) {
-    JOptionPane.showMessageDialog(contentPane, "Ngày bắt đầu không hợp lệ! Định dạng phải là yyyy-MM-dd.");
-}
+            // Gọi phương thức cập nhật từ BUS
+            boolean result = NhanVienBUS.getInstance().updateNhanVien(nhanVienSua);
+
+            // Hiển thị thông báo kết quả
+            if (result) {
+                JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thành công!");
+                loadnhanvien();
+            } else {
+                JOptionPane.showMessageDialog(contentPane, "Sửa nhân viên thất bại!");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(contentPane, "Năm sinh, lương và mã tài khoản phải là số!");
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(contentPane, "Ngày bắt đầu không hợp lệ! Định dạng phải là dd/MM/yyyy.");
+        }
     } else {
         JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn vào bảng!");
     }
@@ -4755,111 +4852,162 @@ btnthemnv.addActionListener(e -> {
             }
         });
         
-       btnthemphieumuon.addActionListener(e -> {
-    try {
-        // Lấy dữ liệu từ giao diện
-        String maNhanVien = cmbnhanvienpm.getSelectedItem().toString().split(" - ")[0];
-        String maDocGia = cmbmadocgiaphieumuon.getSelectedItem().toString().split(" - ")[0];
-        Date ngayMuon = dateChooser.getDate(); // Lấy ngày mượn từ DateChooser
-        String tinhTrang = rdmuon.isSelected() ? "Đang Mượn" : rdtra.isSelected() ? "Đã Trả" : "";
+        btnthemphieumuon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Kiểm tra dữ liệu đầu vào
+                if (cmbnhanvienpm.getSelectedItem() == null) {
+                    thongbao("Mã Nhân Viên");
+                    return;
+                }
+                if (cmbmadocgiaphieumuon.getSelectedItem() == null) {
+                    thongbao("Mã Độc Giả");
+                    return;
+                }
+                if (dateChooser.getDate() == null) {
+                    thongbao("Ngày Mượn");
+                    return;
+                }
+                if (!rdmuon.isSelected() && !rdtra.isSelected()) {
+                    thongbao("Tình Trạng");
+                    return;
+                }
 
-        // Kiểm tra dữ liệu đầu vào
-        if (maNhanVien.isEmpty() || maDocGia.isEmpty() || ngayMuon == null || tinhTrang.isEmpty()) {
-            JOptionPane.showMessageDialog(contentPane, "Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
+                // Lấy mã từ ComboBox
+                String maNhanVien = cmbnhanvienpm.getSelectedItem().toString().split(" - ")[0];
+                String maDocGia = cmbmadocgiaphieumuon.getSelectedItem().toString().split(" - ")[0];
 
-        // Tạo đối tượng phiếu mượn mới
-        PhieuMuonDTO phieuMuonMoi = new PhieuMuonDTO(0, Integer.parseInt(maNhanVien), Integer.parseInt(maDocGia), ngayMuon, tinhTrang);
+                // Tạo đối tượng phiếu mượn mới
+                PhieuMuonDTO phieuMuonMoi = new PhieuMuonDTO();
+                phieuMuonMoi.setNgayMuon(dateChooser.getDate());
+                phieuMuonMoi.setMaNV(Integer.parseInt(maNhanVien));
+                phieuMuonMoi.setMaDocGia(Integer.parseInt(maDocGia));
+                phieuMuonMoi.setTinhTrang(rdmuon.isSelected() ? "Đang Mượn" : "Đã Trả");
 
-        // Thêm phiếu mượn vào cơ sở dữ liệu
-        boolean result = PhieuMuonBUS.getInstance().addPhieuMuon(phieuMuonMoi);
-
-        if (result) {
-            JOptionPane.showMessageDialog(contentPane, "Thêm phiếu mượn thành công!");
-            loadphieumuon(); // Tải lại danh sách phiếu mượn
-        } else {
-            JOptionPane.showMessageDialog(contentPane, "Thêm phiếu mượn thất bại!");
-        }
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + ex.getMessage());
-    }
-});
+                // Thêm phiếu mượn vào cơ sở dữ liệu
+                boolean result = PhieuMuonBUS.gI().addPhieuMuon(phieuMuonMoi);
+                if (result) {
+                    loadphieumuon(); // Tải lại danh sách phiếu mượn
+                    dtmctpm.setRowCount(0); // Xóa bảng chi tiết phiếu mượn
+                    //.requestFocusInWindow(); // Đặt focus vào ô mã sách chi tiết phiếu mượn
+                }
+            }
+        });
 
         btnsuaphieumuon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int i = tablemuon.getSelectedRow();
                 if (i >= 0) {
+                    // Kiểm tra dữ liệu đầu vào
+                    if (cmbnhanvienpm.getSelectedItem() == null) {
+                        thongbao("Mã Nhân Viên");
+                        return;
+                    }
+                    if (cmbmadocgiaphieumuon.getSelectedItem() == null) {
+                        thongbao("Mã Độc Giả");
+                        return;
+                    }
                     if (dateChooser.getDate() == null) {
-                        JOptionPane.showMessageDialog(null, "Bạn chưa chọn ngày");
+                        thongbao("Ngày Mượn");
                         return;
                     }
                     if (!rdmuon.isSelected() && !rdtra.isSelected()) {
-                        JOptionPane.showMessageDialog(null, "Bạn chưa chọn tình trạng");
+                        thongbao("Tình Trạng");
                         return;
                     }
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String ngaymuon = sdf.format(dateChooser.getDate());
-                    int vitri = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+
+                    // Lấy mã từ ComboBox
+                    String maNhanVien = cmbnhanvienpm.getSelectedItem().toString().split(" - ")[0];
+                    String maDocGia = cmbmadocgiaphieumuon.getSelectedItem().toString().split(" - ")[0];
+
+                    // Lấy dữ liệu để sửa
+                    int maPhieuMuon = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
+                    int maNV = Integer.parseInt(maNhanVien);
+                    int maDocGiaInt = Integer.parseInt(maDocGia);
+                    Date ngaySua = dateChooser.getDate();
+                    String tinhTrang = rdmuon.isSelected() ? "Đang Mượn" : "Đã Trả";
+
+                    // Tạo đối tượng phiếu mượn để sửa
+                    PhieuMuonDTO phieuMuonSua = new PhieuMuonDTO(maPhieuMuon, maNV, maDocGiaInt, ngaySua, tinhTrang);
+                    boolean result = PhieuMuonBUS.gI().updatePhieuMuon(phieuMuonSua);
+
+                    if (result) {
+                        loadphieumuon();
+                        // Đặt focus vào ô mã sách chi tiết phiếu mượn (nếu có)
+                        // txtMasachctpm.requestFocusInWindow();
+                        JOptionPane.showMessageDialog(contentPane, "Đã sửa phiếu mượn có mã " + maPhieuMuon);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
                 }
             }
         });
-
-        btnxoaphieumuon.addActionListener(new ActionListener() {
+       btnxoaphieumuon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int i = tablemuon.getSelectedRow();
                 if (i >= 0) {
                     int maPhieuMuon = Integer.parseInt(dtmmuon.getValueAt(i, 0).toString());
-                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá phiếu mượn này?", "Xác nhận",
-                            JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        try {
-                            boolean result = PhieuMuonBUS.getInstance().deletePhieuMuon(maPhieuMuon);
-                            if (result) {
-                                JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thành công!");
-                                loadphieumuon(); // Tải lại danh sách phiếu mượn
-                            } else {
-                                JOptionPane.showMessageDialog(contentPane, "Xóa phiếu mượn thất bại!");
-                            }
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(contentPane, "Đã xảy ra lỗi: " + e.getMessage(), "Lỗi",
-                                    JOptionPane.ERROR_MESSAGE);
+                    if (JOptionPane.showConfirmDialog(contentPane, "Bạn chắc chắn xóa", "",
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        // Xóa chi tiết phiếu mượn trước
+                        boolean t = ChiTietPhieuMuonBUS.gI().deleteByMaPN(maPhieuMuon);
+                        // Xóa phiếu mượn
+                        boolean j = PhieuMuonBUS.gI().deletePhieuMuon(maPhieuMuon);
+
+                        if (j) {
+                            loadphieumuon();
+                            JOptionPane.showMessageDialog(contentPane, "Đã xóa phiếu mượn có mã " + maPhieuMuon);
                         }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn phiếu mượn nào trong bảng!");
+                    JOptionPane.showMessageDialog(contentPane, "Bạn chưa chọn cột nào");
                 }
             }
         });
         btnthemctpm.addActionListener(new ActionListener() {
-            private String ngaymuon2;
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String ngaytra;
-                try {
-                    ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                    ngaymuon2 = sdf.format(dateChooser.getDate());
-                } catch (Exception e2) {
-                    JOptionPane.showMessageDialog(null, "Ngày sai");
+                if (txtmapm.getText().isEmpty()) {
+                    thongbao("Hãy chọn mã phiếu mượn mà bạn cần thêm chi tiết phiếu mượn");
                     return;
                 }
                 if (!isNumber(txtmapm.getText())) {
-                    JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
+                    JOptionPane.showMessageDialog(null, "Mã phiếu mượn phải là số");
                     return;
                 }
-                if (!isNumber(txtmapm.getText())) {
-                    JOptionPane.showMessageDialog(null, "Mã phiếu mượn sai");
+                if (txtmasachmuon.getText().isEmpty()) {
+                    thongbao("Mã sách");
                     return;
                 }
                 if (!isNumber(txtmasachmuon.getText())) {
-                    JOptionPane.showMessageDialog(null, "Mã sách mượn sai");
+                    JOptionPane.showMessageDialog(null, "Mã sách phải là số");
                     return;
+                }
+
+                int mapm = Integer.parseInt(txtmapm.getText());
+                int masach = Integer.parseInt(txtmasachmuon.getText());
+                Date ngayTra = dateChooser_ngaytra.getDate(); // Có thể null
+                String ghiChu = txtghichuctpm.getText(); // Có thể rỗng
+
+                ChiTietPhieuMuonDTO ctpnmoi = new ChiTietPhieuMuonDTO(mapm, masach, ngayTra, ghiChu);
+                boolean j = ChiTietPhieuMuonBUS.gI().addChiTietPhieuMuon(ctpnmoi);
+                if (j) {
+                    ctpm.add(ctpnmoi);
+                    loadphieumuon(); // Cập nhật nếu cần
+                    loadctphieumuon();
+                    dtmctpm.setRowCount(0);
+                    for (ChiTietPhieuMuonDTO ct : ctpm) {
+                        if (ct.getMaPhieuMuon() == mapm) {
+                            dtmctpm.addRow(new Object[] {
+                                ct.getMaPhieuMuon(),
+                                ct.getMaSach(),
+                                ct.getNgayTra(),
+                                ct.getGhiChu()
+                            });
+                        }
+                    }
                 }
             }
         });
@@ -4869,18 +5017,53 @@ btnthemnv.addActionListener(e -> {
             public void actionPerformed(ActionEvent arg0) {
                 int i = tablectpm.getSelectedRow();
                 if (i >= 0) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String ngaymuon2;
-                    String ngaytra;
-                    try {
-                        ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                        ngaymuon2 = sdf.format(dateChooser.getDate());
-                    } catch (Exception e2) {
-                        JOptionPane.showMessageDialog(null, "Ngày sai");
+                    if (txtmapm.getText().isEmpty()) {
+                        thongbao("Mã phiếu mượn");
                         return;
                     }
-                    int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
-                    int mapm = Integer.parseInt(dtmctpm.getValueAt(i, 1).toString());
+                    if (!isNumber(txtmapm.getText())) {
+                        JOptionPane.showMessageDialog(null, "Mã phiếu mượn phải là số");
+                        return;
+                    }
+                    if (txtmasachmuon.getText().isEmpty()) {
+                        thongbao("Mã sách");
+                        return;
+                    }
+                    if (!isNumber(txtmasachmuon.getText())) {
+                        JOptionPane.showMessageDialog(null, "Mã sách phải là số");
+                        return;
+                    }
+
+                    Object masachObj = dtmctpm.getValueAt(i, 1);
+                    if (masachObj == null || masachObj.toString().isEmpty()) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã sách trong bảng không hợp lệ");
+                        return;
+                    }
+
+                    int mapm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
+                    int masach = Integer.parseInt(masachObj.toString());
+                    Date ngayTra = dateChooser_ngaytra.getDate(); // Có thể null
+                    String ghiChu = txtghichuctpm.getText(); // Có thể rỗng
+
+                    ChiTietPhieuMuonDTO ctpnmoi = new ChiTietPhieuMuonDTO(mapm, masach, ngayTra, ghiChu);
+                    boolean j = ChiTietPhieuMuonBUS.gI().updateChiTietPhieuMuon(ctpnmoi);
+                    if (j) {
+                        loadphieumuon(); // Cập nhật nếu cần
+                        loadctphieumuon();
+                        dtmctpm.setRowCount(0);
+                        for (ChiTietPhieuMuonDTO ct : ctpm) {
+                            if (ct.getMaPhieuMuon() == mapm) {
+                                dtmctpm.addRow(new Object[] {
+                                    ct.getMaPhieuMuon(),
+                                    ct.getMaSach(),
+                                    ct.getNgayTra(),
+                                    ct.getGhiChu()
+                                });
+                            }
+                        }
+                        JOptionPane.showMessageDialog(contentPane,
+                            "Đã sửa chi tiết phiếu mượn có mã phiếu " + mapm + " và mã sách " + masach);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
                 }
@@ -4892,12 +5075,35 @@ btnthemnv.addActionListener(e -> {
             public void actionPerformed(ActionEvent arg0) {
                 int i = tablectpm.getSelectedRow();
                 if (i >= 0) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String ngaytra = sdf.format(dateChooser_ngaytra.getDate());
-                    int mactpm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
+                    Object masachObj = dtmctpm.getValueAt(i, 1);
+                    if (masachObj == null || masachObj.toString().isEmpty()) {
+                        JOptionPane.showMessageDialog(contentPane, "Mã sách trong bảng không hợp lệ");
+                        return;
+                    }
+
+                    int mapm = Integer.parseInt(dtmctpm.getValueAt(i, 0).toString());
+                    int masach = Integer.parseInt(masachObj.toString());
                     int a = JOptionPane.showConfirmDialog(null, "Bạn có muốn xoá", "", JOptionPane.YES_NO_OPTION);
                     if (a == JOptionPane.YES_OPTION) {
-                        // Không có thông báo GUI ở đây
+                        boolean j = ChiTietPhieuMuonBUS.gI().deleteChiTietPhieuMuon(mapm, masach);
+                        if (j) {
+                            ctpm.removeIf(ct -> ct.getMaPhieuMuon() == mapm && ct.getMaSach() == masach); // Xóa từ danh sách
+                            loadphieumuon(); // Cập nhật nếu cần
+                            loadctphieumuon();
+                            dtmctpm.setRowCount(0);
+                            for (ChiTietPhieuMuonDTO ct : ctpm) {
+                                if (ct.getMaPhieuMuon() == mapm) {
+                                    dtmctpm.addRow(new Object[] {
+                                        ct.getMaPhieuMuon(),
+                                        ct.getMaSach(),
+                                        ct.getNgayTra(),
+                                        ct.getGhiChu()
+                                    });
+                                }
+                            }
+                            JOptionPane.showMessageDialog(contentPane,
+                                "Đã xóa chi tiết phiếu mượn có mã phiếu " + mapm + " và mã sách " + masach);
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Bạn Chưa Chọn vào table");
@@ -5781,34 +5987,25 @@ btnthemnv.addActionListener(e -> {
         JOptionPane.showMessageDialog(contentPane, "Lỗi khi tải danh sách độc giả: " + e.getMessage());
     }
 }
-
+    public static  ArrayList<SachDTO> listSach = new ArrayList<SachDTO>();
     public void loadsach() {
         System.out.println("Đã gọi loadsach");
         dtmsach.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-
+        listSach = SachBUS.gI().getAllSach();
         try {
-            // Lấy danh sách sách từ lớp BUS
-            ArrayList<SachDTO> listSach = SachBUS.gI().getAllSach();
-
-            if (listSach == null || listSach.isEmpty()) {
-                System.out.println("Không có dữ liệu sách!");
-                JOptionPane.showMessageDialog(null, "Không có sách nào để hiển thị!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
 
             // Duyệt qua danh sách sách và thêm vào bảng
             for (SachDTO sach : listSach) {
                 dtmsach.addRow(new Object[] {
                         sach.getMaSach(),
                         sach.getTenSach(),
-                        sach.getMaLoai(),
-                        sach.getMaNXB(),
-                        sach.getNamXB(),
                         sach.getMaTacGia(),
+                        sach.getMaNXB(),
+                        sach.getMaLoai(),
+                        sach.getNamXB(),
                         sach.getSoLuong(),
                         sach.getMaKeSach(),
-                        sach.getHinhAnh()
+                        getAnh("src\\main\\database\\anhsach\\chi_pheo.jpg")
                 });
             }
             System.out.println("Số hàng trong bảng: " + dtmsach.getRowCount());
@@ -5818,37 +6015,53 @@ btnthemnv.addActionListener(e -> {
         }
     }
 
+    public static ArrayList<PhieuMuonDTO> phieumuon = new ArrayList<PhieuMuonDTO>();
+
     public void loadphieumuon() {
-        dtmmuon.setRowCount(0); // Xóa tất cả các hàng hiện tại trong bảng
-        try {
-            ArrayList<PhieuMuonDTO> listPhieuMuon = PhieuMuonBUS.getInstance().getAllPhieuMuon(); // Lấy danh sách phiếu
-                                                                                                  // mượn từ BUS
+        phieumuon = null;
+        System.out.println("Đã gọi loadphieumuon");
+        dtmmuon.setRowCount(0); // Xóa tất cả hàng hiện tại
+        phieumuon = PhieuMuonBUS.gI().getAllPhieuMuon(); // Lấy danh sách phiếu mượn
 
-            if (listPhieuMuon == null || listPhieuMuon.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Không có phiếu mượn nào để hiển thị!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            for (PhieuMuonDTO pm : listPhieuMuon) {
-                dtmmuon.addRow(new Object[] {
-                        pm.getMaPhieuMuon(),
-                        pm.getMaNV(),
-                        pm.getMaDocGia(),
-                        pm.getNgayMuon(),
-                        pm.getTinhTrang()
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu mượn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (phieumuon == null || phieumuon.isEmpty()) {
+            System.out.println("Không có dữ liệu phiếu mượn!");
+            JOptionPane.showMessageDialog(null, "Không có phiếu mượn nào để hiển thị!", "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            // Reset các trường nhập liệu (giả định tương tự như loadphieunhap)
+            txtmapm.setText("Mã Phiếu Mượn");
+            dateChooser.setDate(null);
+            dtmctpm.setRowCount(0);
+            return;
         }
+
+        for (PhieuMuonDTO pm : phieumuon) {
+            dtmmuon.addRow(new Object[] {
+                    pm.getMaPhieuMuon(),
+                    pm.getMaNV(),
+                    pm.getMaDocGia(),
+                    pm.getNgayMuon(),
+                    pm.getTinhTrang()
+            });
+        }
+        System.out.println("Số hàng trong bảng: " + dtmmuon.getRowCount());
     }
+
+   public static ArrayList<ChiTietPhieuMuonDTO> ctpm = new ArrayList<ChiTietPhieuMuonDTO>();
 
     public void loadctphieumuon() {
+        ctpm = null;
         dtmctpm.setRowCount(0);
-    }
+        ctpm = ChiTietPhieuMuonBUS.gI().getAllChiTietPhieuMuon();
 
+        for (ChiTietPhieuMuonDTO ct : ctpm) {
+            dtmctpm.addRow(new Object[] {
+                ct.getMaPhieuMuon(),
+                ct.getMaSach(),
+                ct.getNgayTra(),
+                ct.getGhiChu()
+            });
+        }
+    }
     public static ArrayList<PhieuNhapDTO> phieunhap = new ArrayList<PhieuNhapDTO>();
 
     public void loadphieunhap() {
@@ -6050,31 +6263,29 @@ btnthemnv.addActionListener(e -> {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             String name = fileChooser.getSelectedFile().getName();
             hinhanh = name;
-            lblhinhanhpre.setIcon(getAnhSP(name));
+            lblhinhanhpre.setIcon(getAnh(name));
             System.out.println(name);
         }
     }
 
-    File fileAnhSP;
-
-    private ImageIcon getAnhSP(String src) {
+    File fileanh;
+    private ImageIcon getAnh(String src){
         src = src.trim().equals("") ? "default.png" : src;
         BufferedImage img = null;
-        File fileImg = new File("img/sach/" + src);
-
-        if (!fileImg.exists()) {
+        File fileimg = new File (src);
+        
+        if (!fileimg.exists()){
             src = "default.png";
-            fileImg = new File("img/sach/" + src);
+            fileimg = new File(src);
         }
-
+        
         try {
-            img = ImageIO.read(fileImg);
-            fileAnhSP = new File("img/sach/" + src);
-        } catch (IOException e) {
-            fileAnhSP = new File("img/sach/default.png");
+            img = ImageIO.read(fileimg);
+            fileanh = new File(src);
+        } catch (Exception e){
+            fileanh = new File("default.png");
         }
-
-        if (img != null) {
+        if(img != null){
             Image dimg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             return new ImageIcon(dimg);
         }
@@ -6092,5 +6303,16 @@ btnthemnv.addActionListener(e -> {
         } catch (Exception e) {
             return false;
         }
+    }
+    public void selectComboBox(JComboBox<String> comboBox, int ma2) {
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            String item = comboBox.getItemAt(i);
+            String ma1 = item.split(" - ")[0];
+            if (ma1.equals(String.valueOf(ma2))) {
+                comboBox.setSelectedIndex(i); 
+                return;
+            }
+        }
+        comboBox.setSelectedIndex(-1);
     }
 }

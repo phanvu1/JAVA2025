@@ -1,39 +1,37 @@
 package dao;
 
-import dto.PhieuMuonDTO;
+import dto.PhatDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class PhieuMuonDAO {
+public class PhatDAO {
     private Connection conn;
 
-    public PhieuMuonDAO() {
+    public PhatDAO() {
         this.conn = DBConnect.getConnection();
         if (this.conn == null) {
             throw new RuntimeException("Không thể kết nối đến cơ sở dữ liệu!");
         }
     }
 
-    public ArrayList<PhieuMuonDTO> getAll() {
-        ArrayList<PhieuMuonDTO> phieumuonlist = new ArrayList<>();
+    public ArrayList<PhatDTO> getAll() {
+        ArrayList<PhatDTO> phatList = new ArrayList<>();
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM phieumuon";
+            String sql = "SELECT * FROM phat";
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                PhieuMuonDTO phieumuon = new PhieuMuonDTO();
-                phieumuon.setMaPhieuMuon(rs.getInt("maphieumuon"));
-                phieumuon.setMaNV(rs.getInt("manv"));
-                phieumuon.setMaDocGia(rs.getInt("madocgia"));
-                phieumuon.setNgayMuon(rs.getDate("ngaymuon"));
-                phieumuon.setTinhTrang(rs.getString("tinhtrang"));
-                phieumuonlist.add(phieumuon);
+                PhatDTO phat = new PhatDTO();
+                phat.setIdphieumuon(rs.getInt("idphieumuon"));
+                phat.setSotienphat(rs.getDouble("sotienphat"));
+                phat.setLydo(rs.getString("lydo"));
+                phatList.add(phat);
             }
-            System.out.println("getAll trả về " + phieumuonlist.size() + " phiếu mượn");
+            System.out.println("getAll trả về " + phatList.size() + " bản ghi phạt");
         } catch (SQLException e) {
             System.err.println("Lỗi SQL trong getAll: " + e.getMessage());
             e.printStackTrace();
@@ -46,27 +44,25 @@ public class PhieuMuonDAO {
                 e.printStackTrace();
             }
         }
-        return phieumuonlist;
+        return phatList;
     }
 
-    public PhieuMuonDTO getById(int maPhieuMuon) {
-        PhieuMuonDTO phieumuon = null;
+    public PhatDTO getById(int idphieumuon) {
+        PhatDTO phat = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM phieumuon WHERE maphieumuon = ?";
+            String sql = "SELECT * FROM phat WHERE idphieumuon = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, maPhieuMuon);
+            stmt.setInt(1, idphieumuon);
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                phieumuon = new PhieuMuonDTO();
-                phieumuon.setMaPhieuMuon(rs.getInt("maphieumuon"));
-                phieumuon.setMaNV(rs.getInt("manv"));
-                phieumuon.setMaDocGia(rs.getInt("madocgia"));
-                phieumuon.setNgayMuon(rs.getDate("ngaymuon"));
-                phieumuon.setTinhTrang(rs.getString("tinhtrang"));
+                phat = new PhatDTO();
+                phat.setIdphieumuon(rs.getInt("idphieumuon"));
+                phat.setSotienphat(rs.getDouble("sotienphat"));
+                phat.setLydo(rs.getString("lydo"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,20 +74,23 @@ public class PhieuMuonDAO {
                 e.printStackTrace();
             }
         }
-        return phieumuon;
+        return phat;
     }
 
-    public boolean insert(PhieuMuonDTO phieumuon) {
+    public boolean insert(PhatDTO phat) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "INSERT INTO phieumuon (manv, madocgia, ngaymuon, tinhtrang) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO phat (idphieumuon, sotienphat, lydo) VALUES (?, ?, ?)";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, phieumuon.getMaNV());
-            stmt.setInt(2, phieumuon.getMaDocGia());
-            stmt.setDate(3, new java.sql.Date(phieumuon.getNgayMuon().getTime()));
-            stmt.setString(4, phieumuon.getTinhTrang());
+            stmt.setInt(1, phat.getIdphieumuon());
+            stmt.setDouble(2, phat.getSotienphat());
+            if (phat.getLydo() != null) {
+                stmt.setString(3, phat.getLydo());
+            } else {
+                stmt.setNull(3, Types.VARCHAR);
+            }
 
             int rows = stmt.executeUpdate();
             result = rows > 0;
@@ -107,18 +106,20 @@ public class PhieuMuonDAO {
         return result;
     }
 
-    public boolean update(PhieuMuonDTO phieumuon) {
+    public boolean update(PhatDTO phat) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "UPDATE phieumuon SET manv = ?, madocgia = ?, ngaymuon = ?, tinhtrang = ? WHERE maphieumuon = ?";
+            String sql = "UPDATE phat SET sotienphat = ?, lydo = ? WHERE idphieumuon = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, phieumuon.getMaNV());
-            stmt.setInt(2, phieumuon.getMaDocGia());
-            stmt.setDate(3, new java.sql.Date(phieumuon.getNgayMuon().getTime()));
-            stmt.setString(4, phieumuon.getTinhTrang());
-            stmt.setInt(5, phieumuon.getMaPhieuMuon());
+            stmt.setDouble(1, phat.getSotienphat());
+            if (phat.getLydo() != null) {
+                stmt.setString(2, phat.getLydo());
+            } else {
+                stmt.setNull(2, Types.VARCHAR);
+            }
+            stmt.setInt(3, phat.getIdphieumuon());
 
             int rows = stmt.executeUpdate();
             result = rows > 0;
@@ -134,14 +135,14 @@ public class PhieuMuonDAO {
         return result;
     }
 
-    public boolean delete(int maPhieuMuon) {
+    public boolean delete(int idphieumuon) {
         PreparedStatement stmt = null;
         boolean result = false;
 
         try {
-            String sql = "DELETE FROM phieumuon WHERE maphieumuon = ?";
+            String sql = "DELETE FROM phat WHERE idphieumuon = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, maPhieuMuon);
+            stmt.setInt(1, idphieumuon);
 
             int rows = stmt.executeUpdate();
             result = rows > 0;
@@ -161,7 +162,7 @@ public class PhieuMuonDAO {
         if (conn != null) {
             try {
                 conn.close();
-                System.out.println("Đóng kết nối trong PhieuMuonDAO thành công!");
+                System.out.println("Đóng kết nối trong PhatDAO thành công!");
             } catch (SQLException e) {
                 e.printStackTrace();
             }

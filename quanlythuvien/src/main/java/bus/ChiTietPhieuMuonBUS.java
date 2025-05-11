@@ -1,61 +1,55 @@
 package bus;
 
+import dao.ChiTietPhieuMuonDAO;
 import dto.ChiTietPhieuMuonDTO;
 import java.util.ArrayList;
 
 public class ChiTietPhieuMuonBUS {
-    private ArrayList<ChiTietPhieuMuonDTO> danhSachChiTiet;
-    private static ChiTietPhieuMuonBUS instance;
+    private ChiTietPhieuMuonDAO chitietphieumuondao;
 
     public ChiTietPhieuMuonBUS() {
-        danhSachChiTiet = new ArrayList<>();
+        this.chitietphieumuondao = new ChiTietPhieuMuonDAO();
     }
 
-    // Singleton Pattern: Lấy instance duy nhất
-    public static ChiTietPhieuMuonBUS getInstance() {
-        if (instance == null) {
-            instance = new ChiTietPhieuMuonBUS();
-        }
-        return instance;
-    }
-
+    // Lấy tất cả chi tiết phiếu mượn
     public ArrayList<ChiTietPhieuMuonDTO> getAllChiTietPhieuMuon() {
-        return danhSachChiTiet;
+        return chitietphieumuondao.getAll();
     }
 
-    public boolean addChiTietPhieuMuon(ChiTietPhieuMuonDTO chiTiet) {
-        for (ChiTietPhieuMuonDTO ct : danhSachChiTiet) {
-            if (ct.getMaPhieuMuon() == chiTiet.getMaPhieuMuon() && ct.getMaSach() == chiTiet.getMaSach()) {
-                return false; // Tránh trùng lặp
-            }
-        }
-        danhSachChiTiet.add(chiTiet);
-        return true;
+    // Thêm chi tiết phiếu mượn mới
+    public boolean addChiTietPhieuMuon(ChiTietPhieuMuonDTO chitietphieumuon) {
+        return chitietphieumuondao.insert(chitietphieumuon);
     }
 
-    public boolean updateChiTietPhieuMuon(ChiTietPhieuMuonDTO chiTiet) {
-        for (ChiTietPhieuMuonDTO ct : danhSachChiTiet) {
-            if (ct.getMaPhieuMuon() == chiTiet.getMaPhieuMuon() && ct.getMaSach() == chiTiet.getMaSach()) {
-                ct.setNgayTra(chiTiet.getNgayTra());
-                ct.setGhiChu(chiTiet.getGhiChu());
-                return true;
-            }
-        }
-        return false;
+    // Cập nhật chi tiết phiếu mượn
+    public boolean updateChiTietPhieuMuon(ChiTietPhieuMuonDTO chitietphieumuon) {
+        return chitietphieumuondao.update(chitietphieumuon);
     }
 
+    // Xóa chi tiết phiếu mượn
     public boolean deleteChiTietPhieuMuon(int maPhieuMuon, int maSach) {
-        return danhSachChiTiet.removeIf(ct -> ct.getMaPhieuMuon() == maPhieuMuon && ct.getMaSach() == maSach);
+        return chitietphieumuondao.delete(maPhieuMuon, maSach);
     }
-    
-        // Hàm trả về tổng số lượng sách đang mượn
+
+    // Tìm kiếm chi tiết phiếu mượn theo mã
+    public ChiTietPhieuMuonDTO getChiTietPhieuMuonById(int maPhieuMuon, int maSach) {
+        return chitietphieumuondao.getById(maPhieuMuon, maSach);
+    }
+
+    public boolean deleteByMaPN(int maPhieuMuon) {
+        return chitietphieumuondao.deleteByMaPN(maPhieuMuon);
+    }
+
     public int getSoLuongSachDangMuon() {
-        int soLuong = 0;
-        for (ChiTietPhieuMuonDTO chiTiet : danhSachChiTiet) {
-            if (chiTiet.getNgayTra() == null) { // Nếu ngày trả là null, sách đang được mượn
-                soLuong++;
-            }
+        return chitietphieumuondao.getSoLuongSachDangMuon();
+    }
+
+    public static ChiTietPhieuMuonBUS iBus = null;
+
+    public static ChiTietPhieuMuonBUS gI() {
+        if (iBus == null) {
+            iBus = new ChiTietPhieuMuonBUS();
         }
-        return soLuong;
+        return iBus;
     }
 }

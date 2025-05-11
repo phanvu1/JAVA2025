@@ -3,6 +3,7 @@ package gui;
 import bus.SachBUS;
 import dto.SachDTO;
 import static gui.MainFrame.txtMaSachctpn;
+import static gui.MainFrame.txtmasachmuon;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,6 +89,7 @@ public class TableSach extends JFrame {
                 if (i >= 0) {
                     String maSach = dtmsach.getValueAt(i, 0).toString();
                     MainFrame.txtMaSachctpn.setText(maSach);
+                    MainFrame.txtmasachmuon.setText(maSach);
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(contentPane, "Chưa chọn sách trong bảng");
