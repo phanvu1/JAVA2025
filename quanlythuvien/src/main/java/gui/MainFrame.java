@@ -111,12 +111,11 @@ import export.ExportEx;
 import export.ImportEx;
 
 import java.util.logging.SimpleFormatter;
-import gui.LoginForm;
 import java.util.List;
 
 public class MainFrame extends JFrame {
     public static String Ma;
-    private static int idnhomquyen = LoginForm.idnhomquyen;
+    //public static int idnhomquyen = LoginForm.idnhomquyen;
     public static boolean isdangxuat;
     private JPanel contentPane;
     private JLabel iconsgu;
@@ -2442,7 +2441,7 @@ public class MainFrame extends JFrame {
         JButton btnNewButton = new JButton("Chọn Ảnh");
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                // Bỏ xuLyChonAnh()
+                 xuLyChonAnh();
             }
         });
         btnNewButton.setBounds(522, 19, 112, 28);
@@ -2708,7 +2707,6 @@ public class MainFrame extends JFrame {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     Date date1 = ngaybd.getDate();
                     Date date2 = ngayketthuc.getDate();
-                    System.out.println(date2);
                     dtmthongkenhaphang.setRowCount(0);
                     for (ThongKePhieuNhapDTO tk : tkpn) {
                         if (tk.getngaynhap().after(date1) && tk.getngaynhap().before(date2)) {
@@ -2730,7 +2728,6 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-
         btnloadlaitrang.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -2858,68 +2855,6 @@ public class MainFrame extends JFrame {
             }
         });
        
-
-        // tablethongkenhaphang.addMouseListener(new MouseListener(){
-        // @Override
-        // public void mouseReleased(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseExited(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseEntered(MouseEvent e) {
-        // }
-        // @Override
-        // public void mouseClicked(MouseEvent e) {
-        // int i = tablethongkenhaphang.getSelectedRow();
-        // if (i >= 0) {
-        // try {
-        // txtmpnctpn.setText(dtmphieunhap.getValueAt(i, 0).toString());
-        // txtManhanvienphieunhap.setText(dtmphieunhap.getValueAt(i, 1).toString());
-        // txtManccPhieuNhap.setText(dtmphieunhap.getValueAt(i, 2).toString());
-        // Date date2;
-        // try {
-        // date2 = new SimpleDateFormat("yyyy-MM-dd").parse(dtmphieunhap.getValueAt(i,
-        // 3).toString());
-        // NgayNhapPhieuNhap.setDate(date2);
-        // } catch (ParseException ex) {
-        // ex.printStackTrace();
-        // JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày nhập!", "Lỗi",
-        // JOptionPane.ERROR_MESSAGE);
-        // }
-        // int maphieunhap = Integer.parseInt(dtmphieunhap.getValueAt(i, 0).toString());
-        // dtmchitietphieunhap.setRowCount(0);
-        // for (ChiTietPhieuNhapDTO ct : ctpn) {
-        // if (ct.getMaphieunhap() == maphieunhap) {
-        // dtmchitietphieunhap.addRow(new Object[] {
-        // ct.getMaphieunhap(),
-        // ct.getMasach(),
-        // ct.getSoluong(),
-        // ct.getGia()
-        // });
-        // }
-        // }
-        // } catch (NumberFormatException ex) {
-        // ex.printStackTrace();
-        // JOptionPane.showMessageDialog(null, "Mã phiếu nhập không hợp lệ!", "Lỗi",
-        // JOptionPane.ERROR_MESSAGE);
-        // }
-        // } else {
-        // System.out.println("Không có hàng nào được chọn hoặc bảng rỗng!");
-        // // Reset các trường nhập liệu
-        // lblmaphieunhap.setText("Mã Phiếu Nhập");
-        // txtManhanvienphieunhap.setText("");
-        // txtManccPhieuNhap.setText("");
-        // dtmchitietphieunhap.setRowCount(0);
-        // }
-        // }
-        // });
         tablephieunhap.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -3494,10 +3429,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 2)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 2)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(true);
@@ -3580,10 +3515,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 1)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 1)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 pnTrangChu.show(false);
                 pnSach.show(true);
                 pndocgia.show(false);
@@ -3624,10 +3559,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 3)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 3)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 // lblTitle.setText("Tác Giả");
                 pnTrangChu.show(false);
                 pnSach.show(false);
@@ -3701,10 +3636,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 5)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 5)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3741,10 +3676,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 6)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 6)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3784,10 +3719,10 @@ public class MainFrame extends JFrame {
                 // if (idnhomquyen!=1){
                 // JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
                 // } else {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 10)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 10)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 loadNhomQuyen();
                 loadChiTietNhomQuyen();
                 pnTrangChu.show(false);
@@ -3828,10 +3763,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 9)){
-                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                    return;
-                }
+//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 9)){
+//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+//                    return;
+//                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3914,10 +3849,8 @@ public class MainFrame extends JFrame {
                         selectComboBox(cmbmakesach, Integer.parseInt(dtmsach.getValueAt(selectedRow, 7).toString()));
                         txtnamxbsach.setText(dtmsach.getValueAt(selectedRow, 5).toString());
                         txtsoluongsach.setText(dtmsach.getValueAt(selectedRow, 6).toString());
-                        if (dtmsach.getValueAt(selectedRow, 8) != null){
-                            hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
-                            lblhinhanhpre.setIcon(getAnh(hinhanh));
-                        }
+                        hinhanh = dtmsach.getValueAt(selectedRow, 8).toString();
+                        lblhinhanhpre.setIcon(getAnhSP(hinhanh));
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu từ bảng: " + ex.getMessage(), "Lỗi",
                                 JOptionPane.ERROR_MESSAGE);
@@ -6005,7 +5938,7 @@ btnthemnv.addActionListener(e -> {
                         sach.getNamXB(),
                         sach.getSoLuong(),
                         sach.getMaKeSach(),
-                        getAnh("src\\main\\database\\anhsach\\chi_pheo.jpg")
+                        sach.getHinhAnh()
                 });
             }
             System.out.println("Số hàng trong bảng: " + dtmsach.getRowCount());
@@ -6261,36 +6194,39 @@ btnthemnv.addActionListener(e -> {
         int returnVal = fileChooser.showOpenDialog(null);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String name = fileChooser.getSelectedFile().getName();
-            hinhanh = name;
-            lblhinhanhpre.setIcon(getAnh(name));
-            System.out.println(name);
+                String name = fileChooser.getSelectedFile().getName();
+                hinhanh = name;
+                lblhinhanhpre.setIcon(getAnhSP(name));
+                System.out.println(name);
         }
-    }
+}
 
-    File fileanh;
-    private ImageIcon getAnh(String src){
-        src = src.trim().equals("") ? "default.png" : src;
-        BufferedImage img = null;
-        File fileimg = new File (src);
-        
-        if (!fileimg.exists()){
-            src = "default.png";
-            fileimg = new File(src);
-        }
-        
-        try {
-            img = ImageIO.read(fileimg);
-            fileanh = new File(src);
-        } catch (Exception e){
-            fileanh = new File("default.png");
-        }
-        if(img != null){
-            Image dimg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-            return new ImageIcon(dimg);
-        }
-        return null;
-    }
+    File fileAnhSP;
+    private ImageIcon getAnhSP(String src) {
+		src = src.trim().equals("") ? "default.png" : src;
+		// Xử lý ảnh
+		BufferedImage img = null;
+		File fileImg = new File("img/sach/" + src);
+
+		if (!fileImg.exists()) {
+			src = "default.png";
+			fileImg = new File("img/sach/" + src);
+		}
+
+		try {
+			img = ImageIO.read(fileImg);
+			fileAnhSP = new File("img/sach/" + src);
+		} catch (IOException e) {
+			fileAnhSP = new File("img/sach/default.png");
+		}
+
+		if (img != null) {
+			Image dimg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+
+			return new ImageIcon(dimg);
+		}
+		return null;
+	}
 
     public static void thongbao(String s) {
         JOptionPane.showMessageDialog(null, s + " không được bỏ trống");
