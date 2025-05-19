@@ -229,7 +229,7 @@ public class MainFrame extends JFrame {
     private JButton btnthemnv;
     private JButton btnsuanv;
     private JButton btnxoanv;
-//    private JButton btntimkiemnv;
+    private JButton btntimkiemnv;
     private JButton btnreloadnv;
     private JLabel lbltimkiem;
     private JTextField txtTimKiemnv;
@@ -816,7 +816,7 @@ public class MainFrame extends JFrame {
         PanelChinh.add(pnnhanvien, "name_890389477283600");
 
         JLabel lblNewLabel_15 = new JLabel("");
-        lblNewLabel_15.setIcon(new ImageIcon("img\\searchbar-removebg-preview.png"));
+//        lblNewLabel_15.setIcon(new ImageIcon("img\\searchbar-removebg-preview.png"));
         lblNewLabel_15.setBounds(268, 392, 532, 52);
         pnnhanvien.add(lblNewLabel_15);
         PanelChinh.add(pnPhieumuon, "name_901238608974900");
@@ -883,6 +883,9 @@ public class MainFrame extends JFrame {
         btnreloadphieumuon.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnreloadphieumuon.setBounds(380, 228, 117, 49);
         panel_3.add(btnreloadphieumuon);
+        btnreloadphieumuon.addActionListener(e -> {
+            loadphieumuon();
+        });
 
         cmbnhanvienpm = new JComboBox();
         cmbnhanvienpm.setBounds(111, 62, 236, 36);
@@ -1894,10 +1897,11 @@ public class MainFrame extends JFrame {
         btnxoanv.setBounds(467, 245, 126, 53);
         panel_2.add(btnxoanv);
         
-//        btntimkiemnv.setIcon(new ImageIcon("img\\Search.png"));
-//        btntimkiemnv.setFont(new Font("Tahoma", Font.BOLD, 14));
-//        btntimkiemnv.setBounds(765, 316, 120, 53);
-//        panel_2.add(btntimkiemnv);
+        btntimkiemnv = new JButton("Tìm");
+        btntimkiemnv.setIcon(new ImageIcon("img\\Search.png"));
+        btntimkiemnv.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btntimkiemnv.setBounds(780, 399, 120, 39); 
+        pnnhanvien.add(btntimkiemnv);
 
         btnreloadnv = new JButton("Tải Lại");
         btnreloadnv.setIcon(new ImageIcon("img\\update.png"));
@@ -1913,8 +1917,7 @@ public class MainFrame extends JFrame {
         txtTimKiemnv = new JTextField();
         txtTimKiemnv.setFont(new Font("Tahoma", Font.PLAIN, 15));
         txtTimKiemnv.setBorder(new EmptyBorder(0, 0, 0, 0));
-        txtTimKiemnv.setBackground(new Color(214, 217, 223));
-        txtTimKiemnv.setBounds(290, 399, 425, 39);
+        txtTimKiemnv.setBounds(290, 399, 450, 39);
         pnnhanvien.add(txtTimKiemnv);
         txtTimKiemnv.setColumns(10);
 
@@ -4280,74 +4283,79 @@ btnthemnv.addActionListener(e -> {
     }
 });
 
-//        btntimkiemnv.addActionListener(e -> {
-//    String idText = txtTimKiemnv.getText().trim(); // Lấy ID từ ô nhập liệu
-//    if (idText.isEmpty()) {
-//        JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập ID để tìm kiếm!");
-//        return;
-//    }
-//
-//    try {
-//        int id = Integer.parseInt(idText); // Chuyển ID sang số nguyên
-//        dtmnhanvien.setRowCount(0); // Xóa dữ liệu cũ trong bảng
-//
-//        // Duyệt danh sách nhân viên để tìm kiếm
-//        List<NhanVienDTO> danhSachNhanVien = NhanVienBUS.getInstance().getAllNhanVien();
-//        boolean found = false;
-//
-//        for (NhanVienDTO nv : danhSachNhanVien) {
-//            if (nv.getMaNhanVien() == id) { // So sánh ID
-//                dtmnhanvien.addRow(new Object[] {
-//                    nv.getMaNhanVien(),
-//                    nv.getTenNhanVien(),
-//                    nv.getNamSinh(),
-//                    nv.getGioiTinh(),
-//                    nv.getDiaChi(),
-//                    nv.getSoDienThoai(),
-//                    nv.getNgayBatDau(),
-//                    nv.getLuong(),
-//                    nv.getMaTaiKhoan()
-//                });
-//                found = true;
-//                break;
-//            }
-//        }
-//
-//        if (!found) {
-//            JOptionPane.showMessageDialog(contentPane, "Không tìm thấy nhân viên với ID: " + id);
-//        }
-//    } catch (NumberFormatException ex) {
-//        JOptionPane.showMessageDialog(contentPane, "ID phải là số!");
-//    }
-//});
+        btntimkiemnv.addActionListener(e -> {
+    String idText = txtTimKiemnv.getText().trim(); // Lấy ID từ ô nhập liệu
+    if (idText.isEmpty()) {
+        JOptionPane.showMessageDialog(contentPane, "Vui lòng nhập ID để tìm kiếm!");
+        return;
+    }
+
+    try {
+        int id = Integer.parseInt(idText); // Chuyển ID sang số nguyên
+        dtmnhanvien.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+        // Duyệt danh sách nhân viên để tìm kiếm
+        List<NhanVienDTO> danhSachNhanVien = NhanVienBUS.getInstance().getAllNhanVien();
+        boolean found = false;
+
+        for (NhanVienDTO nv : danhSachNhanVien) {
+            if (nv.getMaNhanVien() == id) { // So sánh ID
+                dtmnhanvien.addRow(new Object[] {
+                    nv.getMaNhanVien(),
+                    nv.getTenNhanVien(),
+                    nv.getNamSinh(),
+                    nv.getGioiTinh(),
+                    nv.getDiaChi(),
+                    nv.getSoDienThoai(),
+                    nv.getNgayBatDau(),
+                    nv.getLuong(),
+                    nv.getMaTaiKhoan()
+                });
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            JOptionPane.showMessageDialog(contentPane, "Không tìm thấy nhân viên với ID: " + id);
+        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(contentPane, "ID phải là số!");
+    }
+});
         
-        txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent arg0) {
-                searchNv();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent arg0) {
-                searchNv();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent arg0) {
-                searchNv();
-            }
-
-            public void searchNv() {
-                try {
-                    dtmnhanvien.setRowCount(0);
-                    if (txtTimKiemnv.getText().isEmpty()) {
-                        return;
-                    }
-                    String s = txtTimKiemnv.getText().toLowerCase();
-                } catch (Exception e) {
-                }
-            }
-        });
+        btnreloadnv.addActionListener(e -> {
+               loadnhanvien();
+            
+    });
+        
+//        txtTimKiemnv.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void removeUpdate(DocumentEvent arg0) {
+//                searchNv();
+//            }
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent arg0) {
+//                searchNv();
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent arg0) {
+//                searchNv();
+//            }
+//
+//            public void searchNv() {
+//                try {
+//                    dtmnhanvien.setRowCount(0);
+//                    if (txtTimKiemnv.getText().isEmpty()) {
+//                        return;
+//                    }
+//                    String s = txtTimKiemnv.getText().toLowerCase();
+//                } catch (Exception e) {
+//                }
+//            }
+//        });
 
         tablenhaxuatban.addMouseListener(new MouseListener() {
             @Override
