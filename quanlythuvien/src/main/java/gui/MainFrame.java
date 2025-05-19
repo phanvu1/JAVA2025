@@ -115,7 +115,7 @@ import java.util.List;
 
 public class MainFrame extends JFrame {
     public static String Ma;
-    //public static int idnhomquyen = LoginForm.idnhomquyen;
+    public static int idnhomquyen = LoginForm.idnhomquyen;
     public static boolean isdangxuat;
     private JPanel contentPane;
     private JLabel iconsgu;
@@ -3515,10 +3515,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 1)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 1)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(true);
                 pndocgia.show(false);
@@ -3559,11 +3559,11 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 3)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
-                // lblTitle.setText("Tác Giả");
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 3)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
+                 lblTitle.setText("Tác Giả");
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3636,10 +3636,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 5)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 5)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3676,10 +3676,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 6)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 6)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -3716,13 +3716,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                // if (idnhomquyen!=1){
-                // JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-                // } else {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 10)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 10)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 loadNhomQuyen();
                 loadChiTietNhomQuyen();
                 pnTrangChu.show(false);
@@ -3763,10 +3760,10 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-//                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 9)){
-//                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
-//                    return;
-//                }
+                if (!ChiTietNhomQuyenBUS.gI().kiemTraQuyen(idnhomquyen, 9)){
+                    JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập");
+                    return;
+                }
                 pnTrangChu.show(false);
                 pnSach.show(false);
                 pndocgia.show(false);
@@ -4669,7 +4666,11 @@ btnthemnv.addActionListener(e -> {
                 JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin");
                 return;
             }
-
+            
+            if (soluong<=0){
+                JOptionPane.showMessageDialog(null, "Số lượng sách thêm vào phải lớn hơn 0");
+                return;
+            }
             SachDTO sach = new SachDTO(0, tensach, maloai, manxb, matg, namxb, soluong, make, hinhanh);
             try {
                 boolean result = SachBUS.gI().addSach(sach);

@@ -1,31 +1,17 @@
 package gui;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import javax.swing.border.MatteBorder;
-
 import bus.TaiKhoanBUS;
+import javax.swing.border.EmptyBorder;
 
 public class LoginForm extends JFrame {
-
     private JTextField txtUser;
     private JPasswordField txtPass;
-    public static boolean dangnhap = false; // Khai báo biến dangnhap
+    public static boolean dangnhap = false;
     public static int idnhomquyen = 0;
 
-    /**
-     * Create the frame.
-     */
     public LoginForm() {
         setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,26 +58,52 @@ public class LoginForm extends JFrame {
         txtPass.setFont(new Font("Consolas", Font.BOLD, 18));
         txtPass.setBackground(new Color(206, 182, 149));
         txtPass.setBorder(new MatteBorder(0, 0, 2, 0, new Color(0, 0, 128)));
-        txtPass.setColumns(10);
         txtPass.setBounds(478, 232, 170, 35);
         panel.add(txtPass);
 
         JButton btnNewButton = new JButton("LOGIN");
         btnNewButton.addActionListener(e -> {
             String username = txtUser.getText();
-            String password = new String(txtPass.getPassword()); // Lấy mật khẩu từ JPasswordField
-
-            // Kiểm tra tài khoản cứng
+            String password = new String(txtPass.getPassword());
             if (!username.equals("") && !password.equals("")) {
-                if (TaiKhoanBUS.gI().checkTaiKhoan(username, password)>0)
-                dangnhap = true; // Cập nhật trạng thái đăng nhập
-                idnhomquyen = TaiKhoanBUS.gI().checkTaiKhoan(username, password);
-                JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
-                setVisible(false); // Ẩn form đăng nhập
-                dispose(); // Giải phóng tài nguyên
+                try {
+                    int idNhomQuyen = TaiKhoanBUS.gI().checkTaiKhoan(username, password);
+                    if (idNhomQuyen > 0) {
+                        dangnhap = true;
+                        idnhomquyen = idNhomQuyen;
+                        JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
+                        setVisible(false);
+                        dispose();
+                        System.out.println("Đăng nhập thành công, hiển thị loading");
+                        SwingUtilities.invokeLater(() -> {
+                            loading load = new loading();
+                            load.setVisible(true);
+                            // Sử dụng Timer để tạo độ trễ 2 giây mà không chặn EDT
+                            Timer timer = new Timer(2000, evt -> {
+                                load.setVisible(false);
+                                load.dispose();
+                                System.out.println("Đóng loading, hiển thị MainFrame");
+                                try {
+                                    MainFrame mainFrame = new MainFrame();
+                                    mainFrame.setVisible(true);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    JOptionPane.showMessageDialog(null, "Lỗi khi khởi tạo MainFrame: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                }
+                            });
+                            timer.setRepeats(false); // Chỉ chạy 1 lần
+                            timer.start(); // Bắt đầu timer
+                        });
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
+                        dangnhap = false;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Lỗi khi kiểm tra tài khoản: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
-                dangnhap = false;
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập tên đăng nhập và mật khẩu!");
             }
         });
         btnNewButton.setBounds(468, 325, 119, 58);
@@ -101,7 +113,7 @@ public class LoginForm extends JFrame {
         lblexit.setIcon(new ImageIcon("img\\Delete.png"));
         lblexit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                System.exit(0); // Thoát chương trình khi nhấn nút thoát
+                System.exit(0);
             }
         });
         lblexit.setBounds(613, 44, 35, 35);
@@ -115,7 +127,11 @@ public class LoginForm extends JFrame {
         panel.add(checkboxrm);
 
         JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("img\\loginform.png"));
+        try {
+            lblNewLabel.setIcon(new ImageIcon("img\\loginform.png"));
+        } catch (Exception e) {
+            System.out.println("Lỗi khi tải hình nền LoginForm: " + e.getMessage());
+        }
         lblNewLabel.setBounds(-25, -12, 691, 628);
         panel.add(lblNewLabel);
 
